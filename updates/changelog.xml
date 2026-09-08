@@ -3,6 +3,16 @@
   <changelog>
     <element>pkg_xdecarocore</element>
     <type>package</type>
+    <version>1.2.0</version>
+    <addition>
+      <item>Added generic Capability integration contract for stable public capability identifiers.</item>
+      <item>Added generic IntegrationEvent envelope for optional cross-product events.</item>
+      <item>Added Notifications, Tasks and Analytics integration guidance and build validation.</item>
+    </addition>
+  </changelog>
+  <changelog>
+    <element>pkg_xdecarocore</element>
+    <type>package</type>
     <version>1.1.0</version>
     <addition>
       <item>Added the public AssetService for opt-in Joomla Web Asset Manager registration.</item>
