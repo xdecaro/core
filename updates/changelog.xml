@@ -3,9 +3,19 @@
   <changelog>
     <element>pkg_xdecarocore</element>
     <type>package</type>
+    <version>1.0.1</version>
+    <change>
+      <item>Public product name standardized to Core by xdecaro.</item>
+      <item>Joomla-visible package, library, plugin and update labels updated.</item>
+      <item>Technical identifiers, namespace and integration APIs remain unchanged.</item>
+    </change>
+  </changelog>
+  <changelog>
+    <element>pkg_xdecarocore</element>
+    <type>package</type>
     <version>1.0.0</version>
     <addition>
-      <item>Initial Xdecaro Core package with shared library and system plugin.</item>
+      <item>Initial Core package with shared library and system plugin.</item>
       <item>Stable EntityReference and RelationReference cross-product contracts.</item>
       <item>Joomla 4, 5 and 6 compatible update channel.</item>
       <item>Deterministic package build and SHA-256 release verification.</item>
