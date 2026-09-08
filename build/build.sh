@@ -112,6 +112,7 @@ if (simplexml_load_file($argv[7]) === false) {
 
 php "$ROOT/tests/smoke.php"
 php "$ROOT/tests/assets.php"
+php "$ROOT/tests/integration.php"
 python3 "$ROOT/build/build.py"
 
 python3 - "$DIST" "$VERSION" <<'PY'
@@ -135,8 +136,13 @@ for path in artifacts:
             raise SystemExit(f"Corrupt ZIP member {bad} in {path}")
 
 with zipfile.ZipFile(artifacts[0]) as library:
-    if "src/Asset/AssetService.php" not in set(library.namelist()):
-        raise SystemExit("Core library is missing AssetService.php")
+    required = {
+        "src/Asset/AssetService.php",
+        "src/Integration/Capability.php",
+        "src/Integration/IntegrationEvent.php",
+    }
+    if not required.issubset(set(library.namelist())):
+        raise SystemExit("Core library is missing required public integration contracts")
 
 with zipfile.ZipFile(artifacts[1]) as plugin:
     required = {
