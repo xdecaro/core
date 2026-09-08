@@ -1,0 +1,94 @@
+/* Core by xdecaro 1.1.0 - scoped design tokens and foundation. */
+
+.xdecaro-scope {
+    --xdecaro-font-family: inherit;
+    --xdecaro-font-size: 1rem;
+    --xdecaro-line-height: 1.5;
+
+    --xdecaro-color-text: var(--body-color, #1f2937);
+    --xdecaro-color-muted: var(--secondary-color, #667085);
+    --xdecaro-color-surface: var(--body-bg, #ffffff);
+    --xdecaro-color-surface-subtle: #f6f8fb;
+    --xdecaro-color-border: var(--border-color, #d9dee7);
+    --xdecaro-color-primary: var(--template-link-color, #315f9f);
+    --xdecaro-color-primary-hover: #244f89;
+    --xdecaro-color-primary-contrast: #ffffff;
+    --xdecaro-color-success: #287a52;
+    --xdecaro-color-success-soft: #e9f6ef;
+    --xdecaro-color-warning: #986000;
+    --xdecaro-color-warning-soft: #fff4d6;
+    --xdecaro-color-danger: #b42318;
+    --xdecaro-color-danger-soft: #fff0ef;
+    --xdecaro-color-focus: rgba(49, 95, 159, 0.28);
+    --xdecaro-color-backdrop: rgba(15, 23, 42, 0.56);
+
+    --xdecaro-radius-sm: 0.375rem;
+    --xdecaro-radius-md: 0.625rem;
+    --xdecaro-radius-lg: 0.875rem;
+    --xdecaro-shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
+    --xdecaro-shadow-md: 0 8px 24px rgba(15, 23, 42, 0.12);
+
+    --xdecaro-space-1: 0.25rem;
+    --xdecaro-space-2: 0.5rem;
+    --xdecaro-space-3: 0.75rem;
+    --xdecaro-space-4: 1rem;
+    --xdecaro-space-5: 1.25rem;
+    --xdecaro-space-6: 1.5rem;
+    --xdecaro-space-8: 2rem;
+
+    color: var(--xdecaro-color-text);
+    font-family: var(--xdecaro-font-family);
+    font-size: var(--xdecaro-font-size);
+    line-height: var(--xdecaro-line-height);
+}
+
+.xdecaro-scope,
+.xdecaro-scope *,
+.xdecaro-scope *::before,
+.xdecaro-scope *::after {
+    box-sizing: border-box;
+}
+
+html[data-bs-theme="dark"] .xdecaro-scope,
+body[data-bs-theme="dark"] .xdecaro-scope,
+html[data-color-scheme="dark"] .xdecaro-scope,
+body[data-color-scheme="dark"] .xdecaro-scope,
+.xdecaro-scope[data-xdecaro-theme="dark"] {
+    --xdecaro-color-text: #eef2f7;
+    --xdecaro-color-muted: #aab4c3;
+    --xdecaro-color-surface: #202733;
+    --xdecaro-color-surface-subtle: #283140;
+    --xdecaro-color-border: #3b4656;
+    --xdecaro-color-primary: #8ab4f8;
+    --xdecaro-color-primary-hover: #a7c8fb;
+    --xdecaro-color-primary-contrast: #172033;
+    --xdecaro-color-success: #76d3a7;
+    --xdecaro-color-success-soft: #17392a;
+    --xdecaro-color-warning: #f5c46b;
+    --xdecaro-color-warning-soft: #443317;
+    --xdecaro-color-danger: #ff9b93;
+    --xdecaro-color-danger-soft: #482421;
+    --xdecaro-color-focus: rgba(138, 180, 248, 0.32);
+    --xdecaro-color-backdrop: rgba(0, 0, 0, 0.68);
+    --xdecaro-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.24);
+    --xdecaro-shadow-md: 0 10px 30px rgba(0, 0, 0, 0.36);
+}
+
+.xdecaro-scope[data-xdecaro-theme="light"] {
+    --xdecaro-color-text: #1f2937;
+    --xdecaro-color-muted: #667085;
+    --xdecaro-color-surface: #ffffff;
+    --xdecaro-color-surface-subtle: #f6f8fb;
+    --xdecaro-color-border: #d9dee7;
+    --xdecaro-color-primary: #315f9f;
+    --xdecaro-color-primary-hover: #244f89;
+    --xdecaro-color-primary-contrast: #ffffff;
+    --xdecaro-color-success: #287a52;
+    --xdecaro-color-success-soft: #e9f6ef;
+    --xdecaro-color-warning: #986000;
+    --xdecaro-color-warning-soft: #fff4d6;
+    --xdecaro-color-danger: #b42318;
+    --xdecaro-color-danger-soft: #fff0ef;
+    --xdecaro-color-focus: rgba(49, 95, 159, 0.28);
+    --xdecaro-color-backdrop: rgba(15, 23, 42, 0.56);
+}

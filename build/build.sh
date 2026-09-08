@@ -6,6 +6,7 @@ VERSION="$(tr -d '[:space:]' < "$ROOT/VERSION")"
 LIB_SRC="$ROOT/src/lib_xdecarocore"
 PLUGIN_SRC="$ROOT/src/plg_system_xdecarocore"
 PACKAGE_SRC="$ROOT/package/pkg_xdecarocore"
+ASSET_REGISTRY="$PLUGIN_SRC/media/joomla.asset.json"
 UPDATE_FEED="$ROOT/updates/pkg_xdecarocore.xml"
 CHANGELOG_XML="$ROOT/updates/changelog.xml"
 DIST="$ROOT/dist"
@@ -37,13 +38,49 @@ foreach ($manifests as $file) {
         exit(1);
     }
 }
+$plugin = simplexml_load_file($manifests[1]);
+if (trim((string) $plugin->media["destination"]) !== "plg_system_xdecarocore"
+    || trim((string) $plugin->media["folder"]) !== "media") {
+    fwrite(STDERR, "Core plugin media destination is missing or incorrect.\n");
+    exit(1);
+}
 $package = simplexml_load_file($manifests[2]);
 $server = trim((string) $package->updateservers->server);
 if ($server !== "https://raw.githubusercontent.com/xdecaro/core/main/updates/pkg_xdecarocore.xml") {
     fwrite(STDERR, "Package update server is missing or incorrect.\n");
     exit(1);
 }
-$feed = simplexml_load_file($argv[5]);
+$assetText = file_get_contents($argv[5]);
+$assets = json_decode((string) $assetText, true);
+if (!is_array($assets) || json_last_error() !== JSON_ERROR_NONE) {
+    fwrite(STDERR, "Invalid Core joomla.asset.json.\n");
+    exit(1);
+}
+if (($assets["name"] ?? "") !== "plg_system_xdecarocore" || ($assets["version"] ?? "") !== $version) {
+    fwrite(STDERR, "Core asset registry metadata is inconsistent.\n");
+    exit(1);
+}
+$found = [];
+foreach (($assets["assets"] ?? []) as $asset) {
+    if (isset($asset["name"], $asset["type"], $asset["uri"])) {
+        $found[$asset["name"]] = $asset;
+    }
+}
+$expected = [
+    "xdecaro.core" => "plg_system_xdecarocore/core.css",
+    "xdecaro.components" => "plg_system_xdecarocore/components.css",
+];
+foreach ($expected as $name => $uri) {
+    if (!isset($found[$name]) || $found[$name]["type"] !== "style" || $found[$name]["uri"] !== $uri) {
+        fwrite(STDERR, "Required Core style asset is missing or inconsistent: {$name}\n");
+        exit(1);
+    }
+    if (($found[$name]["version"] ?? "") !== $version) {
+        fwrite(STDERR, "Core style asset version mismatch: {$name}\n");
+        exit(1);
+    }
+}
+$feed = simplexml_load_file($argv[6]);
 if ($feed === false || count($feed->update) < 1) {
     fwrite(STDERR, "Invalid Core update feed.\n");
     exit(1);
@@ -56,8 +93,8 @@ foreach ($feed->update as $update) {
         fwrite(STDERR, "Core update feed metadata is inconsistent.\n");
         exit(1);
     }
-    $expected = "https://github.com/xdecaro/core/releases/download/v{$version}/pkg_xdecarocore_{$version}.zip";
-    if (trim((string) $update->downloads->downloadurl) !== $expected) {
+    $expectedUrl = "https://github.com/xdecaro/core/releases/download/v{$version}/pkg_xdecarocore_{$version}.zip";
+    if (trim((string) $update->downloads->downloadurl) !== $expectedUrl) {
         fwrite(STDERR, "Core update feed download URL is inconsistent.\n");
         exit(1);
     }
@@ -67,13 +104,14 @@ foreach ($feed->update as $update) {
         exit(1);
     }
 }
-if (simplexml_load_file($argv[6]) === false) {
+if (simplexml_load_file($argv[7]) === false) {
     fwrite(STDERR, "Invalid Core changelog XML.\n");
     exit(1);
 }
-' "$ROOT/VERSION" "$LIB_SRC/xdecarocore.xml" "$PLUGIN_SRC/xdecarocore.xml" "$PACKAGE_SRC/pkg_xdecarocore.xml" "$UPDATE_FEED" "$CHANGELOG_XML"
+' "$ROOT/VERSION" "$LIB_SRC/xdecarocore.xml" "$PLUGIN_SRC/xdecarocore.xml" "$PACKAGE_SRC/pkg_xdecarocore.xml" "$ASSET_REGISTRY" "$UPDATE_FEED" "$CHANGELOG_XML"
 
 php "$ROOT/tests/smoke.php"
+php "$ROOT/tests/assets.php"
 python3 "$ROOT/build/build.py"
 
 python3 - "$DIST" "$VERSION" <<'PY'
@@ -95,6 +133,19 @@ for path in artifacts:
         bad = archive.testzip()
         if bad:
             raise SystemExit(f"Corrupt ZIP member {bad} in {path}")
+
+with zipfile.ZipFile(artifacts[0]) as library:
+    if "src/Asset/AssetService.php" not in set(library.namelist()):
+        raise SystemExit("Core library is missing AssetService.php")
+
+with zipfile.ZipFile(artifacts[1]) as plugin:
+    required = {
+        "media/joomla.asset.json",
+        "media/css/core.css",
+        "media/css/components.css",
+    }
+    if not required.issubset(set(plugin.namelist())):
+        raise SystemExit("Core plugin ZIP is missing shared media assets")
 
 with zipfile.ZipFile(artifacts[-1]) as package:
     expected = {"pkg_xdecarocore.xml", "lib_xdecarocore.zip", "plg_system_xdecarocore.zip"}

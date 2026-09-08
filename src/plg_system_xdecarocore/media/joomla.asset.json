@@ -1,0 +1,24 @@
+{
+  "$schema": "https://developer.joomla.org/schemas/json-schema/web_assets.json",
+  "name": "plg_system_xdecarocore",
+  "version": "1.1.0",
+  "description": "Core by xdecaro shared, opt-in UI assets.",
+  "license": "GPL-2.0-or-later",
+  "assets": [
+    {
+      "name": "xdecaro.core",
+      "type": "style",
+      "uri": "plg_system_xdecarocore/core.css",
+      "version": "1.1.0"
+    },
+    {
+      "name": "xdecaro.components",
+      "type": "style",
+      "uri": "plg_system_xdecarocore/components.css",
+      "dependencies": [
+        "xdecaro.core"
+      ],
+      "version": "1.1.0"
+    }
+  ]
+}

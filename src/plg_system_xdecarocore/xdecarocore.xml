@@ -5,11 +5,15 @@
     <creationDate>2026-09-08</creationDate>
     <copyright>Copyright (C) 2026 Luca De Caro</copyright>
     <license>GNU General Public License version 2 or later</license>
-    <version>1.0.1</version>
+    <version>1.1.0</version>
     <description>Lightweight Joomla system integration point for Core by xdecaro.</description>
     <namespace path="src">Xdecaro\Plugin\System\XdecaroCore</namespace>
     <files>
         <folder plugin="xdecarocore">services</folder>
         <folder>src</folder>
     </files>
+    <media destination="plg_system_xdecarocore" folder="media">
+        <filename>joomla.asset.json</filename>
+        <folder>css</folder>
+    </media>
 </extension>

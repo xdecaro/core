@@ -4,6 +4,24 @@ All notable changes to **Core by xdecaro** are documented here.
 
 The project follows Semantic Versioning.
 
+## 1.1.0 — 2026-09-08
+
+### Added
+
+- Public `Xdecaro\Core\Asset\AssetService` for opt-in Joomla Web Asset Manager registration.
+- Stable style asset identifiers `xdecaro.core` and `xdecaro.components`.
+- Scoped `.xdecaro-scope` design tokens using the `--xdecaro-*` namespace.
+- Shared cards, toolbars, buttons, badges, form controls, tables, empty/loading states and modal shell.
+- Responsive and light/dark foundations without global selectors or automatic asset injection.
+- AssetService smoke test and build-time validation of `joomla.asset.json` and packaged media files.
+
+### Compatibility
+
+- No database changes.
+- Existing EntityReference and RelationReference APIs are unchanged.
+- Technical package/plugin/library identifiers are unchanged.
+- Assets are opt-in; existing product UI is unaffected until a consumer explicitly enables them.
+
 ## 1.0.1 — 2026-09-08
 
 ### Changed
