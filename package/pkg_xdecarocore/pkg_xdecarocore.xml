@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="package" method="upgrade">
+    <name>Xdecaro Core Package</name>
+    <packagename>xdecarocore</packagename>
+    <author>Luca De Caro</author>
+    <creationDate>2026-09-08</creationDate>
+    <copyright>Copyright (C) 2026 Luca De Caro</copyright>
+    <license>GNU General Public License version 2 or later</license>
+    <version>1.0.0</version>
+    <description>Shared Xdecaro Joomla infrastructure package.</description>
+    <blockChildUninstall>true</blockChildUninstall>
+    <files>
+        <file type="library" id="xdecaro/core">lib_xdecarocore.zip</file>
+        <file type="plugin" id="xdecarocore" group="system">plg_system_xdecarocore.zip</file>
+    </files>
+</extension>
