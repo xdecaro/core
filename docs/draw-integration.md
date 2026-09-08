@@ -1,27 +1,29 @@
-# Draw integration with Xdecaro Core
+# Draw integration with Core by xdecaro
 
 ## Purpose
 
 Draw is a product-domain component. Core supports it only through domain-neutral infrastructure.
 
-The integration must preserve the Core boundary:
+The integration must preserve the boundary:
 
-`Draw -> Xdecaro Core`
+`Draw -> Core by xdecaro`
 
 Core must never depend on Draw.
 
 ## Existing Core APIs Draw should use
 
-Draw can use the current Core public APIs for:
+Canonical Core 1.3+ APIs include:
 
-- `Xdecaro\Core\Integration\EntityReference`;
-- `Xdecaro\Core\Integration\RelationReference`;
-- shared Web Asset Manager registration;
+- `xdecaro\Core\Integration\EntityReference`;
+- `xdecaro\Core\Integration\RelationReference`;
+- `xdecaro\Core\Integration\Capability` / `IntegrationEvent` where a genuinely generic integration needs them;
+- `xdecaro\Core\Asset\AssetService`;
 - `xdecaro.core` and `xdecaro.components` assets;
-- `.xdecaro-*` UI primitives and `--xdecaro-*` design tokens;
-- dependency/version diagnostics already exposed by Core.
+- `.xdecaro-*` UI primitives and `--xdecaro-*` design tokens.
 
-No Draw-specific Core service is required for the initial architecture.
+The former `Xdecaro\Core` spelling is compatibility-only for already-published consumers. New Draw code uses lowercase `xdecaro`.
+
+No Draw-specific Core service is required.
 
 ## What must remain outside Core
 
@@ -40,110 +42,71 @@ Do not add the following to Core:
 - Draw-specific event names;
 - Draw-specific result payload parsing.
 
-These are product-domain responsibilities and belong to Draw.
+These are Draw-domain responsibilities.
 
 ## Cross-product references
 
-Draw should represent external source entities through Core `EntityReference` values where possible.
+Draw should represent external source entities through Core `EntityReference` values.
 
 Example source competition:
 
 ```php
-use Xdecaro\Core\Integration\EntityReference;
+use xdecaro\Core\Integration\EntityReference;
 
-$competition = new EntityReference('com_decarodcl', 'competition', 42);
+$competition = new EntityReference('com_xdecarocompetitions', 'competition', 42);
+$participant = new EntityReference('com_xdecarocompetitions', 'participant', 10);
 ```
 
-Example participant:
+These references do not authorize Draw to query Competitions private tables. Draw must not read or write `#__xdecarocompetitions_*` directly.
 
-```php
-$participant = new EntityReference('com_decarodcl', 'participant', 10);
-```
-
-These references do not allow Draw to query Competitions private tables. They only provide stable cross-product identity.
+Current Draw component identity is `com_xdecarodraw`; Draw-owned tables use `#__xdecarodraw_*`.
 
 ## Relations
 
-Where a product needs to retain a relationship to a draw/result, use a stable relation or product-owned integration record rather than a cross-component database foreign key.
-
-Core does not persist the relationship automatically.
-
-Data ownership remains with the individual products.
+Where a product needs to retain a relationship to a draw/result, use a stable public relation or a product-owned integration record rather than a cross-component database foreign key. Core does not persist the relationship automatically.
 
 ## Shared UI
 
-Draw administrator screens should opt into Core shared assets rather than duplicating generic buttons, cards, badges, tables, alerts, loading states, modals and design tokens.
+Draw administrator screens should opt into Core shared assets rather than duplicating generic buttons, cards, badges, tables, alerts, loading states, modal shells and design tokens.
 
 Draw-specific live presentation, animation, pot visuals, group layouts and bracket transitions remain local to Draw.
 
-The recommended boundary is:
-
-- generic shell/primitives -> Core;
-- draw-domain presentation -> Draw.
-
 ## Live transport
 
-Core should not gain a Draw-specific realtime transport merely to support Draw.
+Core should not gain a Draw-specific realtime transport merely to support Draw. Draw can begin with Joomla-compatible AJAX/polling.
 
-Draw can begin with Joomla-compatible AJAX/polling.
+If multiple products later prove the same domain-neutral need for SSE/WebSocket transport, reconnect logic, sequence cursors or generic event-stream infrastructure, that capability can be evaluated separately. Do not move it into Core speculatively.
 
-If multiple Xdecaro products later prove a common need for SSE/WebSocket transport, reconnect logic, sequence cursors or generic event-stream infrastructure, that capability may be evaluated for a future Core minor release.
+## AJAX, ACL and CSRF
 
-Do not move it into Core speculatively.
-
-## AJAX and CSRF
-
-Generic Joomla-compliant AJAX/CSRF helpers may belong to Core when they are already public and reusable.
-
-Draw remains responsible for:
+Using shared infrastructure never transfers authorization responsibility to Core. Draw remains responsible for:
 
 - draw ACL;
+- Joomla CSRF validation on state-changing actions;
 - state-transition validation;
 - entry/slot validation;
 - protection against result manipulation;
 - preventing disclosure of unrevealed assignments.
 
-Using a Core AJAX helper never transfers authorization responsibility to Core.
-
 ## Diagnostics
 
-Core diagnostics may report whether Draw is installed and compatible only through generic extension/dependency registry mechanisms.
+Generic Core diagnostics may report extension/dependency availability, but Core must not inspect Draw private state or judge whether a draw is valid.
 
-Core must not inspect Draw private database state or judge whether a particular draw is valid.
-
-Draw's own Information/Diagnostics area should report Draw-domain checks such as:
-
-- schema version;
-- draw tables;
-- audit/event integrity;
-- source integration availability;
-- supported Core version;
-- Competitions adapter availability.
+Draw diagnostics own schema, audit integrity, source integration availability and supported dependency checks.
 
 ## Public event contracts
 
-Draw-specific events such as `draw.entry.revealed` remain owned and versioned by Draw.
-
-Only events that are demonstrably useful across multiple products and domain-neutral should be considered for Core.
+Draw-specific events such as `draw.entry.revealed` remain owned and versioned by Draw. `IntegrationEvent` can envelope such an event for optional consumers without making the event name Core-owned.
 
 ## Compatibility
 
-When Draw starts consuming a Core public API:
+When Draw consumes Core:
 
-1. verify the real Core minimum version;
-2. declare the dependency coherently in Draw manifests/package/update metadata if Core is mandatory;
-3. show a controlled Joomla administrator message for missing/incompatible Core;
-4. never assume an undocumented Core class/service exists;
-5. keep Draw domain state independent from Core storage.
+1. verify the real minimum Core version;
+2. declare mandatory/optional dependency policy coherently;
+3. show controlled administrator behavior for missing/incompatible dependencies;
+4. use only documented Core APIs;
+5. keep Draw domain state independent from Core storage;
+6. keep Competitions optional and accessed only through public integration boundaries.
 
-Because Draw is a new product, the first implementation should choose the Core dependency policy before the first stable release and keep it consistent thereafter.
-
-## Current recommendation
-
-For the initial Draw implementation:
-
-- use Core 1.1.0+ public integration and UI APIs where they fit;
-- do not add Draw-specific code to Core;
-- keep Draw/Competitions integration optional;
-- require all cross-product data exchange to use stable public contracts rather than private tables;
-- revisit Core only when at least one additional real consumer proves the same generic infrastructure is needed.
+Draw is still a prerelease product. Runtime Joomla compatibility remains unproven until tested on supported Joomla installations.
