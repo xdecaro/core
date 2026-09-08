@@ -73,7 +73,7 @@ jobs:
             "dist/pkg_xdecarocore_${VERSION}.zip" \
             dist/SHA256SUMS.txt \
             --title "Core by xdecaro ${VERSION}" \
-            --notes "Core by xdecaro ${VERSION}. Adds the opt-in AssetService and scoped shared design system for Joomla 4, 5 and 6. Existing integration contracts remain backward compatible."
+            --notes "Core by xdecaro ${VERSION}. Adds generic Capability and IntegrationEvent contracts for optional cross-product integrations while preserving the existing opt-in shared design system and backward-compatible public APIs."
 
       - name: Publish update-feed checksum
         shell: bash
