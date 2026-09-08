@@ -59,6 +59,7 @@ jobs:
           SHA256="$(sha256sum "$PACKAGE" | awk '{print $1}')"
           grep -q "<sha256>${SHA256}</sha256>" updates/pkg_xdecarocore.xml
           grep -q "${SHA256}  pkg_xdecarocore_${VERSION}.zip" dist/SHA256SUMS.txt
+          test -f "dist/lib_xdecarocorelegacy_${VERSION}.zip"
 
       - name: Create GitHub release
         env:
@@ -69,11 +70,12 @@ jobs:
           VERSION="${{ steps.version.outputs.version }}"
           gh release create "v${VERSION}" \
             "dist/lib_xdecarocore_${VERSION}.zip" \
+            "dist/lib_xdecarocorelegacy_${VERSION}.zip" \
             "dist/plg_system_xdecarocore_${VERSION}.zip" \
             "dist/pkg_xdecarocore_${VERSION}.zip" \
             dist/SHA256SUMS.txt \
             --title "Core by xdecaro ${VERSION}" \
-            --notes "Core by xdecaro ${VERSION}. Adds generic Capability and IntegrationEvent contracts for optional cross-product integrations while preserving the existing opt-in shared design system and backward-compatible public APIs."
+            --notes "Core by xdecaro ${VERSION}. Makes xdecaro\\Core the canonical PHP namespace and temporarily packages Xdecaro\\Core autoload compatibility for already-published consumers. Public contracts and asset identifiers remain behaviorally compatible."
 
       - name: Publish update-feed checksum
         shell: bash
