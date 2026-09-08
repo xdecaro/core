@@ -6,20 +6,30 @@ Notifications, Tasks and Analytics are independent xdecaro products. Core provid
 
 Dependency direction remains:
 
-`Notifications / Tasks / Analytics -> Xdecaro Core`
+`Notifications / Tasks / Analytics -> Core by xdecaro`
 
 Core must never depend on those products.
 
 ## Core contracts
 
-Core exposes:
+Canonical Core 1.3+ classes are:
 
-- `EntityReference` for stable references to records owned by another component;
-- `RelationReference` for typed cross-product relations;
-- `Capability` for stable public capability identifiers;
-- `IntegrationEvent` for a neutral event envelope.
+- `xdecaro\Core\Integration\EntityReference` for stable references to records owned by another component;
+- `xdecaro\Core\Integration\RelationReference` for typed cross-product relations;
+- `xdecaro\Core\Integration\Capability` for stable public capability identifiers;
+- `xdecaro\Core\Integration\IntegrationEvent` for a neutral event envelope.
+
+The former uppercase vendor prefix is compatibility-only for already-published consumers. New integration code uses lowercase `xdecaro`.
 
 Core does not persist capabilities, events, notifications, tasks, metrics or reports. It does not queue or dispatch product events.
+
+## Component identities
+
+- Notifications: `com_xdecaronotifications`;
+- Tasks: `com_xdecarotasks`;
+- Analytics: `com_xdecaroanalytics`.
+
+These products own their own data and workflows. Their repositories must not query another product's private tables as an integration shortcut.
 
 ## Capability naming
 
@@ -96,8 +106,8 @@ Products should detect availability through documented capability/provider mecha
 ## Example
 
 ```php
-use Xdecaro\Core\Integration\EntityReference;
-use Xdecaro\Core\Integration\IntegrationEvent;
+use xdecaro\Core\Integration\EntityReference;
+use xdecaro\Core\Integration\IntegrationEvent;
 
 $document = new EntityReference('com_decarodocuments', 'document', 42);
 
