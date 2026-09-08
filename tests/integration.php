@@ -9,13 +9,12 @@ require_once __DIR__ . '/../src/lib_xdecarocore/src/Integration/EntityReference.
 require_once __DIR__ . '/../src/lib_xdecarocore/src/Integration/Capability.php';
 require_once __DIR__ . '/../src/lib_xdecarocore/src/Integration/IntegrationEvent.php';
 
-use Xdecaro\Core\Integration\Capability;
-use Xdecaro\Core\Integration\EntityReference;
-use Xdecaro\Core\Integration\IntegrationEvent;
+use xdecaro\Core\Integration\Capability;
+use xdecaro\Core\Integration\EntityReference;
+use xdecaro\Core\Integration\IntegrationEvent;
 
-$capability = new Capability('com_decaronotifications', 'notifications.publish', '1');
-
-if ($capability->key() !== 'com_decaronotifications:notifications.publish@1') {
+$capability = new Capability('com_xdecaronotifications', 'notifications.publish', '1');
+if ($capability->key() !== 'com_xdecaronotifications:notifications.publish@1') {
     throw new \RuntimeException('Capability key serialization failed.');
 }
 
@@ -29,25 +28,21 @@ $event = new IntegrationEvent(
 );
 
 $roundTrip = IntegrationEvent::fromArray($event->toArray());
-
 if ($roundTrip->getSource() === null || $roundTrip->getSource()->key() !== $source->key()) {
     throw new \RuntimeException('IntegrationEvent source round-trip failed.');
 }
-
 if (($roundTrip->getPayload()['daysRemaining'] ?? null) !== 7) {
     throw new \RuntimeException('IntegrationEvent payload round-trip failed.');
 }
 
 $invalidRejected = false;
-
 try {
-    new Capability('com_decaronotifications', 'Notifications Publish', '1');
+    new Capability('com_xdecaronotifications', 'Notifications Publish', '1');
 } catch (\InvalidArgumentException $exception) {
     $invalidRejected = true;
 }
-
 if (!$invalidRejected) {
     throw new \RuntimeException('Invalid capability identifiers must be rejected.');
 }
 
-echo "Xdecaro Core integration capability/event tests passed.\n";
+echo "xdecaro Core integration capability/event tests passed.\n";
