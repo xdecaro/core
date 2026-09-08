@@ -1,32 +1,70 @@
 # Xdecaro ecosystem runtime validation matrix
 
-This matrix is the final gate before any Core 1.2.0 public API expansion.
+This matrix is the stabilization gate for the Core `1.4.x` line and for functional cross-product integrations.
 
-A green repository workflow is necessary but is not proof of Joomla runtime compatibility. Each product must be exercised on a real Joomla installation for the versions it claims to support.
+Repository CI, deterministic ZIP generation and successful GitHub Releases are necessary but are not sufficient proof of Joomla runtime compatibility. Runtime claims must be backed by an actual Joomla installation.
 
-## Products in scope
+## Automated runtime baseline
 
-- Core — `pkg_xdecarocore`
-- Forms — `pkg_decaroforms`
-- Courses — `pkg_decarocourses`
-- Competitions — `pkg_decarodcl`
-- Documents — `pkg_decarodocuments`
-- Membership — `pkg_decaromembership`
-- Events — `pkg_decaroevents`
-- Editor — `pkg_decaroeditor`
-- Finance — `pkg_decarofinance`
-- Protocol — `pkg_decaroprotocol`
-- Draw — `pkg_decarodraw`
-- Organizations — `pkg_decaroorganizations`
-- People — `pkg_decaropeople`
-- Inventory — `pkg_decaroinventory`
-- Resources — `pkg_decaroresources`
+`.github/workflows/runtime-smoke.yml` installs real Joomla instances with MariaDB and exercises released packages through Joomla CLI.
 
-Communication and Bookings join this matrix when their repositories exist.
+Current automated majors:
 
-## Required runtime checks for every package
+- Joomla 5 with PHP 8.1;
+- Joomla 6 with PHP 8.3;
+- Editor only on Joomla 6, matching its current manifest/runtime target.
 
-Record PASS / FAIL / N/A with Joomla version, PHP version, package version and date.
+The workflow resolves the latest stable release for each Joomla major and rejects alpha, beta and RC packages. Extension installation uses Joomla's `extension:install --path` command.
+
+Released packages under the initial runtime gate:
+
+- Core `1.4.0`;
+- Courses `1.3.0`;
+- Forms `1.6.0`;
+- Competitions `1.1.0`;
+- Documents `1.1.0`;
+- Membership `1.2.0`;
+- Events `1.1.0`;
+- Editor `0.1.0-alpha4`;
+- Finance `1.1.0`;
+- Protocol `1.2.0`.
+
+The automated gate verifies:
+
+1. clean Joomla installation;
+2. package ZIP integrity;
+3. package installation using Joomla CLI;
+4. optional consumers can install before Core;
+5. hard Core dependencies reject installation before Core and install after Core;
+6. canonical `xdecaro\Core\Version` autoloading after package installation;
+7. Core `1.4.0+` availability;
+8. `xdecaro\Core\Integration\CapabilityRegistry` availability;
+9. Core upgrade from `1.3.0` to `1.4.0` on Joomla 5 and 6.
+
+This is a runtime smoke gate, not a replacement for browser/UI/security regression testing.
+
+## Core dependency policy
+
+Current initial matrix:
+
+| Product | Core policy | Runtime minimum for Core-backed features |
+| --- | --- | --- |
+| Core | self | 1.4.0 |
+| Courses | optional | 1.3.0 |
+| Forms | optional | 1.3.0 |
+| Competitions | optional/integration boundary | canonical Core contracts |
+| Documents | mandatory | 1.3.0 |
+| Membership | optional | 1.3.0 |
+| Events | mandatory | 1.3.0 |
+| Editor | optional | 1.3.0 |
+| Finance | optional | 1.3.0 |
+| Protocol | optional | 1.3.0 |
+
+Core `1.4.0` remains compatible with consumers requiring Core `1.3.0+` because the new Capability Registry is additive.
+
+## Manual runtime checks still required
+
+Record PASS / FAIL / N/A with Joomla version, PHP version, product version and date.
 
 | Check | Required result |
 | --- | --- |
@@ -36,107 +74,68 @@ Record PASS / FAIL / N/A with Joomla version, PHP version, package version and d
 | Core detection | Correct Core version and API availability are reported |
 | Missing Core | Optional consumers fall back cleanly; hard dependencies fail before partial installation |
 | Administrator access | `core.manage` and product ACL are enforced server-side |
-| State-changing requests | Joomla CSRF token validation is enforced |
+| State-changing requests | Joomla CSRF validation is enforced |
 | Input validation | Invalid IDs/states/values are rejected server-side |
-| Database | Tables, indexes, foreign keys and update state are correct; no destructive normal update |
+| Database | Tables/indexes/update state remain coherent; no destructive normal update |
 | Cross-product boundary | No direct reads/writes of another product's private tables |
 | Web assets | Core assets load through WAM/AssetService only when requested |
-| Shared UI scope | Core primitives are inside `.xdecaro-scope` and do not leak globally |
-| JavaScript | Browser console has no relevant errors or duplicate listeners/AJAX |
-| PHP runtime | PHP log has no warnings, notices promoted to errors, deprecations that break supported Joomla, or fatals |
-| Desktop | Primary affected views render and operate correctly |
-| Tablet | No overflow/control loss in primary affected views |
-| Smartphone | Primary actions remain reachable and usable |
-| Light mode | Contrast, borders, badges and controls remain legible |
-| Dark mode | No hard-coded light backgrounds/text conflicts with Core tokens |
-| Accessibility basics | Labels, keyboard focus and semantic controls remain usable where applicable |
+| Shared UI scope | Core primitives remain inside `.xdecaro-scope` |
+| JavaScript | No relevant console errors, duplicate listeners or duplicate AJAX |
+| PHP runtime | No relevant warnings/deprecations/fatals |
+| Desktop/tablet/smartphone | Primary affected views remain usable |
+| Light/dark mode | No contrast or hard-coded surface regressions |
+| Accessibility basics | Labels, focus and semantic controls remain usable |
 
-## Product-specific runtime focus
+## Product-specific focus
 
 ### Core
-- install library + system plugin through `pkg_xdecarocore`;
-- WAM registry available without global CSS injection;
-- `AssetService::useFoundation()` and `useComponents()` can be called repeatedly without duplicate registration failures;
-- `EntityReference` / `RelationReference` validation remains stable.
-
-### Forms
-- Information/Diagnostics Core UI and fallback;
-- Builder/submissions/email/payment paths unchanged by Core integration;
-- current Builder migration work must be tested separately from the Core baseline.
-
-### Courses
-- Information Core UI/fallback;
-- course/edition/enrolment/lesson/attendance/evaluation behavior unchanged.
-
-### Competitions
-- Core diagnostics/reference integration;
-- current technical identity and schema remain coherent with the released package;
-- no regression in competitions/teams/matches.
+- package installs library, legacy compatibility library and system plugin;
+- canonical `xdecaro\Core` source remains authoritative;
+- `Xdecaro\Core` exists only through the compatibility library;
+- `AssetService` calls remain idempotent;
+- `EntityReference`, `RelationReference`, `IntegrationEvent`, `Capability` and `CapabilityRegistry` stay additive and domain-neutral.
 
 ### Documents
-- package refuses installation when Core < 1.1.0;
-- private storage can be created on the target hosting;
-- upload MIME/extension validation;
-- download ACL/view-level check;
-- replace/delete file lifecycle and rollback behavior;
-- no private storage path exposed in diagnostics.
-
-### Membership
-- Core UI/fallback;
-- membership records/workflows remain independent of People until an explicit public integration is implemented.
+- mandatory Core preflight remains atomic;
+- private storage creation, MIME/extension validation and download ACL are tested;
+- document relations never expose private storage paths.
 
 ### Events
-- Core-first install;
-- event/session/registration capacity and ownership validation;
-- registration/check-in state changes protected by ACL/CSRF.
+- mandatory Core preflight remains atomic;
+- capacity/waitlist/check-in changes preserve ACL and CSRF.
 
 ### Editor
-- Core 1.1 UI optional fallback;
-- Joomla editor plugin loads correctly;
-- canvas/block/media/history behavior remains local to Editor;
-- test supported Joomla/PHP matrix exactly as declared by the release.
+- Core remains optional;
+- Joomla editor plugin/canvas/media/history continue to work without Core;
+- shared Core assets do not absorb editor behavior.
 
 ### Finance
-- ledger/budget/deposit writes are transactional where required;
-- idempotency guards prevent duplicate financial writes;
-- no Competitions private-table dependency.
+- ledger/deposit/payment writes retain transaction/idempotency protections;
+- no source product private-table dependency.
 
 ### Protocol
-- numbering/register invariants survive concurrent normal usage;
-- protocol records remain separate from Documents storage and Communication delivery.
+- register numbering remains atomic and immutable after assignment;
+- Documents integration remains optional and public-contract based.
 
-### Draw
-- no direct reads or writes of Competitions private tables;
-- execution/publish ACL boundaries;
-- later live-draw engine tests belong to Draw, not Core.
+## Namespace audit
 
-### Organizations
-- hierarchy integrity and cycle prevention when hierarchy editing is implemented;
-- organization references do not grant access to linked product data.
+`.github/workflows/ecosystem-audit.yml` checks runtime PHP in current xdecaro repositories and rejects new `Xdecaro\Core` consumption. Core itself is checked separately: canonical sources must use `xdecaro\Core`; the legacy manifest is the only compatibility boundary.
 
-### People
-- person records remain separate from Joomla users and Membership;
-- personal data is not exposed through diagnostics/logging;
-- ACL around personally identifiable data is tested explicitly.
+## Stabilization rule
 
-### Inventory
-- stock movement history is append/audit safe;
-- quantity changes cannot bypass domain validation;
-- no booking/accounting logic is introduced implicitly.
+Core is currently frozen on the `1.4.x` minor line. During this gate:
 
-### Resources
-- capacity/resource definitions remain independent from booking state;
-- no Inventory stock mutation through private-table coupling.
-
-## Version claims
-
-Do not claim Joomla 4, 5 or 6 compatibility because a manifest regex allows it. Mark a Joomla major as supported only after the applicable package has completed the runtime checks above on that major.
+- compatible fixes use PATCH releases (`1.4.1`, `1.4.2`, ...);
+- no `1.5.0` is published merely to add a product-specific integration;
+- a new Core public primitive requires evidence from at least two real products and must remain domain-neutral;
+- provider-specific capability names and operations stay owned by their products.
 
 ## Completion rule
 
-Core 1.2.0 work may start only when:
+The stabilization gate is considered satisfied when:
 
-1. all currently released/consumed products needed for the target deployment have a recorded runtime result;
-2. failures affecting Core contracts or shared UI are fixed without domain leakage into Core;
-3. at least two real consumers demonstrate the same domain-neutral missing capability before a new public Core API is proposed;
-4. Communication and Bookings, once created, adopt the same boundary rather than forcing Core to know their domains.
+1. namespace audit is green;
+2. automated Joomla runtime smoke is green for applicable products/majors;
+3. failures affecting shared Core contracts are corrected on the `1.4.x` line;
+4. browser/security checks are recorded for affected production paths;
+5. functional integrations call provider-owned public services and never another component's private tables.

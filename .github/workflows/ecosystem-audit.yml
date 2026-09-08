@@ -1,0 +1,80 @@
+name: Ecosystem Core namespace audit
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 4 * * 1'
+
+permissions:
+  contents: read
+
+jobs:
+  consumer-audit:
+    name: ${{ matrix.repository }} runtime namespace audit
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        repository:
+          - courses
+          - forms
+          - competitions
+          - documents
+          - membership
+          - events
+          - editor
+          - finance
+          - protocol
+          - draw
+          - organizations
+          - people
+          - resources
+          - inventory
+          - notifications
+          - tasks
+          - analytics
+    steps:
+      - name: Checkout consumer
+        uses: actions/checkout@v4
+        with:
+          repository: xdecaro/${{ matrix.repository }}
+          path: consumer
+
+      - name: Reject deprecated Core namespace in runtime PHP
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd consumer
+          MATCHES="$(grep -RInF 'Xdecaro\Core' . \
+            --include='*.php' \
+            --exclude-dir=.git \
+            --exclude-dir=vendor \
+            --exclude-dir=dist \
+            --exclude-dir=build \
+            --exclude-dir=tests \
+            --exclude-dir=docs \
+            --exclude-dir=tools \
+            || true)"
+          if [ -n "$MATCHES" ]; then
+            printf '%s\n' "$MATCHES"
+            echo 'Deprecated Xdecaro\Core usage remains in consumer runtime PHP.' >&2
+            exit 1
+          fi
+
+  core-boundary:
+    name: Core canonical/legacy boundary
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify canonical source and isolated legacy loader
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -Fq '<namespace path="src">xdecaro\Core</namespace>' src/lib_xdecarocore/xdecarocore.xml
+          grep -Fq '<namespace path="src">Xdecaro\Core</namespace>' src/lib_xdecarocorelegacy/xdecarocorelegacy.xml
+          ! grep -RInE '^namespace Xdecaro\\Core' src/lib_xdecarocore/src
+          ! grep -RInF 'Xdecaro\Core' src/lib_xdecarocore/src --include='*.php'
+          grep -RInE '^namespace xdecaro\\Core' src/lib_xdecarocore/src >/dev/null

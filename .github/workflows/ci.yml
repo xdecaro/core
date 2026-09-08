@@ -28,6 +28,23 @@ jobs:
           extensions: simplexml
           coverage: none
 
+      - name: Guard stabilization series
+        shell: bash
+        run: |
+          set -euo pipefail
+          VERSION="$(tr -d '[:space:]' < VERSION)"
+          SERIES="$(tr -d '[:space:]' < STABILIZATION_SERIES)"
+          test -n "$VERSION"
+          test -n "$SERIES"
+          case "$VERSION" in
+            "$SERIES".*) ;;
+            *)
+              echo "Core $VERSION is outside the frozen $SERIES.x stabilization line." >&2
+              echo "Change STABILIZATION_SERIES explicitly when opening a new minor line." >&2
+              exit 1
+              ;;
+          esac
+
       - name: Guard canonical namespace
         shell: bash
         run: |
