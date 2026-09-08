@@ -1,6 +1,6 @@
 # AssetService and shared UI contract
 
-Core by xdecaro 1.1.0 introduces the first public Web Asset Manager API for xdecaro extensions.
+Core by xdecaro 1.1.0 introduced the first public Web Asset Manager API for xdecaro extensions. From Core 1.3.0, the canonical PHP namespace uses lowercase `xdecaro`.
 
 ## Goals
 
@@ -12,7 +12,9 @@ Core by xdecaro 1.1.0 introduces the first public Web Asset Manager API for xdec
 
 ## Public PHP API
 
-Class: `Xdecaro\Core\Asset\AssetService`
+Canonical class: `xdecaro\Core\Asset\AssetService`
+
+The former `Xdecaro\Core\Asset\AssetService` spelling is temporarily autoload-compatible for already-published consumers, but new code must use the lowercase vendor namespace.
 
 Stable constants:
 
@@ -32,7 +34,7 @@ The boolean return value lets an optional consumer preserve its existing local U
 ## Usage
 
 ```php
-use Xdecaro\Core\Asset\AssetService;
+use xdecaro\Core\Asset\AssetService;
 
 $webAssets = $this->getDocument()->getWebAssetManager();
 $coreAssets = new AssetService();
