@@ -2,7 +2,7 @@
 
 **Core by xdecaro** is the shared technical foundation for the xdecaro Joomla ecosystem.
 
-Version `1.1.0` adds the first opt-in shared design system and Web Asset Manager service while keeping Core domain-neutral and backward compatible. Product business logic remains in Forms, Courses, Competitions, Documents, Membership, Events, Editor and future extensions.
+Version `1.2.0` adds generic capability and event contracts for optional cross-product integrations while keeping Core domain-neutral and backward compatible. Version `1.1.0` introduced the opt-in shared design system and Web Asset Manager service. Product business logic remains in the individual xdecaro products.
 
 ## Package
 
@@ -17,17 +17,17 @@ The library installs under `libraries/xdecaro/core` and uses the namespace `Xdec
 
 Install the versioned package ZIP directly through Joomla:
 
-`pkg_xdecarocore_1.1.0.zip`
+`pkg_xdecarocore_1.2.0.zip`
 
 The package registers the official **Core by xdecaro** Joomla update server:
 
 `https://raw.githubusercontent.com/xdecaro/core/main/updates/pkg_xdecarocore.xml`
 
-Updates are distributed through GitHub Releases and verified with SHA-256. The update feed targets Joomla 4, 5 and 6 and Core 1.1.0 requires PHP 7.4 or newer. Joomla itself may impose a higher PHP requirement for the installed Joomla major.
+Updates are distributed through GitHub Releases and verified with SHA-256. The update feed targets Joomla 4, 5 and 6 and Core 1.2.0 requires PHP 7.4 or newer. Joomla itself may impose a higher PHP requirement for the installed Joomla major.
 
 ## Shared Web Asset Manager API
 
-Core 1.1.0 exposes `Xdecaro\Core\Asset\AssetService`.
+Core exposes `Xdecaro\Core\Asset\AssetService`.
 
 Public asset identifiers:
 
