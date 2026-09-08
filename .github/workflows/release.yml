@@ -1,0 +1,92 @@
+name: Core Release
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - VERSION
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: simplexml
+          coverage: none
+
+      - name: Read version
+        id: version
+        shell: bash
+        run: |
+          set -euo pipefail
+          VERSION="$(tr -d '[:space:]' < VERSION)"
+          test -n "$VERSION"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Stop if release already exists
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if gh release view "v${{ steps.version.outputs.version }}" >/dev/null 2>&1; then
+            echo "Release v${{ steps.version.outputs.version }} already exists. Bump VERSION before publishing changed files."
+            exit 1
+          fi
+
+      - name: Build and validate
+        run: bash build/build.sh
+
+      - name: Synchronize Joomla update checksum
+        run: php build/update-feed-checksum.php
+
+      - name: Verify release checksum
+        shell: bash
+        run: |
+          set -euo pipefail
+          VERSION="${{ steps.version.outputs.version }}"
+          PACKAGE="dist/pkg_xdecarocore_${VERSION}.zip"
+          SHA256="$(sha256sum "$PACKAGE" | awk '{print $1}')"
+          grep -q "<sha256>${SHA256}</sha256>" updates/pkg_xdecarocore.xml
+          grep -q "${SHA256}  pkg_xdecarocore_${VERSION}.zip" dist/SHA256SUMS.txt
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          VERSION="${{ steps.version.outputs.version }}"
+          gh release create "v${VERSION}" \
+            "dist/lib_xdecarocore_${VERSION}.zip" \
+            "dist/plg_system_xdecarocore_${VERSION}.zip" \
+            "dist/pkg_xdecarocore_${VERSION}.zip" \
+            dist/SHA256SUMS.txt \
+            --title "Xdecaro Core ${VERSION}" \
+            --notes "Initial stable Xdecaro Core release. Shared Joomla infrastructure and storage-agnostic cross-product integration contracts for Joomla 4, 5 and 6."
+
+      - name: Publish update-feed checksum
+        shell: bash
+        run: |
+          set -euo pipefail
+          VERSION="${{ steps.version.outputs.version }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add updates/pkg_xdecarocore.xml
+          if git diff --cached --quiet; then
+            echo "Update feed checksum already current."
+            exit 0
+          fi
+          git commit -m "Publish SHA-256 for Xdecaro Core ${VERSION}"
+          git pull --rebase origin main
+          git push origin HEAD:main

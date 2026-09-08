@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<changelogs>
+  <changelog>
+    <element>pkg_xdecarocore</element>
+    <type>package</type>
+    <version>1.0.0</version>
+    <addition>
+      <item>Initial Xdecaro Core package with shared library and system plugin.</item>
+      <item>Stable EntityReference and RelationReference cross-product contracts.</item>
+      <item>Joomla 4, 5 and 6 compatible update channel.</item>
+      <item>Deterministic package build and SHA-256 release verification.</item>
+    </addition>
+  </changelog>
+</changelogs>

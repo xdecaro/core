@@ -31,8 +31,34 @@ jobs:
       - name: Build and validate
         run: bash build/build.sh
 
-      - name: Inspect package contents
+      - name: Verify deterministic build
+        shell: bash
         run: |
-          unzip -l dist/pkg_xdecarocore_1.0.0.zip
-          unzip -l dist/lib_xdecarocore_1.0.0.zip
-          unzip -l dist/plg_system_xdecarocore_1.0.0.zip
+          set -euo pipefail
+          cp dist/SHA256SUMS.txt /tmp/core-first-sha256.txt
+          bash build/build.sh >/tmp/core-second-build.txt
+          cmp /tmp/core-first-sha256.txt dist/SHA256SUMS.txt
+
+      - name: Inspect package contents
+        shell: bash
+        run: |
+          set -euo pipefail
+          VERSION="$(cat VERSION)"
+          python3 - "$VERSION" <<'PY'
+          import sys
+          import zipfile
+          from pathlib import Path
+          version = sys.argv[1].strip()
+          for name in (
+              f"dist/pkg_xdecarocore_{version}.zip",
+              f"dist/lib_xdecarocore_{version}.zip",
+              f"dist/plg_system_xdecarocore_{version}.zip",
+          ):
+              path = Path(name)
+              if not path.is_file():
+                  raise SystemExit(f"Missing {path}")
+              with zipfile.ZipFile(path) as archive:
+                  print(name)
+                  for member in archive.namelist():
+                      print("  ", member)
+          PY

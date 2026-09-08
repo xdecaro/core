@@ -3,6 +3,7 @@
     <name>Xdecaro Core Package</name>
     <packagename>xdecarocore</packagename>
     <author>Luca De Caro</author>
+    <authorUrl>https://github.com/xdecaro/core</authorUrl>
     <creationDate>2026-09-08</creationDate>
     <copyright>Copyright (C) 2026 Luca De Caro</copyright>
     <license>GNU General Public License version 2 or later</license>
@@ -13,4 +14,8 @@
         <file type="library" id="xdecaro/core">lib_xdecarocore.zip</file>
         <file type="plugin" id="xdecarocore" group="system">plg_system_xdecarocore.zip</file>
     </files>
+    <updateservers>
+        <server type="extension" priority="1" name="Xdecaro Core Updates">https://raw.githubusercontent.com/xdecaro/core/main/updates/pkg_xdecarocore.xml</server>
+    </updateservers>
+    <changelogurl>https://raw.githubusercontent.com/xdecaro/core/main/updates/changelog.xml</changelogurl>
 </extension>
