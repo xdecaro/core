@@ -4,6 +4,22 @@ All notable changes to **Core by xdecaro** are documented here.
 
 The project follows Semantic Versioning.
 
+## 1.4.0 — 2026-09-09
+
+### Added
+
+- Public `xdecaro\Core\Integration\CapabilityRegistry` for runtime, in-memory registration and discovery of product capabilities.
+- Minimum-version capability matching through `supports()`.
+- Capability filtering by component and deterministic array serialization/round-trip support.
+- Registry smoke coverage using Notifications, Tasks and Analytics capability declarations.
+
+### Architecture
+
+- The registry is storage-free and domain-neutral; Core still owns no Notifications, Tasks or Analytics data.
+- Core does not boot optional products, dispatch product events or access product tables.
+- Products explicitly register their own capabilities when integration is available.
+- Missing optional products remain a normal, non-error condition.
+
 ## 1.3.0 — 2026-09-08
 
 ### Changed
