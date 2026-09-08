@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="plugin" group="system" method="upgrade">
+    <name>System - Xdecaro Core</name>
+    <author>Luca De Caro</author>
+    <creationDate>2026-09-08</creationDate>
+    <copyright>Copyright (C) 2026 Luca De Caro</copyright>
+    <license>GNU General Public License version 2 or later</license>
+    <version>1.0.0</version>
+    <description>Lightweight Joomla system integration point for Xdecaro Core.</description>
+    <namespace path="src">Xdecaro\Plugin\System\XdecaroCore</namespace>
+    <files>
+        <folder plugin="xdecarocore">services</folder>
+        <folder>src</folder>
+    </files>
+</extension>
