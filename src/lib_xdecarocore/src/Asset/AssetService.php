@@ -1,13 +1,13 @@
 <?php
 /**
- * @package     Xdecaro.Core
+ * @package     xdecaro.Core
  * @subpackage  Library
  *
  * @copyright   Copyright (C) 2026 Luca De Caro
  * @license     GNU General Public License version 2 or later
  */
 
-namespace Xdecaro\Core\Asset;
+namespace xdecaro\Core\Asset;
 
 defined('_JEXEC') or die;
 
@@ -24,21 +24,12 @@ final class AssetService
     public const STYLE_FOUNDATION = 'xdecaro.core';
     public const STYLE_COMPONENTS = 'xdecaro.components';
 
-    /**
-     * Whether the installed Core media registry is available.
-     */
     public function isAvailable(): bool
     {
         return defined('JPATH_ROOT')
             && is_file(JPATH_ROOT . '/media/' . self::REGISTRY_EXTENSION . '/joomla.asset.json');
     }
 
-    /**
-     * Register Core assets with the supplied Web Asset Manager.
-     *
-     * Returns false when the package media is unavailable instead of causing
-     * an optional Core consumer to fail with an unknown-asset exception.
-     */
     public function register(WebAssetManager $webAssets): bool
     {
         if ($this->assetsRegistered($webAssets)) {
@@ -54,9 +45,6 @@ final class AssetService
         return $this->assetsRegistered($webAssets);
     }
 
-    /**
-     * Enable only the design tokens/foundation stylesheet.
-     */
     public function useFoundation(WebAssetManager $webAssets): bool
     {
         if (!$this->register($webAssets)) {
@@ -68,10 +56,6 @@ final class AssetService
         return true;
     }
 
-    /**
-     * Enable the shared UI primitives. The WAM dependency automatically loads
-     * the foundation stylesheet first.
-     */
     public function useComponents(WebAssetManager $webAssets): bool
     {
         if (!$this->register($webAssets)) {
