@@ -7,11 +7,12 @@
     <creationDate>2026-09-08</creationDate>
     <copyright>Copyright (C) 2026 Luca De Caro</copyright>
     <license>GNU General Public License version 2 or later</license>
-    <version>1.2.0</version>
+    <version>1.3.0</version>
     <description>Shared xdecaro Joomla infrastructure package.</description>
     <blockChildUninstall>true</blockChildUninstall>
     <files>
         <file type="library" id="xdecaro/core">lib_xdecarocore.zip</file>
+        <file type="library" id="xdecaro/corelegacy">lib_xdecarocorelegacy.zip</file>
         <file type="plugin" id="xdecarocore" group="system">plg_system_xdecarocore.zip</file>
     </files>
     <updateservers>
