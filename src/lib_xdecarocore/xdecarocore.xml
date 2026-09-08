@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="library" method="upgrade">
+    <name>Xdecaro Core Library</name>
+    <libraryname>xdecaro/core</libraryname>
+    <author>Luca De Caro</author>
+    <creationDate>2026-09-08</creationDate>
+    <copyright>Copyright (C) 2026 Luca De Caro</copyright>
+    <license>GNU General Public License version 2 or later</license>
+    <version>1.0.0</version>
+    <description>Shared, domain-neutral infrastructure and integration contracts for Xdecaro Joomla extensions.</description>
+    <namespace path="src">Xdecaro\Core</namespace>
+    <files>
+        <folder>src</folder>
+    </files>
+</extension>
