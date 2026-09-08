@@ -72,6 +72,19 @@ A relation type does not transfer ownership of either entity.
 
 Core owns only the generic reference contract and other genuinely shared infrastructure.
 
+## Stable Joomla component identifiers
+
+Cross-product references must use the installed Joomla component element, not a repository name or visible product name.
+
+Known current identifiers include:
+
+- Forms: `com_decaroforms`;
+- Courses: `com_decarocourses`;
+- Competitions: `com_decarodcl` (historical/internal identifier retained for upgrade compatibility);
+- Membership: `com_decaromembership`.
+
+For Documents, Events and future products, use the actual component element declared by their manifest once implemented. Do not invent an identifier from the repository name.
+
 ## Cross-product examples
 
 ### Membership to Courses
@@ -84,7 +97,7 @@ A member can be linked to a course enrollment:
 
 A member can be linked to a competition participant:
 
-`com_decaromembership/member/125 -> com_decarocompetitions/participant/88` with relation type `participant`.
+`com_decaromembership/member/125 -> com_decarodcl/participant/88` with relation type `participant`.
 
 ### Forms to Membership
 
@@ -94,13 +107,15 @@ A membership application can retain the source Forms submission:
 
 ### Documents to any product
 
-Documents can associate a managed document with an entity without knowing the consumer's tables:
+Documents can associate a managed document with an entity without knowing the consumer's tables. Until the Documents component manifest defines its stable Joomla element, examples must not invent one.
 
-`com_decarodocuments/document/900 -> com_decarocompetitions/participant/88` with relation type `attachment`.
+A target reference can already safely point to an existing product, for example:
+
+`<documents-component>/document/900 -> com_decarodcl/participant/88` with relation type `attachment`.
 
 ### Events to Courses or Competitions
 
-An event can be related to an edition, exam, match or competition through stable entity references rather than direct table coupling.
+An event can be related to an edition, exam, match or competition through stable entity references rather than direct table coupling. Use the actual Events component element once its manifest defines it.
 
 ## Persistence policy
 
