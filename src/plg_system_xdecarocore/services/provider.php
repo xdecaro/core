@@ -1,6 +1,6 @@
 <?php
 /**
- * @package     Xdecaro.Core
+ * @package     xdecaro.Core
  * @subpackage  Plugin.System
  *
  * @copyright   Copyright (C) 2026 Luca De Caro
@@ -14,7 +14,7 @@ use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\DI\Container;
 use Joomla\DI\ServiceProviderInterface;
 use Joomla\Event\DispatcherInterface;
-use Xdecaro\Plugin\System\XdecaroCore\Extension\XdecaroCore;
+use xdecaro\Plugin\System\XdecaroCore\Extension\XdecaroCore;
 
 return new class implements ServiceProviderInterface {
     public function register(Container $container): void

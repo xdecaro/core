@@ -4,6 +4,22 @@ All notable changes to **Core by xdecaro** are documented here.
 
 The project follows Semantic Versioning.
 
+## 1.3.0 — 2026-09-08
+
+### Changed
+
+- Canonical public PHP namespace is now `xdecaro\Core`.
+- Core system plugin namespace is now rooted at lowercase `xdecaro`.
+- New code and documentation must use the lowercase vendor namespace.
+
+### Compatibility
+
+- Added temporary `lib_xdecarocorelegacy` package child registering the deprecated `Xdecaro\Core` prefix.
+- The compatibility library is generated from the exact canonical source tree during each deterministic build; there is no second implementation of the Core API.
+- Existing published consumers can continue to autoload the former namespace while they migrate.
+- Package element, asset identifiers, public contract behavior and database footprint remain unchanged.
+- Removing the legacy namespace mapping is reserved for a future major release after ecosystem migration is verified.
+
 ## 1.2.0 — 2026-09-08
 
 ### Added
