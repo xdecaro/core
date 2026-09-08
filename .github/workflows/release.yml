@@ -72,8 +72,8 @@ jobs:
             "dist/plg_system_xdecarocore_${VERSION}.zip" \
             "dist/pkg_xdecarocore_${VERSION}.zip" \
             dist/SHA256SUMS.txt \
-            --title "Xdecaro Core ${VERSION}" \
-            --notes "Initial stable Xdecaro Core release. Shared Joomla infrastructure and storage-agnostic cross-product integration contracts for Joomla 4, 5 and 6."
+            --title "Core by xdecaro ${VERSION}" \
+            --notes "Core by xdecaro ${VERSION}. Shared Joomla infrastructure and storage-agnostic cross-product integration contracts for Joomla 4, 5 and 6."
 
       - name: Publish update-feed checksum
         shell: bash
@@ -87,6 +87,6 @@ jobs:
             echo "Update feed checksum already current."
             exit 0
           fi
-          git commit -m "Publish SHA-256 for Xdecaro Core ${VERSION}"
+          git commit -m "Publish SHA-256 for Core by xdecaro ${VERSION}"
           git pull --rebase origin main
           git push origin HEAD:main
