@@ -1,33 +1,22 @@
 <?php
 /**
- * @package     Xdecaro.Core
+ * @package     xdecaro.Core
  * @subpackage  Integration
  *
  * @copyright   Copyright (C) 2026 Luca De Caro
  * @license     GNU General Public License version 2 or later
  */
 
-namespace Xdecaro\Core\Integration;
+namespace xdecaro\Core\Integration;
 
 defined('_JEXEC') or die;
 
 use InvalidArgumentException;
 
-/**
- * Immutable description of a public integration capability exposed by a component.
- *
- * Core does not discover, persist or authorize capabilities. Products own their
- * registration and business rules; this object only standardizes identification.
- */
 final class Capability
 {
-    /** @var string */
     private $component;
-
-    /** @var string */
     private $name;
-
-    /** @var string */
     private $version;
 
     public function __construct(string $component, string $name, string $version = '1')
@@ -53,29 +42,15 @@ final class Capability
         $this->version   = $version;
     }
 
-    public function getComponent(): string
-    {
-        return $this->component;
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function getVersion(): string
-    {
-        return $this->version;
-    }
+    public function getComponent(): string { return $this->component; }
+    public function getName(): string { return $this->name; }
+    public function getVersion(): string { return $this->version; }
 
     public function key(): string
     {
         return $this->component . ':' . $this->name . '@' . $this->version;
     }
 
-    /**
-     * @return array{component:string,name:string,version:string}
-     */
     public function toArray(): array
     {
         return [
