@@ -102,5 +102,5 @@ with zipfile.ZipFile(artifacts[-1]) as package:
         raise SystemExit("Core package contains unexpected or missing files")
 PY
 
-printf 'Built and validated Xdecaro Core %s\n' "$VERSION"
+printf 'Built and validated Core by xdecaro %s\n' "$VERSION"
 cat "$DIST/SHA256SUMS.txt"
