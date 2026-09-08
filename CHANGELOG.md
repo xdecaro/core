@@ -4,6 +4,21 @@ All notable changes to **Core by xdecaro** are documented here.
 
 The project follows Semantic Versioning.
 
+## 1.2.0 — 2026-09-08
+
+### Added
+
+- Public `Xdecaro\Core\Integration\Capability` contract for stable, versioned public capability identifiers.
+- Public `Xdecaro\Core\Integration\IntegrationEvent` domain-neutral event envelope.
+- Integration guidance for Notifications, Tasks and Analytics with optional dependencies and strict data ownership boundaries.
+- Build-time smoke validation for capability/event serialization and required public integration classes.
+
+### Architecture
+
+- No Core database tables added.
+- Core does not persist, queue or dispatch notifications, tasks, analytics data or product events.
+- Existing `EntityReference`, `RelationReference` and shared UI APIs remain backward compatible.
+
 ## 1.1.0 — 2026-09-08
 
 ### Added
