@@ -16,10 +16,31 @@ if [[ -z "$VERSION" || "$VERSION" != "$PLUGIN_VERSION" || "$VERSION" != "$PACKAG
     exit 1
 fi
 
+command -v php >/dev/null 2>&1 || {
+    echo "PHP CLI is required for validation." >&2
+    exit 1
+}
+
 command -v zip >/dev/null 2>&1 || {
     echo "The zip command is required." >&2
     exit 1
 }
+
+while IFS= read -r -d '' php_file; do
+    php -l "$php_file" >/dev/null
+done < <(find "$ROOT/src" "$ROOT/tests" -type f -name '*.php' -print0)
+
+php -r '
+foreach (array_slice($argv, 1) as $file) {
+    libxml_use_internal_errors(true);
+    if (simplexml_load_file($file) === false) {
+        fwrite(STDERR, "Invalid XML manifest: {$file}\n");
+        exit(1);
+    }
+}
+' "$LIB_SRC/xdecarocore.xml" "$PLUGIN_SRC/xdecarocore.xml" "$PACKAGE_SRC/pkg_xdecarocore.xml"
+
+php "$ROOT/tests/smoke.php"
 
 rm -rf "$DIST"
 mkdir -p "$DIST"
