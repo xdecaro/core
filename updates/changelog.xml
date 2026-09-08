@@ -3,6 +3,16 @@
   <changelog>
     <element>pkg_xdecarocore</element>
     <type>package</type>
+    <version>1.4.0</version>
+    <addition>
+      <item>Added runtime in-memory CapabilityRegistry for optional product capability discovery.</item>
+      <item>Added minimum-version matching, component filtering and deterministic registry serialization.</item>
+      <item>Added registry smoke coverage for Notifications, Tasks and Analytics declarations.</item>
+    </addition>
+  </changelog>
+  <changelog>
+    <element>pkg_xdecarocore</element>
+    <type>package</type>
     <version>1.3.0</version>
     <change>
       <item>Canonical PHP vendor namespace is now lowercase xdecaro\Core.</item>
