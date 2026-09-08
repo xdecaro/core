@@ -1,39 +1,24 @@
 <?php
 /**
- * @package     Xdecaro.Core
+ * @package     xdecaro.Core
  * @subpackage  Integration
  *
  * @copyright   Copyright (C) 2026 Luca De Caro
  * @license     GNU General Public License version 2 or later
  */
 
-namespace Xdecaro\Core\Integration;
+namespace xdecaro\Core\Integration;
 
 defined('_JEXEC') or die;
 
 use InvalidArgumentException;
 
-/**
- * Domain-neutral event envelope for optional cross-product integrations.
- *
- * The source product owns the event name and payload schema. Core only provides
- * a stable envelope and never persists, queues or dispatches these events itself.
- */
 final class IntegrationEvent
 {
-    /** @var string */
     private $name;
-
-    /** @var string */
     private $version;
-
-    /** @var EntityReference|null */
     private $source;
-
-    /** @var array<string,mixed> */
     private $payload;
-
-    /** @var string|null */
     private $occurredAt;
 
     public function __construct(
@@ -66,33 +51,12 @@ final class IntegrationEvent
         $this->occurredAt = $occurredAt !== '' ? $occurredAt : null;
     }
 
-    public function getName(): string
-    {
-        return $this->name;
-    }
+    public function getName(): string { return $this->name; }
+    public function getVersion(): string { return $this->version; }
+    public function getSource(): ?EntityReference { return $this->source; }
+    public function getPayload(): array { return $this->payload; }
+    public function getOccurredAt(): ?string { return $this->occurredAt; }
 
-    public function getVersion(): string
-    {
-        return $this->version;
-    }
-
-    public function getSource(): ?EntityReference
-    {
-        return $this->source;
-    }
-
-    /** @return array<string,mixed> */
-    public function getPayload(): array
-    {
-        return $this->payload;
-    }
-
-    public function getOccurredAt(): ?string
-    {
-        return $this->occurredAt;
-    }
-
-    /** @return array<string,mixed> */
     public function toArray(): array
     {
         return [
