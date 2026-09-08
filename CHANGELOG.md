@@ -1,8 +1,17 @@
 # Changelog
 
-All notable changes to Xdecaro Core are documented here.
+All notable changes to **Core by xdecaro** are documented here.
 
 The project follows Semantic Versioning.
+
+## 1.0.1 — 2026-09-08
+
+### Changed
+
+- Standardized the public product name to **Core by xdecaro**.
+- Updated Joomla-visible library, system plugin, package, update server and update-feed labels.
+- Kept all technical identifiers and public PHP namespaces unchanged for backward compatibility.
+- No runtime behavior, database structure or public integration API changed.
 
 ## 1.0.0 — 2026-09-08
 
