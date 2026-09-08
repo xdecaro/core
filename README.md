@@ -1,8 +1,8 @@
-# Xdecaro Core
+# Core by xdecaro
 
-Xdecaro Core is the shared technical foundation for the Xdecaro Joomla ecosystem.
+**Core by xdecaro** is the shared technical foundation for the xdecaro Joomla ecosystem.
 
-Version `1.0.0` is intentionally small. Core provides reusable, domain-neutral infrastructure and stable integration contracts. Product business logic remains in Forms, Courses, Competitions, Documents, Membership, Events, Editor and future extensions.
+Version `1.0.1` remains intentionally small. Core provides reusable, domain-neutral infrastructure and stable integration contracts. Product business logic remains in Forms, Courses, Competitions, Documents, Membership, Events, Editor and future extensions.
 
 ## Package
 
@@ -17,13 +17,13 @@ The library installs under `libraries/xdecaro/core` and uses the namespace `Xdec
 
 Install the versioned package ZIP directly through Joomla:
 
-`pkg_xdecarocore_1.0.0.zip`
+`pkg_xdecarocore_1.0.1.zip`
 
-The package registers the official Xdecaro Core Joomla update server:
+The package registers the official **Core by xdecaro** Joomla update server:
 
 `https://raw.githubusercontent.com/xdecaro/core/main/updates/pkg_xdecarocore.xml`
 
-Updates are distributed through GitHub Releases and verified with SHA-256 before Joomla installs them. The update feed targets Joomla 4, 5 and 6 and Core 1.0.0 requires PHP 7.4 or newer. Joomla itself may impose a higher PHP requirement for the installed Joomla major.
+Updates are distributed through GitHub Releases and verified with SHA-256 before Joomla installs them. The update feed targets Joomla 4, 5 and 6 and Core 1.0.1 requires PHP 7.4 or newer. Joomla itself may impose a higher PHP requirement for the installed Joomla major.
 
 ## First public integration contract
 
@@ -43,9 +43,13 @@ $enrollment = new EntityReference('com_decarocourses', 'enrollment', 487);
 $relation = new RelationReference($member, $enrollment, 'participant');
 ```
 
-Core does **not** persist these relationships in 1.0.0. Each product keeps ownership of its own data. Persistence belongs in a product or a future shared service only after multiple real consumers prove a common storage requirement.
+Core does **not** persist these relationships in 1.0.x. Each product keeps ownership of its own data. Persistence belongs in a product or a future shared service only after multiple real consumers prove a common storage requirement.
 
 See `docs/integration-contracts.md` for the contract rules.
+
+## Naming
+
+The public product name is **Core by xdecaro**. Technical identifiers remain stable for backward compatibility, including `pkg_xdecarocore`, `lib_xdecarocore`, `plg_system_xdecarocore`, repository `xdecaro/core` and namespace `Xdecaro\Core`.
 
 ## Build integrity
 
