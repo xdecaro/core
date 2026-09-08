@@ -53,25 +53,33 @@ See `docs/asset-service.md` for usage and migration rules.
 
 ## Cross-product integration contracts
 
-The storage-agnostic integration API remains unchanged:
+Core provides storage-agnostic contracts for optional product integrations:
 
 - `Xdecaro\Core\Integration\EntityReference` identifies an entity owned by a Joomla component;
-- `Xdecaro\Core\Integration\RelationReference` describes a typed relationship between two entity references.
+- `Xdecaro\Core\Integration\RelationReference` describes a typed relationship between two entity references;
+- `Xdecaro\Core\Integration\Capability` standardizes public capability identifiers without discovering or authorizing them;
+- `Xdecaro\Core\Integration\IntegrationEvent` provides a domain-neutral, versioned event envelope without persisting or dispatching events.
 
 Example:
 
 ```php
 use Xdecaro\Core\Integration\EntityReference;
-use Xdecaro\Core\Integration\RelationReference;
+use Xdecaro\Core\Integration\IntegrationEvent;
 
-$member = new EntityReference('com_decaromembership', 'member', 125);
-$enrollment = new EntityReference('com_decarocourses', 'enrollment', 487);
-$relation = new RelationReference($member, $enrollment, 'participant');
+$document = new EntityReference('com_decarodocuments', 'document', 42);
+$event = new IntegrationEvent(
+    'documents.document.expiring',
+    ['daysRemaining' => 7],
+    $document,
+    '1'
+);
 ```
 
-Core does **not** persist these relationships. Each product keeps ownership of its own data. Persistence belongs in a product or a future shared service only after multiple real consumers prove a common storage requirement.
+Core does **not** persist cross-product relations, events, notifications, tasks, metrics or reports. Each product keeps ownership of its own data and ACL. A reference never grants access to the referenced entity.
 
-See `docs/integration-contracts.md` for the contract rules.
+Notifications, Tasks and Analytics use these generic contracts while remaining independent products. Their capability names and business rules remain owned by those components.
+
+See `docs/integration-contracts.md` and `docs/notifications-tasks-analytics-integration.md` for the contract rules.
 
 ## Naming
 
