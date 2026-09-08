@@ -70,7 +70,7 @@ Record PASS / FAIL / N/A with Joomla version, PHP version, package version and d
 
 ### Competitions
 - Core diagnostics/reference integration;
-- legacy technical identity `com_decarodcl` remains intact;
+- current technical identity and schema remain coherent with the released package;
 - no regression in competitions/teams/matches.
 
 ### Documents
@@ -106,7 +106,7 @@ Record PASS / FAIL / N/A with Joomla version, PHP version, package version and d
 - protocol records remain separate from Documents storage and Communication delivery.
 
 ### Draw
-- no writes to `#__dcl_*`;
+- no direct reads or writes of Competitions private tables;
 - execution/publish ACL boundaries;
 - later live-draw engine tests belong to Draw, not Core.
 
