@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="component" method="upgrade">
+    <name>COM_XDECAROCORE</name>
+    <author>Luca De Caro</author>
+    <authorUrl>https://github.com/xdecaro/core</authorUrl>
+    <creationDate>2026-09-09</creationDate>
+    <copyright>Copyright (C) 2026 Luca De Caro</copyright>
+    <license>GNU General Public License version 2 or later</license>
+    <version>1.5.0</version>
+    <description>COM_XDECAROCORE_XML_DESCRIPTION</description>
+    <namespace path="src">xdecaro\Component\Core</namespace>
+    <targetplatform name="joomla" version="(4|5|6).*" />
+    <administration>
+        <menu view="dashboard">COM_XDECAROCORE_MENU</menu>
+        <submenu>
+            <menu view="dashboard">COM_XDECAROCORE_DASHBOARD</menu>
+            <menu link="index.php?option=com_xdecarocore&amp;view=dashboard&amp;layout=products">COM_XDECAROCORE_PRODUCTS</menu>
+            <menu link="index.php?option=com_xdecarocore&amp;view=dashboard&amp;layout=extensions">COM_XDECAROCORE_EXTENSIONS</menu>
+            <menu link="index.php?option=com_xdecarocore&amp;view=dashboard&amp;layout=updates">COM_XDECAROCORE_UPDATES</menu>
+            <menu link="index.php?option=com_xdecarocore&amp;view=dashboard&amp;layout=diagnostics">COM_XDECAROCORE_DIAGNOSTICS</menu>
+            <menu link="index.php?option=com_xdecarocore&amp;view=dashboard&amp;layout=information">COM_XDECAROCORE_INFORMATION</menu>
+        </submenu>
+        <files folder="admin">
+            <filename>access.xml</filename>
+            <folder>services</folder>
+            <folder>src</folder>
+            <folder>tmpl</folder>
+        </files>
+        <languages folder="admin/language">
+            <language tag="en-GB">en-GB/com_xdecarocore.ini</language>
+            <language tag="en-GB">en-GB/com_xdecarocore.sys.ini</language>
+            <language tag="it-IT">it-IT/com_xdecarocore.ini</language>
+            <language tag="it-IT">it-IT/com_xdecarocore.sys.ini</language>
+        </languages>
+    </administration>
+    <media destination="com_xdecarocore" folder="media">
+        <filename>joomla.asset.json</filename>
+        <folder>css</folder>
+    </media>
+</extension>
