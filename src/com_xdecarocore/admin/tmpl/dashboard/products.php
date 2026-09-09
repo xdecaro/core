@@ -114,7 +114,7 @@ $label = static function (string $key): string {
                                         aria-controls="<?php echo htmlspecialchars($detailId, ENT_QUOTES, 'UTF-8'); ?>"
                                     >
                                         <span><?php echo Text::sprintf('COM_XDECAROCORE_EXTENSION_COUNT', count($children)); ?></span>
-                                        <span class="xdecaro-suite__chevron" aria-hidden="true">⌄</span>
+                                        <span class="xdecaro-suite__chevron" aria-hidden="true"></span>
                                     </button>
                                 <?php else : ?>
                                     <span class="xdecaro-suite__muted"><?php echo Text::_('COM_XDECAROCORE_NO_INSTALLED_CHILDREN'); ?></span>
