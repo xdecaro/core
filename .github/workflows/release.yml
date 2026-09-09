@@ -60,6 +60,7 @@ jobs:
           grep -q "<sha256>${SHA256}</sha256>" updates/pkg_xdecarocore.xml
           grep -q "${SHA256}  pkg_xdecarocore_${VERSION}.zip" dist/SHA256SUMS.txt
           test -f "dist/lib_xdecarocorelegacy_${VERSION}.zip"
+          test -f "dist/com_xdecarocore_${VERSION}.zip"
 
       - name: Create GitHub release
         env:
@@ -71,11 +72,12 @@ jobs:
           gh release create "v${VERSION}" \
             "dist/lib_xdecarocore_${VERSION}.zip" \
             "dist/lib_xdecarocorelegacy_${VERSION}.zip" \
+            "dist/com_xdecarocore_${VERSION}.zip" \
             "dist/plg_system_xdecarocore_${VERSION}.zip" \
             "dist/pkg_xdecarocore_${VERSION}.zip" \
             dist/SHA256SUMS.txt \
             --title "Core by xdecaro ${VERSION}" \
-            --notes "Core by xdecaro ${VERSION}. Makes xdecaro\\Core the canonical PHP namespace and temporarily packages Xdecaro\\Core autoload compatibility for already-published consumers. Public contracts and asset identifiers remain behaviorally compatible."
+            --notes "Core by xdecaro ${VERSION}. Adds the xdecaro administrator dashboard for ecosystem inventory, installed/version state, package-child inspection, updates and local diagnostics. Licensing remains intentionally inactive during development. Existing public Core contracts and legacy namespace compatibility remain available."
 
       - name: Publish update-feed checksum
         shell: bash
