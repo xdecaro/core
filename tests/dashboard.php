@@ -24,12 +24,12 @@ namespace {
     }
 
     $catalog = $constant->getValue();
-    if (!is_array($catalog) || count($catalog) < 15) {
+    if (!is_array($catalog) || count($catalog) < 20) {
         throw new \RuntimeException('Dashboard catalog is unexpectedly small.');
     }
 
     $required = [
-        'core' => ['pkg_xdecarocore', '1.5.8'],
+        'core' => ['pkg_xdecarocore', '1.5.9'],
         'forms' => ['pkg_decaroforms', '1.7.0'],
         'courses' => ['pkg_decarocourses', '1.5.0'],
         'competitions' => ['pkg_xdecarocompetitions', '1.3.0'],
@@ -53,6 +53,12 @@ namespace {
     }
     if (($catalog['communications']['channel'] ?? '') !== 'planned') {
         throw new \RuntimeException('Communications must remain marked as planned.');
+    }
+    if (($catalog['feedback']['channel'] ?? '') !== 'planned'
+        || ($catalog['feedback']['package'] ?? '') !== 'pkg_xdecarofeedback'
+        || ($catalog['feedback']['component'] ?? '') !== 'com_xdecarofeedback'
+        || ($catalog['feedback']['version'] ?? '') !== '') {
+        throw new \RuntimeException('Feedback must remain a planned product without an invented release version.');
     }
 
     $manifest = simplexml_load_file(__DIR__ . '/../src/com_xdecarocore/xdecarocore.xml');
@@ -179,6 +185,7 @@ namespace {
         'updates' => file_get_contents(__DIR__ . '/../src/com_xdecarocore/admin/tmpl/dashboard/updates.php'),
         'diagnostics' => file_get_contents(__DIR__ . '/../src/com_xdecarocore/admin/tmpl/dashboard/diagnostics.php'),
         'information' => file_get_contents(__DIR__ . '/../src/com_xdecarocore/admin/tmpl/dashboard/information.php'),
+        'guide' => file_get_contents(__DIR__ . '/../src/com_xdecarocore/admin/tmpl/dashboard/guide.php'),
     ];
 
     foreach ($templates as $name => $template) {
@@ -187,7 +194,7 @@ namespace {
         }
     }
 
-    foreach (['products', 'extensions', 'updates', 'diagnostics', 'information'] as $name) {
+    foreach (['products', 'extensions', 'updates', 'diagnostics', 'information', 'guide'] as $name) {
         if (strpos($templates[$name], 'xdecaro-suite__hero') === false) {
             throw new \RuntimeException('Shared suite hero missing from dashboard layout: ' . $name);
         }
@@ -197,6 +204,10 @@ namespace {
     }
     if (substr_count($templates['information'], 'xdecaro-suite__badge-slot') !== 3) {
         throw new \RuntimeException('Information card status badges must remain wrapped in compact badge slots.');
+    }
+    if (strpos($templates['guide'], 'COM_XDECAROCORE_GUIDE_TOOLBAR_TITLE') === false
+        || strpos($templates['guide'], 'COM_XDECAROCORE_GUIDE_PACKAGE_CONTENTS') === false) {
+        throw new \RuntimeException('Core Guide content is incomplete.');
     }
 
     if (strpos($templates['default'], 'xdecaro-suite__dashboard-products-table') === false
@@ -247,14 +258,14 @@ namespace {
     }
 
     $responsiveCss = file_get_contents(__DIR__ . '/../src/com_xdecarocore/media/css/responsive.css');
-    foreach (['@container xdecaro-suite (max-width: 55rem)', '@container xdecaro-suite (max-width: 20rem)', 'min-width: 0', 'max-width: 100%', 'grid-template-columns: repeat(2, minmax(0, 1fr))', '.xdecaro-suite__metric:last-child', 'safe-area-inset-top', 'safe-area-inset-bottom', 'xdecaro-suite__warning-compact'] as $marker) {
+    foreach (['@container xdecaro-suite (max-width: 55rem)', '@container xdecaro-suite (max-width: 20rem)', 'min-width: 0', 'max-width: 100%', 'grid-template-columns: repeat(2, minmax(0, 1fr))', '.xdecaro-suite__metric:last-child', 'safe-area-inset-top', 'safe-area-inset-bottom', 'xdecaro-suite__warning-compact', 'padding: var(--xdecaro-space-3, 0.75rem);'] as $marker) {
         if (strpos($responsiveCss, $marker) === false) {
-            throw new \RuntimeException('Dashboard 1.5.8 responsive CSS marker missing: ' . $marker);
+            throw new \RuntimeException('Dashboard 1.5.9 responsive CSS marker missing: ' . $marker);
         }
     }
 
     $viewSource = file_get_contents(__DIR__ . '/../src/com_xdecarocore/admin/src/View/Dashboard/HtmlView.php');
-    foreach (["useStyle('com_xdecarocore.responsive')", 'ToolbarHelper::back(', "ToolbarHelper::preferences('com_xdecarocore')"] as $marker) {
+    foreach (["useStyle('com_xdecarocore.responsive')", 'ToolbarHelper::back(', "ToolbarHelper::preferences('com_xdecarocore')", 'ToolbarHelper::link(', 'COM_XDECAROCORE_GUIDE'] as $marker) {
         if (strpos($viewSource, $marker) === false) {
             throw new \RuntimeException('Native dashboard toolbar/responsive asset contract missing: ' . $marker);
         }
@@ -266,5 +277,5 @@ namespace {
     @rmdir($manifestRoot . '/packages');
     @rmdir($manifestRoot);
 
-    echo "xdecaro Core dashboard catalog, package resolution, toolbar and responsive UI tests passed.\n";
+    echo "xdecaro Core dashboard catalog, package resolution, toolbar, guide and responsive UI tests passed.\n";
 }
