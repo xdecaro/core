@@ -297,3 +297,48 @@ jobs:
           php cli/joomla.php extension:install --path=/tmp/core-1.3.0.zip
           php cli/joomla.php extension:install --path=/tmp/core-1.4.0.zip
           php cli/joomla.php extension:list >/tmp/core-upgrade-final.txt
+
+          php -r '
+            $db = new mysqli("127.0.0.1", "root", "root", "joomla");
+            if ($db->connect_errno) { fwrite(STDERR, $db->connect_error . PHP_EOL); exit(2); }
+            $stmt = $db->prepare("SELECT manifest_cache FROM jos_extensions WHERE type = ? AND element = ? LIMIT 1");
+            $type = "package";
+            $element = "pkg_xdecarocore";
+            $stmt->bind_param("ss", $type, $element);
+            $stmt->execute();
+            $stmt->bind_result($cache);
+            if (!$stmt->fetch()) { fwrite(STDERR, "Core package is not registered after upgrade.\n"); exit(1); }
+            $manifest = json_decode((string) $cache, true);
+            if (!is_array($manifest) || ($manifest["version"] ?? "") !== "1.4.0") {
+              fwrite(STDERR, "Core package manifest cache is not 1.4.0 after upgrade.\n");
+              exit(1);
+            }
+          '
+
+          cat > core-upgrade-probe.php <<'PHP'
+          <?php
+          define('_JEXEC', 1);
+          define('JPATH_BASE', __DIR__);
+          require JPATH_BASE . '/includes/defines.php';
+          require JPATH_BASE . '/includes/framework.php';
+          $container = \Joomla\CMS\Factory::getContainer();
+          $container->alias('session', 'session.cli')
+              ->alias('JSession', 'session.cli')
+              ->alias(\Joomla\CMS\Session\Session::class, 'session.cli')
+              ->alias(\Joomla\Session\Session::class, 'session.cli')
+              ->alias(\Joomla\Session\SessionInterface::class, 'session.cli');
+          $app = $container->get(\Joomla\Console\Application::class);
+          \Joomla\CMS\Factory::$application = $app;
+          $app->createExtensionNamespaceMap();
+          if (!class_exists(\xdecaro\Core\Version::class) || (string) \xdecaro\Core\Version::VERSION !== '1.4.0') {
+              fwrite(STDERR, "Core 1.4.0 is not autoloadable after upgrade.\n");
+              exit(1);
+          }
+          if (!class_exists(\xdecaro\Core\Integration\CapabilityRegistry::class)) {
+              fwrite(STDERR, "CapabilityRegistry is not autoloadable after upgrade.\n");
+              exit(1);
+          }
+          echo "Core upgrade runtime OK\n";
+          PHP
+          php core-upgrade-probe.php
+          rm core-upgrade-probe.php
