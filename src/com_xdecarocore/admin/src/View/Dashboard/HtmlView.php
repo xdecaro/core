@@ -61,6 +61,7 @@ final class HtmlView extends BaseHtmlView
             'updates' => 'COM_XDECAROCORE_UPDATES',
             'diagnostics' => 'COM_XDECAROCORE_DIAGNOSTICS',
             'information' => 'COM_XDECAROCORE_INFORMATION',
+            'guide' => 'COM_XDECAROCORE_GUIDE',
         ];
         $layout = $this->getLayout() ?: 'default';
 
@@ -71,6 +72,15 @@ final class HtmlView extends BaseHtmlView
             ToolbarHelper::back(
                 Text::_('JTOOLBAR_BACK'),
                 Route::_('index.php?option=com_xdecarocore&view=dashboard', false)
+            );
+        }
+
+        // Keep the user guide in Joomla's native toolbar instead of adding custom page chrome.
+        if ($layout !== 'guide') {
+            ToolbarHelper::link(
+                Route::_('index.php?option=com_xdecarocore&view=dashboard&layout=guide', false),
+                Text::_('COM_XDECAROCORE_GUIDE'),
+                'help'
             );
         }
 
