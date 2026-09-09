@@ -28,7 +28,7 @@ namespace {
     }
 
     $required = [
-        'core' => ['pkg_xdecarocore', '1.5.2'],
+        'core' => ['pkg_xdecarocore', '1.5.3'],
         'forms' => ['pkg_decaroforms', '1.7.0'],
         'courses' => ['pkg_decarocourses', '1.5.0'],
         'competitions' => ['pkg_xdecarocompetitions', '1.3.0'],
@@ -139,10 +139,13 @@ namespace {
             $assetTypes[$asset['type'] ?? ''] = $asset['uri'] ?? '';
         }
     }
-    if (($assetTypes['style'] ?? '') !== 'com_xdecarocore/css/admin.css'
-        || ($assetTypes['script'] ?? '') !== 'com_xdecarocore/js/admin.js'
+    if (($assetTypes['style'] ?? '') !== 'com_xdecarocore/admin.css'
+        || ($assetTypes['script'] ?? '') !== 'com_xdecarocore/admin.js'
         || !is_file(__DIR__ . '/../src/com_xdecarocore/media/js/admin.js')) {
-        throw new \RuntimeException('Dashboard style/script assets are incomplete.');
+        throw new \RuntimeException('Dashboard style/script Web Asset Manager URIs are incomplete or invalid.');
+    }
+    if (strpos($assetTypes['style'] ?? '', '/css/') !== false || strpos($assetTypes['script'] ?? '', '/js/') !== false) {
+        throw new \RuntimeException('Dashboard Web Asset Manager URIs must not duplicate Joomla css/js media directories.');
     }
 
     $productsTemplate = file_get_contents(__DIR__ . '/../src/com_xdecarocore/admin/tmpl/dashboard/products.php');

@@ -3,6 +3,18 @@
   <changelog>
     <element>pkg_xdecarocore</element>
     <type>package</type>
+    <version>1.5.3</version>
+    <fix>
+      <item>Corrected administrator Dashboard Web Asset Manager URIs so Joomla resolves the component stylesheet and script from their standard css and js media directories.</item>
+      <item>Restored the intended Dashboard statistic cards, responsive spacing, diagnostics layout and animated package-detail presentation by ensuring admin.css and admin.js are actually included.</item>
+    </fix>
+    <change>
+      <item>Added build and runtime regression guards for invalid administrator asset URIs and installed dashboard asset resolution.</item>
+    </change>
+  </changelog>
+  <changelog>
+    <element>pkg_xdecarocore</element>
+    <type>package</type>
     <version>1.5.2</version>
     <fix>
       <item>Dashboard-specific CSS and JavaScript assets are now loaded deterministically on every xdecaro administrator dashboard layout.</item>
