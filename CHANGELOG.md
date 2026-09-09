@@ -4,6 +4,27 @@ All notable changes to **Core by xdecaro** are documented here.
 
 The project follows Semantic Versioning.
 
+## 1.5.6 — 2026-09-09
+
+### Fixed
+
+- Core administrator responsiveness now follows the width actually available to the component, so Joomla's expanded administrator sidebar no longer leaves secondary views using tablet/desktop layouts inside a narrow content column.
+- Components, All extensions and Updates switch to structured responsive record cards when the component container becomes narrow, avoiding clipped six- and seven-column technical tables.
+- Diagnostics and Information collapse diagnostic rows, definition lists, summary bars and card headers based on available component width rather than viewport width alone.
+- Updates moves its availability badge below the page description in constrained layouts instead of crowding the right edge.
+
+### Tests
+
+- Added container-query and responsive-table regression guards to the dashboard smoke suite.
+- Runtime installation now verifies the installed Core stylesheet contains the narrow-container contract.
+- Runtime upgrade coverage now installs Core 1.5.5 before upgrading to 1.5.6 on Joomla 5.4.8 and 6.1.3.
+
+### Compatibility
+
+- Existing `xdecaro\Core` public contracts remain unchanged.
+- The temporary `Xdecaro\Core` legacy namespace compatibility library remains packaged.
+- No product data or configuration is migrated or deleted by this release.
+
 ## 1.5.5 — 2026-09-09
 
 ### Fixed
@@ -124,7 +145,7 @@ The project follows Semantic Versioning.
 
 - Public `xdecaro\Core\Integration\CapabilityRegistry` for runtime, in-memory registration and discovery of product capabilities.
 - Minimum-version capability matching through `supports()`.
-- Capability filtering by component and deterministic registry serialization/round-trip support.
+- Capability filtering by component and deterministic array serialization/round-trip support.
 - Registry smoke coverage using Notifications, Tasks and Analytics capability declarations.
 
 ### Architecture

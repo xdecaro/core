@@ -28,7 +28,7 @@ namespace {
     }
 
     $required = [
-        'core' => ['pkg_xdecarocore', '1.5.5'],
+        'core' => ['pkg_xdecarocore', '1.5.6'],
         'forms' => ['pkg_decaroforms', '1.7.0'],
         'courses' => ['pkg_decarocourses', '1.5.0'],
         'competitions' => ['pkg_xdecarocompetitions', '1.3.0'],
@@ -173,9 +173,9 @@ namespace {
     }
 
     $productsTemplate = $templates['products'];
-    foreach (['data-xdecaro-package-toggle', 'xdecaro-suite__expansion-row', 'xdecaro-suite__child-table', 'COM_XDECAROCORE_ACTIONS', 'xdecaro-suite__action-cell'] as $marker) {
+    foreach (['data-xdecaro-package-toggle', 'xdecaro-suite__expansion-row', 'xdecaro-suite__child-table', 'COM_XDECAROCORE_ACTIONS', 'xdecaro-suite__action-cell', 'xdecaro-suite__responsive-table', 'data-label='] as $marker) {
         if (strpos($productsTemplate, $marker) === false) {
-            throw new \RuntimeException('Package detail/action UI marker missing: ' . $marker);
+            throw new \RuntimeException('Package detail/action/responsive UI marker missing: ' . $marker);
         }
     }
     if (strpos($productsTemplate, '<td colspan="7"') === false) {
@@ -192,9 +192,14 @@ namespace {
     if (strpos($extensionsTemplate, 'Text::_($name)') === false || strpos($extensionsTemplate, '$extensionLabel($extension)') === false) {
         throw new \RuntimeException('All Extensions must translate manifest language keys and provide a readable fallback.');
     }
+    foreach (['extensions', 'updates'] as $name) {
+        if (strpos($templates[$name], 'xdecaro-suite__responsive-table') === false || strpos($templates[$name], 'data-label=') === false) {
+            throw new \RuntimeException('Narrow-container responsive table contract missing from dashboard layout: ' . $name);
+        }
+    }
 
     $dashboardCss = file_get_contents(__DIR__ . '/../src/com_xdecarocore/media/css/admin.css');
-    foreach (['repeat(5, minmax(0, 1fr))', 'xdecaro-suite__diagnostic-row', 'xdecaro-suite__info-grid', 'xdecaro-suite__expansion-panel'] as $marker) {
+    foreach (['repeat(5, minmax(0, 1fr))', 'xdecaro-suite__diagnostic-row', 'xdecaro-suite__info-grid', 'xdecaro-suite__expansion-panel', 'container-name: xdecaro-suite', '@container xdecaro-suite (max-width: 38rem)', 'xdecaro-suite__responsive-table'] as $marker) {
         if (strpos($dashboardCss, $marker) === false) {
             throw new \RuntimeException('Dashboard responsive CSS marker missing: ' . $marker);
         }

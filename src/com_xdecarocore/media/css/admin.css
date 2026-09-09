@@ -1,8 +1,10 @@
-/* Core by xdecaro 1.5.4 - administrator ecosystem dashboard. */
+/* Core by xdecaro 1.5.6 - administrator ecosystem dashboard. */
 
 .xdecaro-suite {
     display: grid;
     gap: var(--xdecaro-space-6, 1.5rem);
+    container-name: xdecaro-suite;
+    container-type: inline-size;
 }
 
 .xdecaro-suite__hero,
@@ -409,6 +411,184 @@
 @media (max-width: 479.98px) {
     .xdecaro-suite__metrics {
         grid-template-columns: 1fr;
+    }
+
+    .xdecaro-suite__notice {
+        grid-template-columns: 1fr;
+    }
+
+    .xdecaro-suite__notice-icon {
+        display: none;
+    }
+
+    .xdecaro-suite__notice .xdecaro-button {
+        grid-column: auto;
+        width: 100%;
+    }
+}
+
+/* Joomla can keep an 18rem administrator sidebar open while the viewport still reports tablet width.
+   Container queries make Core react to the width actually available to the component. */
+@container xdecaro-suite (max-width: 38rem) {
+    .xdecaro-suite__hero,
+    .xdecaro-suite__card-heading {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .xdecaro-suite__hero {
+        display: flex;
+    }
+
+    .xdecaro-suite__hero > .xdecaro-badge,
+    .xdecaro-suite__hero > .xdecaro-suite__count-badge {
+        max-width: 100%;
+        align-self: flex-start;
+        white-space: normal;
+    }
+
+    .xdecaro-suite__info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .xdecaro-suite__info-card--full {
+        grid-column: auto;
+    }
+
+    .xdecaro-suite__diagnostic-row {
+        grid-template-columns: 1fr;
+        gap: var(--xdecaro-space-2, 0.5rem);
+    }
+
+    .xdecaro-suite__diagnostic-row .xdecaro-badge {
+        justify-self: start;
+    }
+
+    .xdecaro-suite__child-heading,
+    .xdecaro-suite__summary-bar {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .xdecaro-suite__summary-bar {
+        display: flex;
+    }
+
+    .xdecaro-suite__summary-bar strong {
+        margin-right: 0;
+    }
+
+    .xdecaro-suite__definition-list > div {
+        grid-template-columns: 1fr;
+        gap: var(--xdecaro-space-1, 0.25rem);
+    }
+
+    .xdecaro-suite__notice {
+        grid-template-columns: auto minmax(0, 1fr);
+    }
+
+    .xdecaro-suite__notice .xdecaro-button {
+        grid-column: 1 / -1;
+        justify-self: start;
+    }
+
+    .xdecaro-suite__responsive-wrap {
+        overflow: visible;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+    }
+
+    .xdecaro-suite__responsive-table {
+        display: block;
+        background: transparent;
+    }
+
+    .xdecaro-suite__responsive-table > thead {
+        display: none;
+    }
+
+    .xdecaro-suite__responsive-table > tbody {
+        display: grid;
+        gap: var(--xdecaro-space-3, 0.75rem);
+    }
+
+    .xdecaro-suite__responsive-table > tbody > tr:not(.xdecaro-suite__expansion-row) {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        overflow: hidden;
+        border: 1px solid var(--xdecaro-color-border);
+        border-radius: var(--xdecaro-radius-md, 0.625rem);
+        background: var(--xdecaro-color-surface);
+    }
+
+    .xdecaro-suite__responsive-table > tbody > tr:not(.xdecaro-suite__expansion-row) > td {
+        display: block;
+        min-width: 0;
+        padding: 0.7rem 0.8rem;
+        border-bottom: 1px solid var(--xdecaro-color-border);
+        background: var(--xdecaro-color-surface);
+        text-align: start;
+        white-space: normal;
+        overflow-wrap: anywhere;
+    }
+
+    .xdecaro-suite__responsive-table > tbody > tr:not(.xdecaro-suite__expansion-row) > td:first-child {
+        grid-column: 1 / -1;
+    }
+
+    .xdecaro-suite__responsive-table > tbody > tr:not(.xdecaro-suite__expansion-row) > td::before {
+        display: block;
+        margin-bottom: 0.25rem;
+        color: var(--xdecaro-color-muted);
+        content: attr(data-label);
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        line-height: 1.2;
+    }
+
+    .xdecaro-suite__responsive-table .xdecaro-suite__action-cell {
+        width: auto;
+        text-align: start;
+        white-space: normal;
+    }
+
+    .xdecaro-suite__responsive-table .xdecaro-suite__filter-button {
+        max-width: 100%;
+        white-space: normal;
+    }
+
+    .xdecaro-suite__responsive-table > tbody > .xdecaro-suite__expansion-row {
+        display: block;
+        overflow: visible;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+    }
+
+    .xdecaro-suite__responsive-table > tbody > .xdecaro-suite__expansion-row > .xdecaro-suite__expansion-cell {
+        display: block;
+        padding: 0 !important;
+        border: 0 !important;
+    }
+
+    .xdecaro-suite__responsive-table > tbody > .xdecaro-suite__expansion-row > .xdecaro-suite__expansion-cell::before {
+        display: none;
+    }
+
+    .xdecaro-suite__expansion-content {
+        padding: var(--xdecaro-space-3, 0.75rem) 0 0;
+    }
+}
+
+@container xdecaro-suite (max-width: 28rem) {
+    .xdecaro-suite__responsive-table > tbody > tr:not(.xdecaro-suite__expansion-row) {
+        grid-template-columns: 1fr;
+    }
+
+    .xdecaro-suite__responsive-table > tbody > tr:not(.xdecaro-suite__expansion-row) > td:first-child {
+        grid-column: auto;
     }
 
     .xdecaro-suite__notice {

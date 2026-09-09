@@ -3,6 +3,21 @@
   <changelog>
     <element>pkg_xdecarocore</element>
     <type>package</type>
+    <version>1.5.6</version>
+    <fix>
+      <item>Core administrator views now react to the component container width when the Joomla sidebar remains open, instead of relying only on the browser viewport width.</item>
+      <item>Components, All extensions and Updates switch to readable responsive record cards in narrow content areas rather than clipping wide technical tables.</item>
+      <item>Diagnostics and Information collapse their internal grids and definition rows when the available Joomla content area becomes narrow.</item>
+      <item>The Updates summary badge now moves below the page description when the administrator content column is constrained.</item>
+    </fix>
+    <change>
+      <item>Added container-query responsive contracts and data labels for technical table cells.</item>
+      <item>Runtime upgrade coverage now validates Core 1.5.5 to 1.5.6 on Joomla 5.4.8 and 6.1.3.</item>
+    </change>
+  </changelog>
+  <changelog>
+    <element>pkg_xdecarocore</element>
+    <type>package</type>
     <version>1.5.5</version>
     <fix>
       <item>Information now uses the same shared suite hero structure as the other Core administrator views.</item>
