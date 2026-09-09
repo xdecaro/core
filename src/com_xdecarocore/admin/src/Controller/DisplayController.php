@@ -1,0 +1,16 @@
+<?php
+/**
+ * @package     xdecaro.Core
+ * @subpackage  com_xdecarocore
+ */
+
+namespace xdecaro\Component\Core\Administrator\Controller;
+
+defined('_JEXEC') or die;
+
+use Joomla\CMS\MVC\Controller\BaseController;
+
+final class DisplayController extends BaseController
+{
+    protected $default_view = 'dashboard';
+}
