@@ -8,6 +8,7 @@ LEGACY_MANIFEST="$ROOT/src/lib_xdecarocorelegacy/xdecarocorelegacy.xml"
 COMPONENT_SRC="$ROOT/src/com_xdecarocore"
 PLUGIN_SRC="$ROOT/src/plg_system_xdecarocore"
 PACKAGE_SRC="$ROOT/package/pkg_xdecarocore"
+PACKAGE_SCRIPT="$PACKAGE_SRC/script.php"
 ASSET_REGISTRY="$PLUGIN_SRC/media/joomla.asset.json"
 COMPONENT_ASSET_REGISTRY="$COMPONENT_SRC/media/joomla.asset.json"
 UPDATE_FEED="$ROOT/updates/pkg_xdecarocore.xml"
@@ -18,10 +19,11 @@ command -v php >/dev/null 2>&1 || { echo "PHP CLI is required." >&2; exit 1; }
 command -v python3 >/dev/null 2>&1 || { echo "Python 3 is required." >&2; exit 1; }
 
 [[ -n "$VERSION" ]] || { echo "VERSION is empty." >&2; exit 1; }
+[[ -f "$PACKAGE_SCRIPT" ]] || { echo "Core package installer script is missing." >&2; exit 1; }
 
 while IFS= read -r -d '' php_file; do
     php -l "$php_file" >/dev/null
-done < <(find "$ROOT/src" "$ROOT/tests" "$ROOT/build" -type f -name '*.php' -print0)
+done < <(find "$ROOT/src" "$ROOT/tests" "$ROOT/build" "$ROOT/package" -type f -name '*.php' -print0)
 
 php -r '
 $version = trim(file_get_contents($argv[1]));
@@ -58,6 +60,9 @@ if (trim((string) $plugin->namespace) !== "xdecaro\\Plugin\\System\\XdecaroCore"
 if (trim((string) $plugin->media["destination"]) !== "plg_system_xdecarocore"
     || trim((string) $plugin->media["folder"]) !== "media") {
     fwrite(STDERR, "Core plugin media destination is missing or incorrect.\n"); exit(1);
+}
+if (trim((string) $package->scriptfile) !== "script.php" || !is_file($argv[11])) {
+    fwrite(STDERR, "Core package installer script is missing or not declared.\n"); exit(1);
 }
 $files = [];
 foreach ($package->files->file as $file) {
@@ -129,7 +134,7 @@ foreach ($feed->update as $update) {
 if (simplexml_load_file($argv[10]) === false) {
     fwrite(STDERR, "Invalid Core changelog XML.\n"); exit(1);
 }
-' "$ROOT/VERSION" "$LIB_SRC/xdecarocore.xml" "$LEGACY_MANIFEST" "$COMPONENT_SRC/xdecarocore.xml" "$PLUGIN_SRC/xdecarocore.xml" "$PACKAGE_SRC/pkg_xdecarocore.xml" "$ASSET_REGISTRY" "$COMPONENT_ASSET_REGISTRY" "$UPDATE_FEED" "$CHANGELOG_XML"
+' "$ROOT/VERSION" "$LIB_SRC/xdecarocore.xml" "$LEGACY_MANIFEST" "$COMPONENT_SRC/xdecarocore.xml" "$PLUGIN_SRC/xdecarocore.xml" "$PACKAGE_SRC/pkg_xdecarocore.xml" "$ASSET_REGISTRY" "$COMPONENT_ASSET_REGISTRY" "$UPDATE_FEED" "$CHANGELOG_XML" "$PACKAGE_SCRIPT"
 
 php "$ROOT/tests/smoke.php"
 php "$ROOT/tests/assets.php"
@@ -211,9 +216,12 @@ with zipfile.ZipFile(plugin) as archive:
         raise SystemExit("Core plugin ZIP is missing shared media assets")
 
 with zipfile.ZipFile(package) as archive:
-    expected = {"pkg_xdecarocore.xml", "lib_xdecarocore.zip", "lib_xdecarocorelegacy.zip", "com_xdecarocore.zip", "plg_system_xdecarocore.zip"}
+    expected = {"pkg_xdecarocore.xml", "script.php", "lib_xdecarocore.zip", "lib_xdecarocorelegacy.zip", "com_xdecarocore.zip", "plg_system_xdecarocore.zip"}
     if set(archive.namelist()) != expected:
         raise SystemExit("Core package contains unexpected or missing files")
+    manifest = archive.read("pkg_xdecarocore.xml").decode()
+    if "<scriptfile>script.php</scriptfile>" not in manifest:
+        raise SystemExit("Core package installer script is not declared")
 PY
 
 printf 'Built and validated Core by xdecaro %s\n' "$VERSION"
