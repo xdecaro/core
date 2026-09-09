@@ -22,7 +22,7 @@ Released packages under the runtime gate:
 - Courses `1.3.0`;
 - Forms `1.6.0`;
 - Competitions `1.1.0`;
-- Documents `1.2.0`;
+- Documents `1.2.1`;
 - Membership `1.2.0`;
 - Events `1.1.1`;
 - Editor `0.1.0-alpha5`;
@@ -43,7 +43,9 @@ The automated gate verifies:
 8. `xdecaro\Core\Integration\CapabilityRegistry` availability;
 9. Core upgrade from `1.3.0` to `1.4.0` on Joomla 5.4.8 and 6.1.3.
 
-Protocol additionally owns a repository-level integration gate that installs Core `1.4.0`, Documents `1.2.0` and Protocol `1.3.0` together on Joomla 5.4.8 and 6.1.3, verifies the installed schemas and rejects direct Protocol access to `#__decarodocuments_*`.
+Documents additionally owns repository-level clean-install and `1.2.0 -> 1.2.1` repair tests on Joomla 5.4.8 and 6.1.3. These tests verify the Joomla SQL manifest compatibility fix and confirm that the repair creates missing Documents-owned tables without destructive SQL.
+
+Protocol additionally owns a repository-level integration gate that installs Core `1.4.0`, Documents `1.2.1` and Protocol `1.3.0` together on Joomla 5.4.8 and 6.1.3, verifies the installed schemas and rejects direct Protocol access to `#__decarodocuments_*`. It also exercises repair from the published Protocol 1.2.0 package.
 
 This is a runtime smoke gate, not a replacement for browser/UI/security regression testing.
 
@@ -102,7 +104,9 @@ Record PASS / FAIL / N/A with Joomla version, PHP version, product version and d
 ### Documents
 - mandatory Core preflight remains atomic;
 - private storage creation, MIME/extension validation and download ACL are tested;
-- public relation API owns relation persistence and never exposes private storage paths.
+- public relation API owns relation persistence and never exposes private storage paths;
+- Joomla SQL manifest uses `charset="utf8"` while table definitions remain `utf8mb4`;
+- 1.2.1 repairs affected 1.2.0 installations using only `CREATE TABLE IF NOT EXISTS`.
 
 ### Events
 - mandatory Core preflight remains atomic;
@@ -122,7 +126,8 @@ Record PASS / FAIL / N/A with Joomla version, PHP version, product version and d
 - Documents integration remains optional and public-contract based;
 - Protocol checks its own ACL before delegating;
 - Documents keeps document ACL and relation persistence ownership;
-- Protocol never reads or writes `#__decarodocuments_*` directly.
+- Protocol never reads or writes `#__decarodocuments_*` directly;
+- Protocol 1.3.0 repairs its own affected older installs non-destructively.
 
 ## Namespace audit
 
