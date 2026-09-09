@@ -29,7 +29,7 @@ namespace {
     }
 
     $required = [
-        'core' => ['pkg_xdecarocore', '1.5.11'],
+        'core' => ['pkg_xdecarocore', '1.5.12'],
         'forms' => ['pkg_decaroforms', '1.7.0'],
         'courses' => ['pkg_decarocourses', '1.5.0'],
         'competitions' => ['pkg_xdecarocompetitions', '1.3.0'],
@@ -226,7 +226,7 @@ namespace {
         throw new \RuntimeException('Package toggle must not depend on a font chevron glyph.');
     }
     if (strpos($productsTemplate, '<span class="xdecaro-suite__chevron" aria-hidden="true"></span>') === false) {
-        throw new \RuntimeException('Package toggle must expose an empty geometric chevron hook.');
+        throw new \RuntimeException('Package toggle must expose an empty CSS direction-arrow hook.');
     }
     if (strpos($productsTemplate, '<td colspan="7"') === false) {
         throw new \RuntimeException('Expanded package details must span the dedicated Actions column.');
@@ -264,10 +264,13 @@ namespace {
     }
 
     $responsiveCss = file_get_contents(__DIR__ . '/../src/com_xdecarocore/media/css/responsive.css');
-    foreach (['@container xdecaro-suite (max-width: 55rem)', '@container xdecaro-suite (max-width: 20rem)', 'min-width: 0', 'max-width: 100%', 'grid-template-columns: repeat(2, minmax(0, 1fr))', '.xdecaro-suite__metric:last-child', 'safe-area-inset-top', 'safe-area-inset-bottom', 'xdecaro-suite__warning-compact', 'padding: var(--xdecaro-space-3, 0.75rem);', '.xdecaro-suite__filter-button {', 'align-items: center;', 'justify-content: center;', 'border-right: 0.125rem solid currentColor;', 'border-bottom: 0.125rem solid currentColor;', 'transform: rotate(45deg);', 'transform: rotate(225deg);', 'transform-origin: 50% 50%;'] as $marker) {
+    foreach (['@container xdecaro-suite (max-width: 55rem)', '@container xdecaro-suite (max-width: 20rem)', 'min-width: 0', 'max-width: 100%', 'grid-template-columns: repeat(2, minmax(0, 1fr))', '.xdecaro-suite__metric:last-child', 'safe-area-inset-top', 'safe-area-inset-bottom', 'xdecaro-suite__warning-compact', 'padding: var(--xdecaro-space-3, 0.75rem);', '.xdecaro-suite__filter-button {', 'align-items: center;', 'justify-content: center;', '.xdecaro-suite__chevron::before', 'background: currentColor;', '.xdecaro-suite__chevron::after', 'border-right: 0.12rem solid currentColor;', 'border-bottom: 0.12rem solid currentColor;', 'transform: translateX(-50%) rotate(45deg);', 'transform: rotate(180deg);', 'transform-origin: 50% 50%;'] as $marker) {
         if (strpos($responsiveCss, $marker) === false) {
-            throw new \RuntimeException('Dashboard 1.5.11 responsive CSS marker missing: ' . $marker);
+            throw new \RuntimeException('Dashboard 1.5.12 responsive CSS marker missing: ' . $marker);
         }
+    }
+    if (strpos($responsiveCss, 'transform: rotate(225deg);') !== false) {
+        throw new \RuntimeException('Legacy large chevron rotation must not return in the package toggle.');
     }
 
     $viewSource = file_get_contents(__DIR__ . '/../src/com_xdecarocore/admin/src/View/Dashboard/HtmlView.php');
