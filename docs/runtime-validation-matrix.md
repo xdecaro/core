@@ -2,21 +2,25 @@
 
 This matrix is the stabilization gate for the Core `1.4.x` line and for functional cross-product integrations.
 
-Repository CI, deterministic ZIP generation and successful GitHub Releases are necessary but are not sufficient proof of Joomla runtime compatibility. Runtime claims must be backed by an actual Joomla installation.
+Repository CI, deterministic ZIP generation and successful publication are necessary but are not sufficient proof of Joomla runtime compatibility. Runtime claims must be backed by an actual Joomla installation.
 
 ## Automated runtime baseline
 
-`.github/workflows/runtime-smoke.yml` installs real Joomla instances with MariaDB and exercises released packages through Joomla CLI.
+`.github/workflows/runtime-smoke.yml` installs real Joomla instances with MariaDB and exercises distributed packages through Joomla CLI.
 
 The stabilization baseline is deliberately pinned so that a new Joomla patch release cannot change the result of an already-defined gate:
 
-- Joomla `5.4.8` with PHP `8.1`;
-- Joomla `6.1.3` with PHP `8.3`;
-- Editor only on Joomla 6, matching its current manifest/runtime target.
+- Joomla `5.4.8` with PHP `8.1` for products whose current distribution declares Joomla 5 support;
+- Joomla `6.1.3` with PHP `8.3` for all applicable products;
+- Courses, Forms, Competitions and Editor are tested only on Joomla 6 because their current distributed metadata/manifests target Joomla 6 / PHP 8.3.
 
-The Joomla ZIPs and Core release ZIPs are SHA-256 verified before installation.
+Joomla ZIPs and all product package ZIPs are SHA-256 verified before installation. The gate follows the real distribution channel of each product rather than assuming every package is a GitHub Release asset:
 
-Released packages under the runtime gate:
+- Courses and Forms are downloaded from their versioned repository `releases/<version>/` paths, matching their Joomla update feeds;
+- Core, Competitions, Documents, Membership, Events, Editor, Finance and Protocol are downloaded from their published GitHub Release assets;
+- package checksums are pinned to the actual distributed artifact or its authoritative Joomla update feed.
+
+Distributed packages under the runtime gate:
 
 - Core `1.4.0`;
 - Courses `1.3.0`;
@@ -34,14 +38,16 @@ Notifications is not duplicated in this central package matrix because its own r
 The automated gate verifies:
 
 1. clean Joomla installation;
-2. package ZIP integrity;
+2. package ZIP integrity and authoritative SHA-256;
 3. package installation using Joomla CLI;
-4. optional consumers can install before Core;
-5. hard Core dependencies reject installation before Core and install after Core;
-6. canonical `xdecaro\Core\Version` autoloading after package installation;
-7. Core `1.4.0+` availability;
+4. optional consumers are genuinely registered before Core is installed;
+5. hard Core dependencies leave neither package/component registration nor component files behind before Core, then install after Core;
+6. canonical `xdecaro\Core\Version` autoloading through Joomla's real extension namespace map;
+7. Core `1.4.0` availability;
 8. `xdecaro\Core\Integration\CapabilityRegistry` availability;
-9. Core upgrade from `1.3.0` to `1.4.0` on Joomla 5.4.8 and 6.1.3.
+9. Core upgrade from the actually published `1.3.0` package to `1.4.0` on Joomla 5.4.8 and 6.1.3, including manifest-cache and runtime-autoload verification.
+
+The hard-dependency assertion deliberately does not trust only the exit status of `extension:install`: Joomla CLI can report command success while an extension installer script has rejected the package. The gate checks `#__extensions` and the component filesystem directly to detect partial installation.
 
 Documents additionally owns repository-level clean-install and `1.2.0 -> 1.2.1` repair tests on Joomla 5.4.8 and 6.1.3. These tests verify the Joomla SQL manifest compatibility fix and confirm that the repair creates missing Documents-owned tables without destructive SQL.
 
@@ -98,6 +104,7 @@ Record PASS / FAIL / N/A with Joomla version, PHP version, product version and d
 - package installs library, legacy compatibility library and system plugin;
 - canonical `xdecaro\Core` source remains authoritative;
 - `Xdecaro\Core` exists only through the compatibility library;
+- runtime smoke creates Joomla's extension namespace map before probing Core classes, matching the CMS lifecycle;
 - `AssetService` calls remain idempotent;
 - `EntityReference`, `RelationReference`, `IntegrationEvent`, `Capability` and `CapabilityRegistry` stay additive and domain-neutral.
 
