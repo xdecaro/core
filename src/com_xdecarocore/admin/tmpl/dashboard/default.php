@@ -32,10 +32,21 @@ $statusClass = static function (string $status): string {
     }
     return '';
 };
+$diagnosticLabel = static function (string $level): string {
+    if ($level === 'success') return Text::_('COM_XDECAROCORE_DIAGNOSTIC_OK');
+    if ($level === 'warning') return Text::_('COM_XDECAROCORE_DIAGNOSTIC_WARNING');
+    return Text::_('COM_XDECAROCORE_DIAGNOSTIC_ERROR');
+};
+$diagnosticClass = static function (string $level): string {
+    if ($level === 'success') return 'xdecaro-badge--success';
+    if ($level === 'warning') return 'xdecaro-badge--warning';
+    return 'xdecaro-badge--danger';
+};
 ?>
 <div class="xdecaro-scope xdecaro-suite">
     <div class="xdecaro-suite__hero">
         <div>
+            <span class="xdecaro-suite__eyebrow"><?php echo Text::_('COM_XDECAROCORE_SUITE'); ?></span>
             <h2>xdecaro</h2>
             <p><?php echo Text::_('COM_XDECAROCORE_DASHBOARD_INTRO'); ?></p>
         </div>
@@ -53,6 +64,7 @@ $statusClass = static function (string $status): string {
     <div class="xdecaro-card xdecaro-suite__section">
         <div class="xdecaro-card__header xdecaro-toolbar">
             <div>
+                <span class="xdecaro-suite__eyebrow"><?php echo Text::_('COM_XDECAROCORE_ECOSYSTEM'); ?></span>
                 <h3 class="xdecaro-card__title"><?php echo Text::_('COM_XDECAROCORE_PRODUCTS'); ?></h3>
                 <p class="xdecaro-card__description"><?php echo Text::_('COM_XDECAROCORE_PRODUCTS_DESC'); ?></p>
             </div>
@@ -80,12 +92,23 @@ $statusClass = static function (string $status): string {
     </div>
 
     <div class="xdecaro-card xdecaro-suite__section">
-        <div class="xdecaro-card__header"><h3 class="xdecaro-card__title"><?php echo Text::_('COM_XDECAROCORE_DIAGNOSTICS'); ?></h3></div>
-        <div class="xdecaro-card__body xdecaro-suite__checks">
+        <div class="xdecaro-card__header xdecaro-toolbar">
+            <div>
+                <span class="xdecaro-suite__eyebrow"><?php echo Text::_('COM_XDECAROCORE_SYSTEM'); ?></span>
+                <h3 class="xdecaro-card__title"><?php echo Text::_('COM_XDECAROCORE_DIAGNOSTICS'); ?></h3>
+                <p class="xdecaro-card__description"><?php echo Text::_('COM_XDECAROCORE_DIAGNOSTICS_DESC'); ?></p>
+            </div>
+            <span class="xdecaro-toolbar__spacer"></span>
+            <a class="xdecaro-button" href="index.php?option=com_xdecarocore&amp;view=dashboard&amp;layout=diagnostics"><?php echo Text::_('COM_XDECAROCORE_VIEW_ALL'); ?></a>
+        </div>
+        <div class="xdecaro-card__body xdecaro-suite__diagnostic-list">
             <?php foreach (array_slice($diagnostics, 0, 8) as $check) : ?>
-                <div class="xdecaro-suite__check">
-                    <span class="xdecaro-badge <?php echo $check['level'] === 'success' ? 'xdecaro-badge--success' : ($check['level'] === 'warning' ? 'xdecaro-badge--warning' : 'xdecaro-badge--danger'); ?>"><?php echo htmlspecialchars(strtoupper($check['level']), ENT_QUOTES, 'UTF-8'); ?></span>
-                    <div><strong><?php echo htmlspecialchars($check['label'], ENT_QUOTES, 'UTF-8'); ?></strong><div class="xdecaro-suite__muted"><?php echo htmlspecialchars($check['detail'], ENT_QUOTES, 'UTF-8'); ?></div></div>
+                <div class="xdecaro-suite__diagnostic-row">
+                    <div>
+                        <strong><?php echo htmlspecialchars($check['label'], ENT_QUOTES, 'UTF-8'); ?></strong>
+                        <div class="xdecaro-suite__muted"><?php echo htmlspecialchars($check['detail'], ENT_QUOTES, 'UTF-8'); ?></div>
+                    </div>
+                    <span class="xdecaro-badge <?php echo $diagnosticClass($check['level']); ?>"><?php echo $diagnosticLabel($check['level']); ?></span>
                 </div>
             <?php endforeach; ?>
         </div>
