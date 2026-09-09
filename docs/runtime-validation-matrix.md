@@ -23,12 +23,12 @@ Joomla ZIPs and all product package ZIPs are SHA-256 verified before installatio
 Distributed packages under the runtime gate:
 
 - Core `1.4.0`;
-- Courses `1.3.0`;
+- Courses `1.5.0`;
 - Forms `1.7.0`;
 - Competitions `1.1.0`;
 - Documents `1.2.2`;
 - Membership `1.2.0`;
-- Events `1.1.2`;
+- Events `1.2.0`;
 - Editor `0.1.0-alpha6`;
 - Finance `1.1.0`;
 - Protocol `1.4.0`.
@@ -51,9 +51,11 @@ The hard-dependency assertion deliberately does not trust only the exit status o
 
 Documents additionally owns repository-level clean-install, `1.2.0 -> 1.2.2` repair and missing-Core rejection tests on Joomla 5.4.8 and 6.1.3. These tests verify the Joomla SQL manifest repair, preserve the non-destructive `CREATE TABLE IF NOT EXISTS` recovery path and prove that the mandatory Core preflight leaves no package/component registration or component files behind.
 
-Events additionally owns repository-level clean-install, `1.1.1 -> 1.1.2` repair and missing-Core rejection tests on Joomla 5.4.8 and 6.1.3. These tests verify the corrected package installer class, Joomla SQL manifest compatibility and non-destructive repair of Events-owned tables.
+Events additionally owns repository-level clean-install, `1.1.1 -> 1.2.0` repair and missing-Core rejection tests on Joomla 5.4.8 and 6.1.3. The existing `1.1.2` non-destructive repair remains part of that path. Events `1.2.0` also verifies the native Joomla editor fallback to `none` on Joomla 5.4.8 and 6.1.3, then proves `decaroeditor` provider discovery with Editor `0.1.0-alpha6` on Joomla 6.1.3.
 
 Forms additionally owns a Joomla 6.1.3 integration gate for Forms `1.7.0` and Editor `0.1.0-alpha6`. It proves that Forms installs and keeps the raw textarea fallback when Editor is absent, then installs/enables Editor, resolves `decaroeditor` through Joomla `EditorsRegistry`, and validates the installed editor bridge. Forms remains independent of Editor private classes and keeps its existing save/ACL/CSRF boundary.
+
+Courses additionally owns a Joomla 6.1.3 integration gate for Courses `1.5.0` and Editor `0.1.0-alpha6`. It proves that the public course description resolves Joomla's built-in `none` editor when Editor is absent, prefers `decaroeditor` when the provider is installed/enabled, and preserves the existing `safehtml` save boundary. Edition notes remain a normal textarea and Courses does not import Editor private classes or storage.
 
 Protocol additionally owns a repository-level functional integration gate that installs Core `1.4.0`, Documents `1.2.2` and Protocol `1.4.0` together on Joomla 5.4.8 and 6.1.3. It verifies clean installation and repair from published Protocol `1.2.0`, validates the installed schemas, rejects direct Protocol access to `#__decarodocuments_*`, and exercises the provider-owned Documents relation API end to end: attach and read on a draft record, protocol finalization, then server-side rejection of further attach/detach operations. Protocol enforces Documents `1.2.1+` for this optional integration.
 
@@ -122,14 +124,16 @@ Record PASS / FAIL / N/A with Joomla version, PHP version, product version and d
 ### Events
 - mandatory Core preflight remains atomic and is runtime-tested with Core absent;
 - Joomla SQL manifest uses `charset="utf8"` while table definitions remain `utf8mb4`;
-- 1.1.2 repairs affected prior installations using only `CREATE TABLE IF NOT EXISTS` for Events-owned tables;
+- the `1.1.2` repair remains non-destructive and available when upgrading affected prior installations;
+- Events `1.2.0` uses Joomla's native editor field for event descriptions, preferring `decaroeditor` and falling back to `none` while preserving the existing `raw` filter;
+- Editor remains optional and Events does not import Editor private classes or storage;
 - capacity/waitlist/check-in changes preserve ACL and CSRF.
 
 ### Editor
 - Core remains optional;
 - Joomla editor plugin/canvas/media/history continue to work without Core;
 - Editor `0.1.0-alpha6` registers through Joomla `EditorsRegistry` for provider-based consumers;
-- Forms `1.7.0` consumes only that Joomla provider boundary and keeps its raw textarea fallback when Editor is unavailable;
+- Forms `1.7.0`, Courses `1.5.0` and Events `1.2.0` consume only Joomla-owned editor/provider boundaries and retain product-owned save/filter behavior when Editor is unavailable;
 - shared Core assets do not absorb editor behavior.
 
 ### Finance
