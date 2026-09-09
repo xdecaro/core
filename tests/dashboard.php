@@ -181,7 +181,7 @@ namespace {
     if (strpos($productsTemplate, '<td colspan="7"') === false) {
         throw new \RuntimeException('Expanded package details must span the dedicated Actions column.');
     }
-    if (strpos($productsTemplate, "if ($channel === 'stable') return 'xdecaro-badge--success';") === false) {
+    if (strpos($productsTemplate, "if (\$channel === 'stable') return 'xdecaro-badge--success';") === false) {
         throw new \RuntimeException('Stable product channels must use the success badge.');
     }
     if (strpos($productsTemplate, '$extensionLabel($child)') === false) {
