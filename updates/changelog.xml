@@ -3,6 +3,18 @@
   <changelog>
     <element>pkg_xdecarocore</element>
     <type>package</type>
+    <version>1.5.1</version>
+    <fix>
+      <item>Fixed administrator submenu links that could generate a duplicated index.php? prefix and fall back to com_cpanel with a 404 error.</item>
+      <item>Added upgrade-time normalization for menu rows already persisted by Core 1.5.0.</item>
+    </fix>
+    <change>
+      <item>Added regression coverage for normalized dashboard submenu routes on clean installs and upgrades.</item>
+    </change>
+  </changelog>
+  <changelog>
+    <element>pkg_xdecarocore</element>
+    <type>package</type>
     <version>1.5.0</version>
     <addition>
       <item>Added the xdecaro administrator dashboard component to the Core package.</item>
