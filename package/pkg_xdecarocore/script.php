@@ -10,13 +10,16 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Log\Log;
 use Joomla\Database\DatabaseInterface;
+use Joomla\Database\ParameterType;
 
-final class PkgXdecaroCoreInstallerScript
+final class pkg_xdecarocoreInstallerScript
 {
     /**
-     * The Core system plugin is a required package child and must be active
-     * after both a clean install and an upgrade.
+     * Core's system plugin is a required package child. Keep it active after
+     * both clean installs and upgrades so the package has one deterministic
+     * operational state across Joomla installers and CLI installs.
      */
     public function postflight($type, $parent): void
     {
@@ -25,16 +28,31 @@ final class PkgXdecaroCoreInstallerScript
         }
 
         try {
+            /** @var DatabaseInterface $db */
             $db = Factory::getContainer()->get(DatabaseInterface::class);
+            $enabled = 1;
+            $pluginType = 'plugin';
+            $folder = 'system';
+            $element = 'xdecarocore';
+
             $query = $db->getQuery(true)
                 ->update($db->quoteName('#__extensions'))
-                ->set($db->quoteName('enabled') . ' = 1')
-                ->where($db->quoteName('type') . ' = ' . $db->quote('plugin'))
-                ->where($db->quoteName('folder') . ' = ' . $db->quote('system'))
-                ->where($db->quoteName('element') . ' = ' . $db->quote('xdecarocore'));
+                ->set($db->quoteName('enabled') . ' = :enabled')
+                ->where($db->quoteName('type') . ' = :type')
+                ->where($db->quoteName('folder') . ' = :folder')
+                ->where($db->quoteName('element') . ' = :element')
+                ->bind(':enabled', $enabled, ParameterType::INTEGER)
+                ->bind(':type', $pluginType)
+                ->bind(':folder', $folder)
+                ->bind(':element', $element);
 
             $db->setQuery($query)->execute();
         } catch (\Throwable $exception) {
+            Log::add(
+                'Core system plugin could not be enabled automatically: ' . $exception->getMessage(),
+                Log::WARNING,
+                'pkg_xdecarocore'
+            );
             Factory::getApplication()->enqueueMessage(
                 'Core by xdecaro was installed, but its required system plugin could not be enabled automatically.',
                 'warning'
