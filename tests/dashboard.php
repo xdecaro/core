@@ -28,7 +28,7 @@ namespace {
     }
 
     $required = [
-        'core' => ['pkg_xdecarocore', '1.5.6'],
+        'core' => ['pkg_xdecarocore', '1.5.7'],
         'forms' => ['pkg_decaroforms', '1.7.0'],
         'courses' => ['pkg_decarocourses', '1.5.0'],
         'competitions' => ['pkg_xdecarocompetitions', '1.3.0'],
@@ -85,8 +85,6 @@ namespace {
         }
     }
 
-    // Reproduce a stale package_id relationship: Courses children incorrectly point at the Forms package.
-    // Installed package manifests must win over that stale database relationship.
     file_put_contents(
         $manifestRoot . '/packages/pkg_decaroforms.xml',
         '<?xml version="1.0"?><extension type="package"><files>'
@@ -170,6 +168,9 @@ namespace {
     }
     if (strpos($templates['information'], 'xdecaro-suite__page-header') !== false) {
         throw new \RuntimeException('Information must not use a separate page-header structure.');
+    }
+    if (substr_count($templates['information'], 'xdecaro-suite__badge-slot') !== 3) {
+        throw new \RuntimeException('Information card status badges must remain wrapped in compact badge slots.');
     }
 
     $productsTemplate = $templates['products'];

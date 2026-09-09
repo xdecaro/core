@@ -4,6 +4,23 @@ All notable changes to **Core by xdecaro** are documented here.
 
 The project follows Semantic Versioning.
 
+## 1.5.7 — 2026-09-09
+
+### Fixed
+
+- Information card status badges now remain compact when Joomla's expanded administrator sidebar forces card headers into a vertical layout.
+- `Coerente`, `Sistema OK` and `In sviluppo` no longer stretch to the full card width on narrow tablet and phone layouts.
+- The fix is structural in the Information template and does not alter the already-approved responsive behavior of Dashboard, Components, All extensions, Updates or Diagnostics.
+
+### Tests
+
+- Added a regression guard requiring the three Information card status badges to remain inside compact badge slots.
+
+### Compatibility
+
+- Existing `xdecaro\Core` public contracts remain unchanged.
+- No database changes, migrations or product data changes are introduced.
+
 ## 1.5.6 — 2026-09-09
 
 ### Fixed

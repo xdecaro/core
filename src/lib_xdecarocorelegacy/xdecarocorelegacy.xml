@@ -6,7 +6,7 @@
     <creationDate>2026-09-09</creationDate>
     <copyright>Copyright (C) 2026 Luca De Caro</copyright>
     <license>GNU General Public License version 2 or later</license>
-    <version>1.5.6</version>
+    <version>1.5.7</version>
     <description>Temporary autoload compatibility for the deprecated Xdecaro\Core namespace.</description>
     <namespace path="src">Xdecaro\Core</namespace>
     <files>
