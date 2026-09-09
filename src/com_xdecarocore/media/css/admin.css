@@ -1,4 +1,4 @@
-/* Core by xdecaro 1.5.2 - administrator ecosystem dashboard. */
+/* Core by xdecaro 1.5.4 - administrator ecosystem dashboard. */
 
 .xdecaro-suite {
     display: grid;
@@ -95,6 +95,13 @@
 
 .xdecaro-suite__products-table > tbody > .xdecaro-suite__product-row > td {
     vertical-align: middle;
+}
+
+.xdecaro-suite__action-heading,
+.xdecaro-suite__action-cell {
+    width: 1%;
+    text-align: right;
+    white-space: nowrap;
 }
 
 .xdecaro-suite__filter-button {
