@@ -13,7 +13,7 @@ defined('_JEXEC') or die;
 
 final class Version
 {
-    public const VERSION = '1.5.6';
+    public const VERSION = '1.5.7';
 
     private function __construct()
     {
