@@ -37,7 +37,7 @@ $installationCoherent = $coreProduct !== null && $coreProduct['installed'] && !$
 ?>
 <div class="xdecaro-scope xdecaro-suite">
     <header class="xdecaro-suite__page-header">
-        <span class="xdecaro-suite__eyebrow">CORE</span>
+        <span class="xdecaro-suite__eyebrow"><?php echo Text::_('COM_XDECAROCORE_SUITE'); ?></span>
         <h2><?php echo Text::_('COM_XDECAROCORE_INFORMATION'); ?></h2>
         <p><?php echo Text::_('COM_XDECAROCORE_INFORMATION_DESC'); ?></p>
     </header>
