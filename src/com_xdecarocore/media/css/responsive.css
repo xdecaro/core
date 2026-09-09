@@ -1,0 +1,267 @@
+/* Core by xdecaro 1.5.8 - responsive administrator refinements. */
+
+/* Never let intrinsic table/card width enlarge the Joomla administrator canvas. */
+.xdecaro-suite,
+.xdecaro-suite > *,
+.xdecaro-suite .xdecaro-card,
+.xdecaro-suite .xdecaro-card__header,
+.xdecaro-suite .xdecaro-card__body,
+.xdecaro-suite .xdecaro-suite__hero,
+.xdecaro-suite .xdecaro-suite__hero > div,
+.xdecaro-suite .xdecaro-suite__responsive-wrap {
+    min-width: 0;
+    max-width: 100%;
+}
+
+.xdecaro-suite .xdecaro-suite__responsive-wrap {
+    width: 100%;
+}
+
+.xdecaro-suite .xdecaro-suite__hero p,
+.xdecaro-suite .xdecaro-card__description {
+    overflow-wrap: anywhere;
+}
+
+/* The measured seven-column tables need roughly 55rem. Below that width a card layout is safer
+   than horizontal document overflow. This reacts to the real Core container, not the viewport. */
+@container xdecaro-suite (max-width: 55rem) {
+    .xdecaro-suite__hero,
+    .xdecaro-suite__card-heading {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .xdecaro-suite__hero {
+        display: flex;
+    }
+
+    .xdecaro-suite__hero > .xdecaro-badge,
+    .xdecaro-suite__hero > .xdecaro-suite__count-badge {
+        max-width: 100%;
+        align-self: flex-start;
+        white-space: normal;
+    }
+
+    .xdecaro-suite__info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .xdecaro-suite__info-card--full {
+        grid-column: auto;
+    }
+
+    .xdecaro-suite__diagnostic-row {
+        grid-template-columns: 1fr;
+        gap: var(--xdecaro-space-2, 0.5rem);
+    }
+
+    .xdecaro-suite__diagnostic-row .xdecaro-badge {
+        justify-self: start;
+    }
+
+    .xdecaro-suite__child-heading,
+    .xdecaro-suite__summary-bar {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .xdecaro-suite__summary-bar {
+        display: flex;
+    }
+
+    .xdecaro-suite__summary-bar strong {
+        margin-right: 0;
+    }
+
+    .xdecaro-suite__definition-list > div {
+        grid-template-columns: 1fr;
+        gap: var(--xdecaro-space-1, 0.25rem);
+    }
+
+    .xdecaro-suite__notice {
+        grid-template-columns: auto minmax(0, 1fr);
+    }
+
+    .xdecaro-suite__notice .xdecaro-button {
+        grid-column: 1 / -1;
+        justify-self: start;
+    }
+
+    .xdecaro-suite__responsive-wrap {
+        overflow: visible;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+    }
+
+    .xdecaro-suite__responsive-table {
+        display: block;
+        width: 100%;
+        min-width: 0;
+        max-width: 100%;
+        background: transparent;
+    }
+
+    .xdecaro-suite__responsive-table > thead {
+        display: none;
+    }
+
+    .xdecaro-suite__responsive-table > tbody {
+        display: grid;
+        gap: var(--xdecaro-space-3, 0.75rem);
+        min-width: 0;
+    }
+
+    .xdecaro-suite__responsive-table > tbody > tr:not(.xdecaro-suite__expansion-row) {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        min-width: 0;
+        overflow: hidden;
+        border: 1px solid var(--xdecaro-color-border);
+        border-radius: var(--xdecaro-radius-md, 0.625rem);
+        background: var(--xdecaro-color-surface);
+    }
+
+    .xdecaro-suite__responsive-table > tbody > tr:not(.xdecaro-suite__expansion-row) > td {
+        display: block;
+        min-width: 0;
+        padding: 0.7rem 0.8rem;
+        border-bottom: 1px solid var(--xdecaro-color-border);
+        background: var(--xdecaro-color-surface);
+        text-align: start;
+        white-space: normal;
+        overflow-wrap: anywhere;
+    }
+
+    .xdecaro-suite__responsive-table > tbody > tr:not(.xdecaro-suite__expansion-row) > td:first-child {
+        grid-column: 1 / -1;
+    }
+
+    .xdecaro-suite__responsive-table > tbody > tr:not(.xdecaro-suite__expansion-row) > td::before {
+        display: block;
+        margin-bottom: 0.25rem;
+        color: var(--xdecaro-color-muted);
+        content: attr(data-label);
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        line-height: 1.2;
+    }
+
+    .xdecaro-suite__responsive-table .xdecaro-suite__action-cell {
+        width: auto;
+        text-align: start;
+        white-space: normal;
+    }
+
+    .xdecaro-suite__responsive-table .xdecaro-suite__filter-button {
+        max-width: 100%;
+        white-space: normal;
+    }
+
+    .xdecaro-suite__responsive-table > tbody > .xdecaro-suite__expansion-row {
+        display: block;
+        min-width: 0;
+        overflow: visible;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+    }
+
+    .xdecaro-suite__responsive-table > tbody > .xdecaro-suite__expansion-row > .xdecaro-suite__expansion-cell {
+        display: block;
+        padding: 0 !important;
+        border: 0 !important;
+    }
+
+    .xdecaro-suite__responsive-table > tbody > .xdecaro-suite__expansion-row > .xdecaro-suite__expansion-cell::before {
+        display: none;
+    }
+
+    .xdecaro-suite__expansion-content {
+        padding: var(--xdecaro-space-3, 0.75rem) 0 0;
+    }
+
+    /* All Extensions: keep the technical element with the card heading, then pair the four
+       remaining facts as Tipo/Versione and Stato/Package ID. */
+    .xdecaro-suite__extension-element-mobile {
+        display: block;
+        margin-top: 0.2rem;
+    }
+
+    .xdecaro-suite__extension-element-cell {
+        display: none !important;
+    }
+
+    /* Updates: installed/available remain a pair; status receives its own compact row. */
+    .xdecaro-suite__updates-table .xdecaro-suite__update-status-cell {
+        grid-column: 1 / -1;
+    }
+}
+
+.xdecaro-suite__extension-element-mobile {
+    display: none;
+}
+
+/* Existing 28rem base rule stacks all fields. Keep the reviewed 2-column compact cards on phones;
+   only exceptionally narrow containers fall back to one field per row. */
+@container xdecaro-suite (max-width: 28rem) {
+    .xdecaro-suite__responsive-table > tbody > tr:not(.xdecaro-suite__expansion-row) {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .xdecaro-suite__responsive-table > tbody > tr:not(.xdecaro-suite__expansion-row) > td:first-child {
+        grid-column: 1 / -1;
+    }
+
+    .xdecaro-suite__updates-table .xdecaro-suite__update-status-cell {
+        grid-column: 1 / -1;
+    }
+}
+
+@container xdecaro-suite (max-width: 20rem) {
+    .xdecaro-suite__responsive-table > tbody > tr:not(.xdecaro-suite__expansion-row) {
+        grid-template-columns: 1fr;
+    }
+
+    .xdecaro-suite__responsive-table > tbody > tr:not(.xdecaro-suite__expansion-row) > td:first-child,
+    .xdecaro-suite__updates-table .xdecaro-suite__update-status-cell {
+        grid-column: auto;
+    }
+}
+
+/* Phone Dashboard summary: 2 + 2 + 1, with a one-column emergency fallback only on very narrow
+   viewports. This intentionally overrides the older one-column phone rule in admin.css. */
+@media (max-width: 479.98px) {
+    .xdecaro-suite__metrics {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .xdecaro-suite__metric:last-child {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 319.98px) {
+    .xdecaro-suite__metrics {
+        grid-template-columns: 1fr;
+    }
+
+    .xdecaro-suite__metric:last-child {
+        grid-column: auto;
+    }
+}
+
+/* Atum is responsible for its own chrome. Core only reserves iOS safe areas while its pages are
+   active, so the administrator toolbar and fixed mobile controls never cover suite content. */
+@supports (padding: max(0px)) {
+    @media (max-width: 767.98px) {
+        body.admin.com_xdecarocore #header.header {
+            padding-top: env(safe-area-inset-top);
+        }
+
+        .xdecaro-suite {
+            padding-bottom: calc(5.5rem + env(safe-area-inset-bottom));
+        }
+    }
+}
