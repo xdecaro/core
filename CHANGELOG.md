@@ -4,6 +4,24 @@ All notable changes to **Core by xdecaro** are documented here.
 
 The project follows Semantic Versioning.
 
+## 1.5.3 — 2026-09-09
+
+### Fixed
+
+- Corrected the Joomla Web Asset Manager URIs for the administrator Dashboard stylesheet and script. Component asset URIs now use `com_xdecarocore/admin.css` and `com_xdecarocore/admin.js`, allowing Joomla to resolve the standard `css/` and `js/` media directories correctly.
+- Dashboard-specific CSS now reaches the rendered administrator page, restoring the intended statistic cards, spacing, responsive layouts, diagnostics presentation and package-detail animation.
+
+### Tests
+
+- Added build-time guards that reject administrator asset URIs containing duplicated `/css/` or `/js/` path segments.
+- Runtime coverage now upgrades from Core 1.5.2 and validates the installed component asset registry and resolved dashboard asset paths on Joomla 5.4.8 and 6.1.3.
+
+### Compatibility
+
+- Existing `xdecaro\Core` public contracts remain unchanged.
+- The temporary `Xdecaro\Core` legacy namespace compatibility library remains packaged.
+- No product data or configuration is migrated or deleted by this release.
+
 ## 1.5.2 — 2026-09-09
 
 ### Fixed
