@@ -12,7 +12,7 @@ The stabilization baseline is deliberately pinned so that a new Joomla patch rel
 
 - Joomla `5.4.8` with PHP `8.1` for products whose current distribution declares Joomla 5 support;
 - Joomla `6.1.3` with PHP `8.3` for all applicable products;
-- Courses, Forms, Competitions and Editor are tested only on Joomla 6 because their current distributed metadata/manifests target Joomla 6 / PHP 8.3.
+- Courses, Forms, Competitions, Membership and Editor are tested only on Joomla 6 because their current distributed metadata/manifests target Joomla 6 / PHP 8.3.
 
 Joomla ZIPs and all product package ZIPs are SHA-256 verified before installation. The gate follows the real distribution channel of each product rather than assuming every package is a GitHub Release asset:
 
@@ -27,10 +27,10 @@ Distributed packages under the runtime gate:
 - Forms `1.7.0`;
 - Competitions `1.3.0`;
 - Documents `1.2.2`;
-- Membership `1.2.0`;
+- Membership `1.4.0`;
 - Events `1.2.0`;
 - Editor `0.1.0-alpha6`;
-- Finance `1.2.1`;
+- Finance `1.3.0`;
 - Protocol `1.4.0`.
 
 Notifications is not duplicated in this central package matrix because its own repository CI already performs clean package installation on Joomla `4.4.14`, `5.4.8` and `6.1.3`. It remains part of the ecosystem namespace audit.
@@ -57,9 +57,11 @@ Forms additionally owns a Joomla 6.1.3 integration gate for Forms `1.7.0` and Ed
 
 Courses additionally owns a Joomla 6.1.3 integration gate for Courses `1.5.0` and Editor `0.1.0-alpha6`. It proves that the public course description resolves Joomla's built-in `none` editor when Editor is absent, prefers `decaroeditor` when the provider is installed/enabled, and preserves the existing `safehtml` save boundary. Edition notes remain a normal textarea and Courses does not import Editor private classes or storage.
 
-Competitions additionally owns a Joomla 6.1.3 functional integration gate for Competitions `1.3.0` and Finance `1.2.1`. It proves that Competitions installs and remains usable when Finance is absent, then installs the published Finance package with its pinned SHA-256 and exercises the public Finance service end to end: idempotent participation-fee obligation, stable team deposit account, idempotent EUR 500 credit, idempotent EUR 25 disciplinary debit and final EUR 475 balance. Competitions supplies the competition-owned reason and amount; Finance owns the obligation and deposit ledger. No direct `#__decarofinance_*` access is permitted.
+Membership additionally owns a Joomla 6.1.3 functional integration gate for Membership `1.4.0` and the published Finance `1.3.0` package pinned to SHA-256 `9659b3325960a65126f24a9d8906e3fa02db88198d369367e086d36265255c6c`. It proves that a due changed before allocation updates the same Finance obligation, a payment changed before allocation updates the same Finance payment, an unchanged allocation replay is idempotent, and conflicting due/payment changes after allocation are rejected. Membership consumes only `bootComponent('com_decarofinance')->getFinanceService()` and never Finance private tables or implementation classes. The published Membership `1.4.0` package is pinned to SHA-256 `0399497475e4d0e82c15120758ecd635f387dd5bdf7cf8b007dd5bb6b940413b`.
 
-Finance `1.2.1` additionally owns real Joomla 4.4.14, 5.4.8 and 6.1.3 regression coverage for the reference-safe `DatabaseInterface` writes discovered by the Competitions integration gate. Payment allocation/status updates, deposit-account creation, append-only movements and budget writes are exercised without changing Finance's public API or schema.
+Competitions additionally owns a Joomla 6.1.3 functional integration gate for Competitions `1.3.0` against Finance `1.2.1`. It proves that Competitions installs and remains usable when Finance is absent, then installs the published Finance package with its pinned SHA-256 and exercises the public Finance service end to end: idempotent participation-fee obligation, stable team deposit account, idempotent EUR 500 credit, idempotent EUR 25 disciplinary debit and final EUR 475 balance. Competitions supplies the competition-owned reason and amount; Finance owns the obligation and deposit ledger. No direct `#__decarofinance_*` access is permitted. Finance `1.3.0`, now pinned by the central package matrix, preserves the existing create/payment/allocation and deposit APIs used by Competitions while adding the synchronization APIs required by Membership.
+
+Finance `1.3.0` owns real Joomla 4.4.14, 5.4.8 and 6.1.3 regression coverage for external-key obligation/payment updates before allocation, replay-safe allocation, conflict rejection after allocation, and the reference-safe `DatabaseInterface` writes introduced in `1.2.1`. Existing payment allocation/status updates, deposit-account creation, append-only movements and budget writes remain covered without schema changes or breaking the existing public service surface.
 
 Protocol additionally owns a repository-level functional integration gate that installs Core `1.4.0`, Documents `1.2.2` and Protocol `1.4.0` together on Joomla 5.4.8 and 6.1.3. It verifies clean installation and repair from published Protocol `1.2.0`, validates the installed schemas, rejects direct Protocol access to `#__decarodocuments_*`, and exercises the provider-owned Documents relation API end to end: attach and read on a draft record, protocol finalization, then server-side rejection of further attach/detach operations. Protocol enforces Documents `1.2.1+` for this optional integration.
 
@@ -140,6 +142,15 @@ Record PASS / FAIL / N/A with Joomla version, PHP version, product version and d
 - Forms `1.7.0`, Courses `1.5.0` and Events `1.2.0` consume only Joomla-owned editor/provider boundaries and retain product-owned save/filter behavior when Editor is unavailable;
 - shared Core assets do not absorb editor behavior.
 
+### Membership
+- Membership `1.4.0` keeps both Core and Finance optional;
+- Finance integration uses only the provider-owned component service returned by `bootComponent('com_decarofinance')->getFinanceService()`;
+- Membership never reads or writes `#__decarofinance_*` and does not import Finance implementation classes;
+- due and payment changes before allocation update the existing Finance records keyed by stable external identifiers;
+- unchanged allocation retries are idempotent;
+- conflicting financial changes after allocation are rejected instead of rewriting financial history;
+- Membership owns membership rules and source records; Finance owns obligations, payments and allocation history.
+
 ### Competitions
 - Competitions `1.3.0` keeps Finance optional and consumes only `bootComponent('com_decarofinance')->getFinanceService()`;
 - participation fees and team-deposit movements use stable external idempotency keys;
@@ -148,7 +159,10 @@ Record PASS / FAIL / N/A with Joomla version, PHP version, product version and d
 - no direct reads or writes of `#__decarofinance_*` are allowed.
 
 ### Finance
-- Finance `1.2.1` preserves the public 1.2 service surface and fixes reference-safe Joomla database writes without schema changes;
+- Finance `1.3.0` preserves the existing public create/payment/allocation/deposit/budget APIs and adds `upsertObligation()`, `upsertPayment()` and `allocatePaymentIdempotent()` for cross-product synchronization;
+- open/unallocated obligations and payments may be updated by stable external key before allocation;
+- unchanged allocation retries are replay-safe while conflicting amounts remain errors;
+- allocated financial history cannot be silently rewritten;
 - ledger/deposit/payment writes retain transaction/idempotency protections;
 - deposit movements remain append-only and auditable;
 - no source product private-table dependency.
