@@ -3,6 +3,21 @@
   <changelog>
     <element>pkg_xdecarocore</element>
     <type>package</type>
+    <version>1.5.2</version>
+    <fix>
+      <item>Dashboard-specific CSS and JavaScript assets are now loaded deterministically on every xdecaro administrator dashboard layout.</item>
+      <item>Package child detection now uses each installed package manifest before falling back to package_id, preventing stale Joomla package relationships from mixing Forms and Courses extensions.</item>
+    </fix>
+    <change>
+      <item>Redesigned dashboard metrics, diagnostics and information views for consistent spacing, readable hierarchy, responsive behavior and light/dark mode.</item>
+      <item>Package contents now expand below the product row into a structured extension table with an accessible animated toggle.</item>
+      <item>Extension and update counters now use descriptive labels instead of isolated numeric badges.</item>
+      <item>Update network behavior is presented in a separate information panel with a direct Joomla Updates action when permitted.</item>
+    </change>
+  </changelog>
+  <changelog>
+    <element>pkg_xdecarocore</element>
+    <type>package</type>
     <version>1.5.1</version>
     <fix>
       <item>Fixed administrator submenu links that could generate a duplicated index.php? prefix and fall back to com_cpanel with a 404 error.</item>

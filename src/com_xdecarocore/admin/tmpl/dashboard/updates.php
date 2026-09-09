@@ -3,6 +3,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Router\Route;
 
 $products = $this->snapshot['products'];
 $updateCount = 0;
@@ -13,7 +14,16 @@ foreach ($products as $product) {
 }
 ?>
 <div class="xdecaro-scope xdecaro-suite">
-    <div class="xdecaro-suite__hero"><div><h2><?php echo Text::_('COM_XDECAROCORE_UPDATES'); ?></h2><p><?php echo Text::_('COM_XDECAROCORE_UPDATES_DESC'); ?></p></div><span class="xdecaro-badge <?php echo $updateCount > 0 ? 'xdecaro-badge--warning' : 'xdecaro-badge--success'; ?>"><?php echo $updateCount; ?></span></div>
+    <div class="xdecaro-suite__hero">
+        <div>
+            <h2><?php echo Text::_('COM_XDECAROCORE_UPDATES'); ?></h2>
+            <p><?php echo Text::_('COM_XDECAROCORE_UPDATES_DESC'); ?></p>
+        </div>
+        <span class="xdecaro-badge xdecaro-suite__count-badge <?php echo $updateCount > 0 ? 'xdecaro-badge--warning' : 'xdecaro-badge--success'; ?>">
+            <?php echo $updateCount > 0 ? Text::sprintf('COM_XDECAROCORE_UPDATES_AVAILABLE_COUNT', $updateCount) : Text::_('COM_XDECAROCORE_NO_UPDATES_AVAILABLE'); ?>
+        </span>
+    </div>
+
     <div class="xdecaro-card">
         <div class="xdecaro-card__body">
             <div class="xdecaro-table-wrap">
@@ -36,7 +46,17 @@ foreach ($products as $product) {
                     </tbody>
                 </table>
             </div>
-            <p class="xdecaro-suite__note"><?php echo Text::_('COM_XDECAROCORE_UPDATES_NOTE'); ?></p>
+
+            <div class="xdecaro-suite__notice" role="note">
+                <div class="xdecaro-suite__notice-icon" aria-hidden="true">i</div>
+                <div class="xdecaro-suite__notice-content">
+                    <strong><?php echo Text::_('COM_XDECAROCORE_UPDATE_CHECK_TITLE'); ?></strong>
+                    <p><?php echo Text::_('COM_XDECAROCORE_UPDATES_NOTE'); ?></p>
+                </div>
+                <?php if ($this->canManageInstaller) : ?>
+                    <a class="xdecaro-button" href="<?php echo Route::_('index.php?option=com_installer&view=update'); ?>"><?php echo Text::_('COM_XDECAROCORE_OPEN_JOOMLA_UPDATES'); ?></a>
+                <?php endif; ?>
+            </div>
         </div>
     </div>
 </div>

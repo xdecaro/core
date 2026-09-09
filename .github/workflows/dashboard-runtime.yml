@@ -110,10 +110,10 @@ jobs:
 
           if [ '${{ matrix.scenario }}' = 'upgrade' ]; then
             curl --fail --location --retry 3 \
-              'https://github.com/xdecaro/core/releases/download/v1.5.0/pkg_xdecarocore_1.5.0.zip' \
-              --output /tmp/core-1.5.0.zip
-            echo '4b76e86209823345813c8a56eb0e0526b9f13c7fab6d28ef5c53dc7a07e7e70f  /tmp/core-1.5.0.zip' | sha256sum --check --strict
-            php cli/joomla.php extension:install --path=/tmp/core-1.5.0.zip
+              'https://github.com/xdecaro/core/releases/download/v1.5.1/pkg_xdecarocore_1.5.1.zip' \
+              --output /tmp/core-1.5.1.zip
+            echo '53d364124bab132a5b5831a0560cc3d8c96df9599bafaad031447c7efbf06701  /tmp/core-1.5.1.zip' | sha256sum --check --strict
+            php cli/joomla.php extension:install --path=/tmp/core-1.5.1.zip
           fi
 
           php cli/joomla.php extension:install --path="$PACKAGE"
@@ -178,6 +178,10 @@ jobs:
             echo "Core {$version} extension records and administrator menu routes OK\n";
           '
 
+          test -f joomla/media/com_xdecarocore/css/admin.css
+          test -f joomla/media/com_xdecarocore/js/admin.js
+          grep -q 'com_xdecarocore/js/admin.js' joomla/media/com_xdecarocore/joomla.asset.json
+
       - name: Probe dashboard services through Joomla runtime
         shell: bash
         run: |
@@ -228,6 +232,9 @@ jobs:
           }
           if (($snapshot['summary']['technical_extensions'] ?? 0) < 5) {
               fwrite(STDERR, "Dashboard technical extension inventory is incomplete.\n"); exit(1);
+          }
+          if (count($core['children'] ?? []) !== 4) {
+              fwrite(STDERR, "Dashboard did not resolve all four Core package children from the installed package manifest.\n"); exit(1);
           }
           echo "Core dashboard runtime discovery OK\n";
           PHP

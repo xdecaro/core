@@ -23,11 +23,14 @@ final class HtmlView extends BaseHtmlView
     public $coreVersion = '';
     public $joomlaVersion = '';
     public $phpVersion = '';
+    public $canManageInstaller = false;
 
     public function display($tpl = null): void
     {
         $app = Factory::getApplication();
-        if (!$app->getIdentity()->authorise('core.manage', 'com_xdecarocore')) {
+        $identity = $app->getIdentity();
+
+        if (!$identity->authorise('core.manage', 'com_xdecarocore')) {
             throw new \RuntimeException(Text::_('JERROR_ALERTNOAUTHOR'), 403);
         }
 
@@ -37,13 +40,17 @@ final class HtmlView extends BaseHtmlView
         $this->coreVersion = Version::VERSION;
         $this->joomlaVersion = defined('JVERSION') ? JVERSION : '';
         $this->phpVersion = PHP_VERSION;
+        $this->canManageInstaller = $identity->authorise('core.manage', 'com_installer');
 
         $webAssets = $this->getDocument()->getWebAssetManager();
         (new AssetService())->useComponents($webAssets);
+
+        // The dashboard-specific assets are required on every dashboard layout.
+        // Do not silently skip them: without these styles the Joomla fallback layout remains usable
+        // but loses the responsive suite hierarchy that the administrator component promises.
         $webAssets->getRegistry()->addExtensionRegistryFile('com_xdecarocore');
-        if ($webAssets->assetExists('style', 'com_xdecarocore.admin')) {
-            $webAssets->useStyle('com_xdecarocore.admin');
-        }
+        $webAssets->useStyle('com_xdecarocore.admin');
+        $webAssets->useScript('com_xdecarocore.admin');
 
         $titles = [
             'default' => 'COM_XDECAROCORE_DASHBOARD',
