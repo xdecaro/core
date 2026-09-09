@@ -4,6 +4,41 @@ All notable changes to **Core by xdecaro** are documented here.
 
 The project follows Semantic Versioning.
 
+## 1.5.2 — 2026-09-09
+
+### Fixed
+
+- Dashboard-specific CSS and JavaScript assets are now loaded deterministically on every `com_xdecarocore` administrator layout.
+- Package-child detection now prefers the installed Joomla package manifest and falls back to `package_id` only when the manifest is unavailable. This prevents stale package relationships from mixing Forms and Courses extensions.
+- Courses component, Analytics provider and Task plugin are therefore grouped under Courses even when legacy Joomla `package_id` values point to another package.
+
+### Changed
+
+- Dashboard counters are rendered as responsive statistic cards instead of compact full-width rows.
+- Component package details now open below the product row through an accessible animated control and a structured extension table.
+- All Extensions and Updates use descriptive counters instead of isolated numeric badges.
+- The Updates network note is separated from the table and exposes a direct Joomla Updates action when the administrator has permission.
+- Diagnostics now uses structured rows with `OK`, `Attention` and `Error` states instead of raw technical status output.
+- Information now follows the shared suite visual hierarchy with summary, product/version, environment/system and commercial-licensing development cards.
+- Commercial licensing remains intentionally inactive during development and does not block installed functionality.
+
+### Compatibility
+
+- Existing `xdecaro\Core` public contracts remain unchanged.
+- The temporary `Xdecaro\Core` legacy namespace compatibility library remains packaged.
+- No product data or configuration is migrated or deleted by this release.
+
+## 1.5.1 — 2026-09-09
+
+### Fixed
+
+- Fixed administrator submenu links that could generate a duplicated `index.php?` prefix and fall back to `com_cpanel` with a 404 error.
+- Existing Core 1.5.0 menu rows are normalized automatically during upgrade.
+
+### Tests
+
+- Added clean-install and upgrade regression coverage for normalized administrator dashboard routes on Joomla 5.4.8 and 6.1.3.
+
 ## 1.5.0 — 2026-09-09
 
 ### Added
