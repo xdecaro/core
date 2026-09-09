@@ -51,9 +51,12 @@ jobs:
           set -euo pipefail
           grep -Fq '<namespace path="src">xdecaro\Core</namespace>' src/lib_xdecarocore/xdecarocore.xml
           grep -Fq '<namespace path="src">Xdecaro\Core</namespace>' src/lib_xdecarocorelegacy/xdecarocorelegacy.xml
+          grep -Fq '<namespace path="src">xdecaro\Component\Core</namespace>' src/com_xdecarocore/xdecarocore.xml
           ! grep -RInE '^namespace Xdecaro\\Core' src/lib_xdecarocore/src
           ! grep -RInE '^namespace Xdecaro\\Plugin' src/plg_system_xdecarocore/src
+          ! grep -RInE '^namespace Xdecaro\\Component' src/com_xdecarocore/admin/src src/com_xdecarocore/admin/services
           grep -RInE '^namespace xdecaro\\Core' src/lib_xdecarocore/src >/dev/null
+          grep -RInE '^namespace xdecaro\\Component\\Core' src/com_xdecarocore/admin/src src/com_xdecarocore/admin/services >/dev/null
 
       - name: Build and validate
         run: bash build/build.sh
@@ -80,6 +83,7 @@ jobs:
               f"dist/pkg_xdecarocore_{version}.zip",
               f"dist/lib_xdecarocore_{version}.zip",
               f"dist/lib_xdecarocorelegacy_{version}.zip",
+              f"dist/com_xdecarocore_{version}.zip",
               f"dist/plg_system_xdecarocore_{version}.zip",
           )
           for name in names:
@@ -94,6 +98,7 @@ jobs:
                   'pkg_xdecarocore.xml',
                   'lib_xdecarocore.zip',
                   'lib_xdecarocorelegacy.zip',
+                  'com_xdecarocore.zip',
                   'plg_system_xdecarocore.zip',
               }
               if set(package.namelist()) != expected:
