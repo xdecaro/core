@@ -19,6 +19,7 @@ $statusClass = static function (string $level): string {
 <div class="xdecaro-scope xdecaro-suite">
     <div class="xdecaro-suite__hero">
         <div>
+            <span class="xdecaro-suite__eyebrow"><?php echo Text::_('COM_XDECAROCORE_SUITE'); ?></span>
             <h2><?php echo Text::_('COM_XDECAROCORE_DIAGNOSTICS'); ?></h2>
             <p><?php echo Text::_('COM_XDECAROCORE_DIAGNOSTICS_DESC'); ?></p>
         </div>

@@ -74,7 +74,7 @@ $diagnosticClass = static function (string $level): string {
         <div class="xdecaro-card__body">
             <div class="xdecaro-table-wrap">
                 <table class="xdecaro-table">
-                    <thead><tr><th><?php echo Text::_('COM_XDECAROCORE_PRODUCT'); ?></th><th><?php echo Text::_('COM_XDECAROCORE_STATUS'); ?></th><th><?php echo Text::_('COM_XDECAROCORE_INSTALLED_VERSION'); ?></th><th><?php echo Text::_('COM_XDECAROCORE_AVAILABLE_VERSION'); ?></th><th></th></tr></thead>
+                    <thead><tr><th><?php echo Text::_('COM_XDECAROCORE_PRODUCT'); ?></th><th><?php echo Text::_('COM_XDECAROCORE_STATUS'); ?></th><th><?php echo Text::_('COM_XDECAROCORE_INSTALLED_VERSION'); ?></th><th><?php echo Text::_('COM_XDECAROCORE_AVAILABLE_VERSION'); ?></th><th><?php echo Text::_('COM_XDECAROCORE_ACTIONS'); ?></th></tr></thead>
                     <tbody>
                     <?php foreach ($products as $product) : ?>
                         <tr>
@@ -82,7 +82,7 @@ $diagnosticClass = static function (string $level): string {
                             <td><span class="xdecaro-badge <?php echo $statusClass($product['status']); ?>"><?php echo $statusLabel($product['status']); ?></span></td>
                             <td><?php echo $product['installed_version'] !== '' ? htmlspecialchars($product['installed_version'], ENT_QUOTES, 'UTF-8') : '—'; ?></td>
                             <td><?php echo $product['available_version'] !== '' ? htmlspecialchars($product['available_version'], ENT_QUOTES, 'UTF-8') : '—'; ?></td>
-                            <td><?php if ($product['open_url'] !== '') : ?><a class="xdecaro-button" href="<?php echo htmlspecialchars($product['open_url'], ENT_QUOTES, 'UTF-8'); ?>"><?php echo Text::_('COM_XDECAROCORE_OPEN'); ?></a><?php endif; ?></td>
+                            <td><?php if ($product['open_url'] !== '') : ?><a class="xdecaro-button" href="<?php echo htmlspecialchars($product['open_url'], ENT_QUOTES, 'UTF-8'); ?>"><?php echo Text::_('COM_XDECAROCORE_OPEN'); ?></a><?php else : ?>—<?php endif; ?></td>
                         </tr>
                     <?php endforeach; ?>
                     </tbody>

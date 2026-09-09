@@ -3,6 +3,18 @@
   <changelog>
     <element>pkg_xdecarocore</element>
     <type>package</type>
+    <version>1.5.4</version>
+    <change>
+      <item>Moved product Open actions into a dedicated Actions column so the Component column contains only product identity and package information.</item>
+      <item>Added the shared blue Suite eyebrow above every Core administrator page title for consistent hierarchy across Dashboard, Components, All extensions, Updates, Diagnostics and Information.</item>
+    </change>
+    <fix>
+      <item>Aligned the Core catalog and administrator asset metadata with the 1.5.4 release.</item>
+    </fix>
+  </changelog>
+  <changelog>
+    <element>pkg_xdecarocore</element>
+    <type>package</type>
     <version>1.5.3</version>
     <fix>
       <item>Corrected administrator Dashboard Web Asset Manager URIs so Joomla resolves the component stylesheet and script from their standard css and js media directories.</item>
