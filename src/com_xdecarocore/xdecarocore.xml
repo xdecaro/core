@@ -6,7 +6,7 @@
     <creationDate>2026-09-09</creationDate>
     <copyright>Copyright (C) 2026 Luca De Caro</copyright>
     <license>GNU General Public License version 2 or later</license>
-    <version>1.5.0</version>
+    <version>1.5.1</version>
     <description>COM_XDECAROCORE_XML_DESCRIPTION</description>
     <namespace path="src">xdecaro\Component\Core</namespace>
     <targetplatform name="joomla" version="(4|5|6).*" />
@@ -14,11 +14,11 @@
         <menu view="dashboard">COM_XDECAROCORE_MENU</menu>
         <submenu>
             <menu view="dashboard">COM_XDECAROCORE_DASHBOARD</menu>
-            <menu link="index.php?option=com_xdecarocore&amp;view=dashboard&amp;layout=products">COM_XDECAROCORE_PRODUCTS</menu>
-            <menu link="index.php?option=com_xdecarocore&amp;view=dashboard&amp;layout=extensions">COM_XDECAROCORE_EXTENSIONS</menu>
-            <menu link="index.php?option=com_xdecarocore&amp;view=dashboard&amp;layout=updates">COM_XDECAROCORE_UPDATES</menu>
-            <menu link="index.php?option=com_xdecarocore&amp;view=dashboard&amp;layout=diagnostics">COM_XDECAROCORE_DIAGNOSTICS</menu>
-            <menu link="index.php?option=com_xdecarocore&amp;view=dashboard&amp;layout=information">COM_XDECAROCORE_INFORMATION</menu>
+            <menu link="option=com_xdecarocore&amp;view=dashboard&amp;layout=products">COM_XDECAROCORE_PRODUCTS</menu>
+            <menu link="option=com_xdecarocore&amp;view=dashboard&amp;layout=extensions">COM_XDECAROCORE_EXTENSIONS</menu>
+            <menu link="option=com_xdecarocore&amp;view=dashboard&amp;layout=updates">COM_XDECAROCORE_UPDATES</menu>
+            <menu link="option=com_xdecarocore&amp;view=dashboard&amp;layout=diagnostics">COM_XDECAROCORE_DIAGNOSTICS</menu>
+            <menu link="option=com_xdecarocore&amp;view=dashboard&amp;layout=information">COM_XDECAROCORE_INFORMATION</menu>
         </submenu>
         <files folder="admin">
             <filename>access.xml</filename>
