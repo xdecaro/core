@@ -61,7 +61,7 @@ $installationCoherent = $coreProduct !== null && $coreProduct['installed'] && !$
                     <span class="xdecaro-suite__eyebrow"><?php echo Text::_('COM_XDECAROCORE_PRODUCT_SECTION'); ?></span>
                     <h3 class="xdecaro-card__title"><?php echo Text::_('COM_XDECAROCORE_VERSIONS'); ?></h3>
                 </div>
-                <div>
+                <div class="xdecaro-suite__badge-slot">
                     <span class="xdecaro-badge <?php echo $installationCoherent ? 'xdecaro-badge--success' : 'xdecaro-badge--danger'; ?>">
                         <?php echo Text::_($installationCoherent ? 'COM_XDECAROCORE_COHERENT' : 'COM_XDECAROCORE_CHECK'); ?>
                     </span>
@@ -86,7 +86,7 @@ $installationCoherent = $coreProduct !== null && $coreProduct['installed'] && !$
                     <span class="xdecaro-suite__eyebrow"><?php echo Text::_('COM_XDECAROCORE_ENVIRONMENT'); ?></span>
                     <h3 class="xdecaro-card__title"><?php echo Text::_('COM_XDECAROCORE_SYSTEM'); ?></h3>
                 </div>
-                <div>
+                <div class="xdecaro-suite__badge-slot">
                     <span class="xdecaro-badge <?php echo $systemOk ? 'xdecaro-badge--success' : 'xdecaro-badge--danger'; ?>">
                         <?php echo Text::_($systemOk ? 'COM_XDECAROCORE_SYSTEM_OK' : 'COM_XDECAROCORE_SYSTEM_CHECK'); ?>
                     </span>
@@ -111,7 +111,7 @@ $installationCoherent = $coreProduct !== null && $coreProduct['installed'] && !$
                     <span class="xdecaro-suite__eyebrow"><?php echo Text::_('COM_XDECAROCORE_DEVELOPMENT'); ?></span>
                     <h3 class="xdecaro-card__title"><?php echo Text::_('COM_XDECAROCORE_COMMERCIAL_LICENSING'); ?></h3>
                 </div>
-                <div>
+                <div class="xdecaro-suite__badge-slot">
                     <span class="xdecaro-badge xdecaro-badge--warning"><?php echo Text::_('COM_XDECAROCORE_IN_DEVELOPMENT'); ?></span>
                 </div>
             </div>
