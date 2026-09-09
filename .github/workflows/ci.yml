@@ -96,6 +96,7 @@ jobs:
           with zipfile.ZipFile(names[0]) as package:
               expected = {
                   'pkg_xdecarocore.xml',
+                  'script.php',
                   'lib_xdecarocore.zip',
                   'lib_xdecarocorelegacy.zip',
                   'com_xdecarocore.zip',
@@ -103,4 +104,6 @@ jobs:
               }
               if set(package.namelist()) != expected:
                   raise SystemExit('Unexpected Core package contents')
+              if '<scriptfile>script.php</scriptfile>' not in package.read('pkg_xdecarocore.xml').decode():
+                  raise SystemExit('Core installer script is not declared')
           PY
