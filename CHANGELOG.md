@@ -4,6 +4,35 @@ All notable changes to **Core by xdecaro** are documented here.
 
 The project follows Semantic Versioning.
 
+## 1.5.8 — 2026-09-09
+
+### Fixed
+
+- Prevented Components, All extensions and other technical tables from expanding the Joomla administrator canvas at intermediate tablet widths; the measured Core content area can now switch to record cards before intrinsic table width exceeds the available column.
+- Added structural `min-width: 0` / `max-width: 100%` guards so Core cards, heroes, bodies and table wrappers cannot force document-level horizontal overflow.
+- Phone Dashboard metrics now use the reviewed **2 + 2 + 1** arrangement instead of five full-width rows.
+- Dashboard product inventory, Components, All extensions and Updates now use compact paired-field cards on narrow containers, with a one-column fallback only for exceptionally narrow content.
+- Added iOS safe-area spacing around Joomla administrator chrome on Core mobile pages.
+
+### Changed
+
+- Secondary Core views now expose Joomla-native **Back** navigation to the xdecaro Dashboard.
+- Administrators now receive Joomla-native **Options**, backed by a minimal `config.xml` permissions surface for future Core settings.
+- All extensions keeps the technical element with the mobile card heading and pairs Type/Version and State/Package ID.
+- Components uses a shorter disabled-extension warning in compact layouts while retaining the full diagnostic wording elsewhere.
+
+### Tests
+
+- Added regression guards for the 55rem container threshold, anti-overflow constraints, 2 + 2 + 1 metrics, compact technical cards, safe areas and native toolbar actions.
+- Runtime upgrade coverage now installs Core 1.5.7 before upgrading to 1.5.8 on Joomla 5.4.8 and 6.1.3.
+- Runtime installation verifies the responsive Web Asset, native Options configuration and installed responsive CSS contract.
+
+### Compatibility
+
+- Existing `xdecaro\Core` public integration contracts remain unchanged.
+- The temporary `Xdecaro\Core` legacy namespace compatibility library remains packaged.
+- No database changes, migrations or product-data changes are introduced.
+
 ## 1.5.7 — 2026-09-09
 
 ### Fixed
