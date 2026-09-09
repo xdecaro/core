@@ -53,6 +53,9 @@ $extensionLabel = static function (array $extension): string {
 
     return $fallback !== '' ? ucwords($fallback) : ($element !== '' ? $element : $name);
 };
+$label = static function (string $key): string {
+    return htmlspecialchars(Text::_($key), ENT_QUOTES, 'UTF-8');
+};
 ?>
 <div class="xdecaro-scope xdecaro-suite">
     <div class="xdecaro-suite__hero">
@@ -65,8 +68,8 @@ $extensionLabel = static function (array $extension): string {
 
     <div class="xdecaro-card">
         <div class="xdecaro-card__body">
-            <div class="xdecaro-table-wrap">
-                <table class="xdecaro-table xdecaro-suite__products-table">
+            <div class="xdecaro-table-wrap xdecaro-suite__responsive-wrap">
+                <table class="xdecaro-table xdecaro-suite__products-table xdecaro-suite__responsive-table">
                     <thead>
                         <tr>
                             <th><?php echo Text::_('COM_XDECAROCORE_PRODUCT'); ?></th>
@@ -85,20 +88,20 @@ $extensionLabel = static function (array $extension): string {
                         $children = $product['children'];
                         ?>
                         <tr class="xdecaro-suite__product-row">
-                            <td>
+                            <td data-label="<?php echo $label('COM_XDECAROCORE_PRODUCT'); ?>">
                                 <strong><?php echo htmlspecialchars($product['name'], ENT_QUOTES, 'UTF-8'); ?></strong>
                                 <div class="xdecaro-suite__muted"><?php echo $product['package'] !== '' ? htmlspecialchars($product['package'], ENT_QUOTES, 'UTF-8') : '—'; ?></div>
                             </td>
-                            <td>
+                            <td data-label="<?php echo $label('COM_XDECAROCORE_STATUS'); ?>">
                                 <span class="xdecaro-badge <?php echo $statusClass($product['status']); ?>"><?php echo $statusLabel($product['status']); ?></span>
                                 <?php if ($product['disabled_count'] > 0) : ?>
                                     <div class="xdecaro-suite__warning"><?php echo Text::sprintf('COM_XDECAROCORE_DISABLED_CHILDREN', (int) $product['disabled_count']); ?></div>
                                 <?php endif; ?>
                             </td>
-                            <td><span class="xdecaro-badge <?php echo $channelClass($product['channel']); ?>"><?php echo $channelLabel($product['channel']); ?></span></td>
-                            <td><?php echo $product['installed_version'] !== '' ? htmlspecialchars($product['installed_version'], ENT_QUOTES, 'UTF-8') : '—'; ?></td>
-                            <td><?php echo $product['available_version'] !== '' ? htmlspecialchars($product['available_version'], ENT_QUOTES, 'UTF-8') : '—'; ?></td>
-                            <td>
+                            <td data-label="<?php echo $label('COM_XDECAROCORE_CHANNEL'); ?>"><span class="xdecaro-badge <?php echo $channelClass($product['channel']); ?>"><?php echo $channelLabel($product['channel']); ?></span></td>
+                            <td data-label="<?php echo $label('COM_XDECAROCORE_INSTALLED_VERSION'); ?>"><?php echo $product['installed_version'] !== '' ? htmlspecialchars($product['installed_version'], ENT_QUOTES, 'UTF-8') : '—'; ?></td>
+                            <td data-label="<?php echo $label('COM_XDECAROCORE_AVAILABLE_VERSION'); ?>"><?php echo $product['available_version'] !== '' ? htmlspecialchars($product['available_version'], ENT_QUOTES, 'UTF-8') : '—'; ?></td>
+                            <td data-label="<?php echo $label('COM_XDECAROCORE_CONTENTS'); ?>">
                                 <?php if ($children) : ?>
                                     <button
                                         type="button"
@@ -114,7 +117,7 @@ $extensionLabel = static function (array $extension): string {
                                     <span class="xdecaro-suite__muted"><?php echo Text::_('COM_XDECAROCORE_NO_INSTALLED_CHILDREN'); ?></span>
                                 <?php endif; ?>
                             </td>
-                            <td class="xdecaro-suite__action-cell">
+                            <td class="xdecaro-suite__action-cell" data-label="<?php echo $label('COM_XDECAROCORE_ACTIONS'); ?>">
                                 <?php if ($product['open_url'] !== '') : ?>
                                     <a class="xdecaro-button" href="<?php echo htmlspecialchars($product['open_url'], ENT_QUOTES, 'UTF-8'); ?>"><?php echo Text::_('COM_XDECAROCORE_OPEN'); ?></a>
                                 <?php else : ?>
@@ -133,8 +136,8 @@ $extensionLabel = static function (array $extension): string {
                                                     <strong><?php echo htmlspecialchars($product['name'], ENT_QUOTES, 'UTF-8'); ?> · <?php echo Text::_('COM_XDECAROCORE_INCLUDED_EXTENSIONS'); ?></strong>
                                                     <span class="xdecaro-suite__muted"><?php echo Text::sprintf('COM_XDECAROCORE_EXTENSION_COUNT', count($children)); ?></span>
                                                 </div>
-                                                <div class="xdecaro-table-wrap">
-                                                    <table class="xdecaro-table xdecaro-suite__child-table">
+                                                <div class="xdecaro-table-wrap xdecaro-suite__responsive-wrap">
+                                                    <table class="xdecaro-table xdecaro-suite__child-table xdecaro-suite__responsive-table">
                                                         <thead>
                                                             <tr>
                                                                 <th><?php echo Text::_('COM_XDECAROCORE_EXTENSION'); ?></th>
@@ -149,12 +152,12 @@ $extensionLabel = static function (array $extension): string {
                                                         <?php foreach ($children as $child) : ?>
                                                             <?php $switchable = in_array($child['type'], ['plugin', 'module'], true); ?>
                                                             <tr>
-                                                                <td><strong><?php echo htmlspecialchars($extensionLabel($child), ENT_QUOTES, 'UTF-8'); ?></strong></td>
-                                                                <td><?php echo htmlspecialchars($child['type'], ENT_QUOTES, 'UTF-8'); ?></td>
-                                                                <td><code><?php echo htmlspecialchars($child['element'], ENT_QUOTES, 'UTF-8'); ?></code></td>
-                                                                <td><?php echo $child['folder'] !== '' ? htmlspecialchars($child['folder'], ENT_QUOTES, 'UTF-8') : '—'; ?></td>
-                                                                <td><?php echo $child['version'] !== '' ? htmlspecialchars($child['version'], ENT_QUOTES, 'UTF-8') : '—'; ?></td>
-                                                                <td>
+                                                                <td data-label="<?php echo $label('COM_XDECAROCORE_EXTENSION'); ?>"><strong><?php echo htmlspecialchars($extensionLabel($child), ENT_QUOTES, 'UTF-8'); ?></strong></td>
+                                                                <td data-label="<?php echo $label('COM_XDECAROCORE_TYPE'); ?>"><?php echo htmlspecialchars($child['type'], ENT_QUOTES, 'UTF-8'); ?></td>
+                                                                <td data-label="<?php echo $label('COM_XDECAROCORE_ELEMENT'); ?>"><code><?php echo htmlspecialchars($child['element'], ENT_QUOTES, 'UTF-8'); ?></code></td>
+                                                                <td data-label="<?php echo $label('COM_XDECAROCORE_FOLDER_GROUP'); ?>"><?php echo $child['folder'] !== '' ? htmlspecialchars($child['folder'], ENT_QUOTES, 'UTF-8') : '—'; ?></td>
+                                                                <td data-label="<?php echo $label('COM_XDECAROCORE_VERSION'); ?>"><?php echo $child['version'] !== '' ? htmlspecialchars($child['version'], ENT_QUOTES, 'UTF-8') : '—'; ?></td>
+                                                                <td data-label="<?php echo $label('COM_XDECAROCORE_STATE'); ?>">
                                                                     <span class="xdecaro-badge <?php echo (!$switchable || (int) $child['enabled'] === 1) ? 'xdecaro-badge--success' : 'xdecaro-badge--warning'; ?>">
                                                                         <?php echo (!$switchable || (int) $child['enabled'] === 1) ? Text::_('JENABLED') : Text::_('JDISABLED'); ?>
                                                                     </span>
