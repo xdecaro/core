@@ -1,6 +1,6 @@
-/* Core by xdecaro 1.5.10 - responsive administrator refinements. */
+/* Core by xdecaro 1.5.11 - responsive administrator refinements. */
 
-/* Keep package-count text and chevron perfectly centered on the same axis. */
+/* Keep package-count text and geometric chevron perfectly centered on the same axis. */
 .xdecaro-suite__filter-button {
     display: inline-flex;
     align-items: center;
@@ -13,19 +13,20 @@
 }
 
 .xdecaro-suite__chevron {
-    display: inline-flex;
-    width: 1rem;
-    height: 1rem;
-    align-items: center;
-    justify-content: center;
-    line-height: 1;
-    transform: none;
+    display: inline-block;
+    flex: 0 0 0.75rem;
+    width: 0.55rem;
+    height: 0.55rem;
+    box-sizing: border-box;
+    border-right: 0.125rem solid currentColor;
+    border-bottom: 0.125rem solid currentColor;
+    transform: rotate(45deg);
     transform-origin: 50% 50%;
     transition: transform 0.2s ease;
 }
 
 .xdecaro-suite__filter-button[aria-expanded="true"] .xdecaro-suite__chevron {
-    transform: rotate(180deg);
+    transform: rotate(225deg);
 }
 
 /* Never let intrinsic table/card width enlarge the Joomla administrator canvas. */
