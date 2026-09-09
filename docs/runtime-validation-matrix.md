@@ -24,12 +24,12 @@ Distributed packages under the runtime gate:
 
 - Core `1.4.0`;
 - Courses `1.3.0`;
-- Forms `1.6.0`;
+- Forms `1.7.0`;
 - Competitions `1.1.0`;
 - Documents `1.2.2`;
 - Membership `1.2.0`;
 - Events `1.1.2`;
-- Editor `0.1.0-alpha5`;
+- Editor `0.1.0-alpha6`;
 - Finance `1.1.0`;
 - Protocol `1.4.0`.
 
@@ -52,6 +52,8 @@ The hard-dependency assertion deliberately does not trust only the exit status o
 Documents additionally owns repository-level clean-install, `1.2.0 -> 1.2.2` repair and missing-Core rejection tests on Joomla 5.4.8 and 6.1.3. These tests verify the Joomla SQL manifest repair, preserve the non-destructive `CREATE TABLE IF NOT EXISTS` recovery path and prove that the mandatory Core preflight leaves no package/component registration or component files behind.
 
 Events additionally owns repository-level clean-install, `1.1.1 -> 1.1.2` repair and missing-Core rejection tests on Joomla 5.4.8 and 6.1.3. These tests verify the corrected package installer class, Joomla SQL manifest compatibility and non-destructive repair of Events-owned tables.
+
+Forms additionally owns a Joomla 6.1.3 integration gate for Forms `1.7.0` and Editor `0.1.0-alpha6`. It proves that Forms installs and keeps the raw textarea fallback when Editor is absent, then installs/enables Editor, resolves `decaroeditor` through Joomla `EditorsRegistry`, and validates the installed editor bridge. Forms remains independent of Editor private classes and keeps its existing save/ACL/CSRF boundary.
 
 Protocol additionally owns a repository-level functional integration gate that installs Core `1.4.0`, Documents `1.2.2` and Protocol `1.4.0` together on Joomla 5.4.8 and 6.1.3. It verifies clean installation and repair from published Protocol `1.2.0`, validates the installed schemas, rejects direct Protocol access to `#__decarodocuments_*`, and exercises the provider-owned Documents relation API end to end: attach and read on a draft record, protocol finalization, then server-side rejection of further attach/detach operations. Protocol enforces Documents `1.2.1+` for this optional integration.
 
@@ -126,6 +128,8 @@ Record PASS / FAIL / N/A with Joomla version, PHP version, product version and d
 ### Editor
 - Core remains optional;
 - Joomla editor plugin/canvas/media/history continue to work without Core;
+- Editor `0.1.0-alpha6` registers through Joomla `EditorsRegistry` for provider-based consumers;
+- Forms `1.7.0` consumes only that Joomla provider boundary and keeps its raw textarea fallback when Editor is unavailable;
 - shared Core assets do not absorb editor behavior.
 
 ### Finance
