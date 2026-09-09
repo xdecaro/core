@@ -16,6 +16,7 @@ foreach ($products as $product) {
 <div class="xdecaro-scope xdecaro-suite">
     <div class="xdecaro-suite__hero">
         <div>
+            <span class="xdecaro-suite__eyebrow"><?php echo Text::_('COM_XDECAROCORE_SUITE'); ?></span>
             <h2><?php echo Text::_('COM_XDECAROCORE_UPDATES'); ?></h2>
             <p><?php echo Text::_('COM_XDECAROCORE_UPDATES_DESC'); ?></p>
         </div>
