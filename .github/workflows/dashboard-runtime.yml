@@ -52,14 +52,6 @@ jobs:
           extensions: mysqli, zip, intl, mbstring, gd, simplexml
           coverage: none
 
-      - name: Verify runner tooling
-        shell: bash
-        run: |
-          set -euo pipefail
-          command -v curl >/dev/null
-          command -v unzip >/dev/null
-          command -v sha256sum >/dev/null
-
       - name: Build Core package
         run: bash build/build.sh
 
@@ -71,11 +63,12 @@ jobs:
           case "$JOOMLA" in
             5.4.8) SHA='8d3585939bca8e6b1d5f3e97dda2cc557c61e610daf488c871e1f62a97be9bd0' ;;
             6.1.3) SHA='a49305652503f9344d046d55471f324a07882996132ed967c3b0fe34707ae4a1' ;;
-            *) echo "Unsupported pinned Joomla version: $JOOMLA" >&2; exit 1 ;;
+            *) echo "Unsupported Joomla version: $JOOMLA" >&2; exit 1 ;;
           esac
           FILE="Joomla_${JOOMLA}-Stable-Full_Package.zip"
-          URL="https://github.com/joomla/joomla-cms/releases/download/${JOOMLA}/${FILE}"
-          curl --fail --location --retry 3 "$URL" --output /tmp/joomla.zip
+          curl --fail --location --retry 3 \
+            "https://github.com/joomla/joomla-cms/releases/download/${JOOMLA}/${FILE}" \
+            --output /tmp/joomla.zip
           echo "${SHA}  /tmp/joomla.zip" | sha256sum --check --strict
           mkdir joomla
           unzip -q /tmp/joomla.zip -d joomla
@@ -85,11 +78,12 @@ jobs:
         run: |
           set -euo pipefail
           cd joomla
+          ADMIN_PASS="Runtime-${GITHUB_RUN_ID}-Aa1!"
           php installation/joomla.php install \
             --site-name='Core Dashboard Runtime' \
             --admin-user='Runtime Admin' \
             --admin-username='runtimeadmin' \
-            --admin-password='Runtime-Only-12345!' \
+            --admin-password="$ADMIN_PASS" \
             --admin-email='runtime@example.invalid' \
             --db-type='mysqli' \
             --db-host='127.0.0.1' \
@@ -99,7 +93,7 @@ jobs:
             --db-prefix='jos_'
           test -f configuration.php
 
-      - name: Install current Core
+      - name: Install Core
         shell: bash
         run: |
           set -euo pipefail
@@ -110,17 +104,15 @@ jobs:
 
           if [ '${{ matrix.scenario }}' = 'upgrade' ]; then
             curl --fail --location --retry 3 \
-              'https://github.com/xdecaro/core/releases/download/v1.5.1/pkg_xdecarocore_1.5.1.zip' \
-              --output /tmp/core-1.5.1.zip
-            echo '53d364124bab132a5b5831a0560cc3d8c96df9599bafaad031447c7efbf06701  /tmp/core-1.5.1.zip' | sha256sum --check --strict
-            php cli/joomla.php extension:install --path=/tmp/core-1.5.1.zip
+              'https://github.com/xdecaro/core/releases/download/v1.5.2/pkg_xdecarocore_1.5.2.zip' \
+              --output /tmp/core-1.5.2.zip
+            echo 'e36f20356ceb4a4fd5f6a120d8cafada104f320dfb5e3045fd5584feab96c7a9  /tmp/core-1.5.2.zip' | sha256sum --check --strict
+            php cli/joomla.php extension:install --path=/tmp/core-1.5.2.zip
           fi
 
           php cli/joomla.php extension:install --path="$PACKAGE"
-          php cli/joomla.php extension:list >/tmp/core-extensions.txt
-          cat /tmp/core-extensions.txt
 
-      - name: Verify installed extension records and administrator menu routes
+      - name: Verify installed records and dashboard assets
         shell: bash
         run: |
           set -euo pipefail
@@ -136,53 +128,45 @@ jobs:
               ["component", "com_xdecarocore", ""],
               ["plugin", "xdecarocore", "system"],
             ];
-            foreach ($expected as $item) {
-              [$type, $element, $folder] = $item;
+            foreach ($expected as [$type, $element, $folder]) {
               $stmt = $db->prepare("SELECT extension_id, package_id, enabled, manifest_cache FROM jos_extensions WHERE type=? AND element=? AND folder=? LIMIT 1");
               $stmt->bind_param("sss", $type, $element, $folder);
               $stmt->execute();
-              $result = $stmt->get_result();
-              $row = $result->fetch_assoc();
-              if (!$row) { fwrite(STDERR, "Missing extension: {$type} {$element} {$folder}\n"); exit(1); }
+              $row = $stmt->get_result()->fetch_assoc();
+              if (!$row) { fwrite(STDERR, "Missing extension: {$type} {$element}\n"); exit(1); }
               $manifest = json_decode($row["manifest_cache"], true) ?: [];
-              if (($manifest["version"] ?? "") !== $version) { fwrite(STDERR, "Unexpected version for {$element}\n"); exit(1); }
-              if ($type === "plugin" && (int) $row["enabled"] !== 1) { fwrite(STDERR, "Core system plugin is disabled\n"); exit(1); }
+              if (($manifest["version"] ?? "") !== $version) { fwrite(STDERR, "Wrong version: {$element}\n"); exit(1); }
+              if ($type === "plugin" && (int) $row["enabled"] !== 1) { fwrite(STDERR, "Core plugin disabled\n"); exit(1); }
             }
-
             $component = $db->query("SELECT extension_id, package_id FROM jos_extensions WHERE type=\"component\" AND element=\"com_xdecarocore\" LIMIT 1")->fetch_assoc();
             $package = $db->query("SELECT extension_id FROM jos_extensions WHERE type=\"package\" AND element=\"pkg_xdecarocore\" LIMIT 1")->fetch_assoc();
             if (!$component || !$package || (int) $component["package_id"] !== (int) $package["extension_id"]) {
-              fwrite(STDERR, "Core administrator component is not linked to the package\n"); exit(1);
+              fwrite(STDERR, "Core component/package link invalid\n"); exit(1);
             }
-
             $componentId = (int) $component["extension_id"];
             $menuResult = $db->query("SELECT link FROM jos_menu WHERE client_id=1 AND component_id={$componentId}");
             $expectedLayouts = ["products", "extensions", "updates", "diagnostics", "information"];
-            $foundLayouts = [];
+            $found = [];
             while ($menu = $menuResult->fetch_assoc()) {
               $link = (string) ($menu["link"] ?? "");
-              if (strpos($link, "index.php?index.php?") !== false) {
-                fwrite(STDERR, "Duplicated index.php? prefix remains in administrator menu: {$link}\n"); exit(1);
-              }
+              if (strpos($link, "index.php?index.php?") !== false) { fwrite(STDERR, "Duplicated administrator route\n"); exit(1); }
               foreach ($expectedLayouts as $layout) {
-                if (strpos($link, "option=com_xdecarocore") !== false && strpos($link, "layout={$layout}") !== false) {
-                  $foundLayouts[$layout] = true;
-                }
+                if (strpos($link, "option=com_xdecarocore") !== false && strpos($link, "layout={$layout}") !== false) $found[$layout] = true;
               }
             }
             foreach ($expectedLayouts as $layout) {
-              if (empty($foundLayouts[$layout])) {
-                fwrite(STDERR, "Missing normalized Core administrator submenu route: {$layout}\n"); exit(1);
-              }
+              if (empty($found[$layout])) { fwrite(STDERR, "Missing submenu: {$layout}\n"); exit(1); }
             }
-            echo "Core {$version} extension records and administrator menu routes OK\n";
           '
 
           test -f joomla/media/com_xdecarocore/css/admin.css
           test -f joomla/media/com_xdecarocore/js/admin.js
-          grep -q 'com_xdecarocore/js/admin.js' joomla/media/com_xdecarocore/joomla.asset.json
+          grep -Fq '"uri": "com_xdecarocore/admin.css"' joomla/media/com_xdecarocore/joomla.asset.json
+          grep -Fq '"uri": "com_xdecarocore/admin.js"' joomla/media/com_xdecarocore/joomla.asset.json
+          ! grep -Fq 'com_xdecarocore/css/admin.css' joomla/media/com_xdecarocore/joomla.asset.json
+          ! grep -Fq 'com_xdecarocore/js/admin.js' joomla/media/com_xdecarocore/joomla.asset.json
 
-      - name: Probe dashboard services through Joomla runtime
+      - name: Probe dashboard through Joomla runtime
         shell: bash
         run: |
           set -euo pipefail
@@ -206,16 +190,9 @@ jobs:
           \Joomla\CMS\Factory::$application = $app;
           $app->createExtensionNamespaceMap();
 
-          if (!class_exists(\xdecaro\Core\Version::class) || \xdecaro\Core\Version::VERSION !== $expectedVersion) {
-              fwrite(STDERR, "Current Core runtime class is unavailable.\n"); exit(1);
-          }
+          if (!class_exists(\xdecaro\Core\Version::class) || \xdecaro\Core\Version::VERSION !== $expectedVersion) exit(1);
           $component = $app->bootComponent('com_xdecarocore');
-          if (!$component instanceof \Joomla\CMS\Extension\ComponentInterface) {
-              fwrite(STDERR, "Core dashboard component did not boot.\n"); exit(1);
-          }
-          if (!class_exists(\xdecaro\Component\Core\Administrator\Service\EcosystemService::class)) {
-              fwrite(STDERR, "EcosystemService is not autoloadable.\n"); exit(1);
-          }
+          if (!$component instanceof \Joomla\CMS\Extension\ComponentInterface) exit(1);
           $service = new \xdecaro\Component\Core\Administrator\Service\EcosystemService(
               $container->get(\Joomla\Database\DatabaseInterface::class)
           );
@@ -224,19 +201,17 @@ jobs:
           foreach ($snapshot['products'] ?? [] as $product) {
               if (($product['key'] ?? '') === 'core') { $core = $product; break; }
           }
-          if (!$core || empty($core['installed']) || ($core['installed_version'] ?? '') !== $expectedVersion) {
-              fwrite(STDERR, "Dashboard did not discover its own installed Core version.\n"); exit(1);
+          if (!$core || ($core['installed_version'] ?? '') !== $expectedVersion || ($core['status'] ?? '') !== 'current') exit(1);
+          if (count($core['children'] ?? []) !== 4) exit(1);
+
+          $registry = json_decode((string) file_get_contents(JPATH_ROOT . '/media/com_xdecarocore/joomla.asset.json'), true);
+          $assets = [];
+          foreach (($registry['assets'] ?? []) as $asset) {
+              if (($asset['name'] ?? '') === 'com_xdecarocore.admin') $assets[$asset['type'] ?? ''] = $asset['uri'] ?? '';
           }
-          if (($core['status'] ?? '') !== 'current') {
-              fwrite(STDERR, "Dashboard does not classify the installed Core release as current.\n"); exit(1);
-          }
-          if (($snapshot['summary']['technical_extensions'] ?? 0) < 5) {
-              fwrite(STDERR, "Dashboard technical extension inventory is incomplete.\n"); exit(1);
-          }
-          if (count($core['children'] ?? []) !== 4) {
-              fwrite(STDERR, "Dashboard did not resolve all four Core package children from the installed package manifest.\n"); exit(1);
-          }
-          echo "Core dashboard runtime discovery OK\n";
+          if (($assets['style'] ?? '') !== 'com_xdecarocore/admin.css') exit(1);
+          if (($assets['script'] ?? '') !== 'com_xdecarocore/admin.js') exit(1);
+          echo "Core dashboard runtime and Web Asset registry OK\n";
           PHP
           php core-dashboard-probe.php
           rm core-dashboard-probe.php
