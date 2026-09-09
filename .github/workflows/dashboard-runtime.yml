@@ -104,10 +104,10 @@ jobs:
 
           if [ '${{ matrix.scenario }}' = 'upgrade' ]; then
             curl --fail --location --retry 3 \
-              'https://github.com/xdecaro/core/releases/download/v1.5.5/pkg_xdecarocore_1.5.5.zip' \
-              --output /tmp/core-1.5.5.zip
-            echo 'a54ebb95e33d6a24bd5e0ff7950cdd6c12d53583737409f1e7797214b76593f3  /tmp/core-1.5.5.zip' | sha256sum --check --strict
-            php cli/joomla.php extension:install --path=/tmp/core-1.5.5.zip
+              'https://github.com/xdecaro/core/releases/download/v1.5.7/pkg_xdecarocore_1.5.7.zip' \
+              --output /tmp/core-1.5.7.zip
+            echo '79ff5f26a667a42490d90a575723f415ca0f8ddc97c83a209b5dbc1615a564b1  /tmp/core-1.5.7.zip' | sha256sum --check --strict
+            php cli/joomla.php extension:install --path=/tmp/core-1.5.7.zip
           fi
 
           php cli/joomla.php extension:install --path="$PACKAGE"
@@ -159,14 +159,20 @@ jobs:
             }
           '
 
+          test -f joomla/administrator/components/com_xdecarocore/config.xml
           test -f joomla/media/com_xdecarocore/css/admin.css
+          test -f joomla/media/com_xdecarocore/css/responsive.css
           test -f joomla/media/com_xdecarocore/js/admin.js
           grep -Fq '"uri": "com_xdecarocore/admin.css"' joomla/media/com_xdecarocore/joomla.asset.json
+          grep -Fq '"uri": "com_xdecarocore/responsive.css"' joomla/media/com_xdecarocore/joomla.asset.json
           grep -Fq '"uri": "com_xdecarocore/admin.js"' joomla/media/com_xdecarocore/joomla.asset.json
           ! grep -Fq 'com_xdecarocore/css/admin.css' joomla/media/com_xdecarocore/joomla.asset.json
+          ! grep -Fq 'com_xdecarocore/css/responsive.css' joomla/media/com_xdecarocore/joomla.asset.json
           ! grep -Fq 'com_xdecarocore/js/admin.js' joomla/media/com_xdecarocore/joomla.asset.json
           grep -Fq 'container-name: xdecaro-suite' joomla/media/com_xdecarocore/css/admin.css
-          grep -Fq '@container xdecaro-suite (max-width: 38rem)' joomla/media/com_xdecarocore/css/admin.css
+          grep -Fq '@container xdecaro-suite (max-width: 55rem)' joomla/media/com_xdecarocore/css/responsive.css
+          grep -Fq 'safe-area-inset-top' joomla/media/com_xdecarocore/css/responsive.css
+          grep -Fq 'safe-area-inset-bottom' joomla/media/com_xdecarocore/css/responsive.css
 
       - name: Probe dashboard through Joomla runtime
         shell: bash
@@ -209,11 +215,14 @@ jobs:
           $registry = json_decode((string) file_get_contents(JPATH_ROOT . '/media/com_xdecarocore/joomla.asset.json'), true);
           $assets = [];
           foreach (($registry['assets'] ?? []) as $asset) {
-              if (($asset['name'] ?? '') === 'com_xdecarocore.admin') $assets[$asset['type'] ?? ''] = $asset['uri'] ?? '';
+              $name = (string) ($asset['name'] ?? '');
+              $type = (string) ($asset['type'] ?? '');
+              if ($name !== '' && $type !== '') $assets[$name . ':' . $type] = $asset['uri'] ?? '';
           }
-          if (($assets['style'] ?? '') !== 'com_xdecarocore/admin.css') exit(1);
-          if (($assets['script'] ?? '') !== 'com_xdecarocore/admin.js') exit(1);
-          echo "Core dashboard runtime and Web Asset registry OK\n";
+          if (($assets['com_xdecarocore.admin:style'] ?? '') !== 'com_xdecarocore/admin.css') exit(1);
+          if (($assets['com_xdecarocore.responsive:style'] ?? '') !== 'com_xdecarocore/responsive.css') exit(1);
+          if (($assets['com_xdecarocore.admin:script'] ?? '') !== 'com_xdecarocore/admin.js') exit(1);
+          echo "Core dashboard runtime, responsive assets and Web Asset registry OK\n";
           PHP
           php core-dashboard-probe.php
           rm core-dashboard-probe.php
