@@ -61,9 +61,11 @@ $installationCoherent = $coreProduct !== null && $coreProduct['installed'] && !$
                     <span class="xdecaro-suite__eyebrow"><?php echo Text::_('COM_XDECAROCORE_PRODUCT_SECTION'); ?></span>
                     <h3 class="xdecaro-card__title"><?php echo Text::_('COM_XDECAROCORE_VERSIONS'); ?></h3>
                 </div>
-                <span class="xdecaro-badge <?php echo $installationCoherent ? 'xdecaro-badge--success' : 'xdecaro-badge--danger'; ?>">
-                    <?php echo Text::_($installationCoherent ? 'COM_XDECAROCORE_COHERENT' : 'COM_XDECAROCORE_CHECK'); ?>
-                </span>
+                <div>
+                    <span class="xdecaro-badge <?php echo $installationCoherent ? 'xdecaro-badge--success' : 'xdecaro-badge--danger'; ?>">
+                        <?php echo Text::_($installationCoherent ? 'COM_XDECAROCORE_COHERENT' : 'COM_XDECAROCORE_CHECK'); ?>
+                    </span>
+                </div>
             </div>
             <div class="xdecaro-card__body">
                 <dl class="xdecaro-suite__definition-list">
@@ -84,9 +86,11 @@ $installationCoherent = $coreProduct !== null && $coreProduct['installed'] && !$
                     <span class="xdecaro-suite__eyebrow"><?php echo Text::_('COM_XDECAROCORE_ENVIRONMENT'); ?></span>
                     <h3 class="xdecaro-card__title"><?php echo Text::_('COM_XDECAROCORE_SYSTEM'); ?></h3>
                 </div>
-                <span class="xdecaro-badge <?php echo $systemOk ? 'xdecaro-badge--success' : 'xdecaro-badge--danger'; ?>">
-                    <?php echo Text::_($systemOk ? 'COM_XDECAROCORE_SYSTEM_OK' : 'COM_XDECAROCORE_SYSTEM_CHECK'); ?>
-                </span>
+                <div>
+                    <span class="xdecaro-badge <?php echo $systemOk ? 'xdecaro-badge--success' : 'xdecaro-badge--danger'; ?>">
+                        <?php echo Text::_($systemOk ? 'COM_XDECAROCORE_SYSTEM_OK' : 'COM_XDECAROCORE_SYSTEM_CHECK'); ?>
+                    </span>
+                </div>
             </div>
             <div class="xdecaro-card__body">
                 <dl class="xdecaro-suite__definition-list">
@@ -107,7 +111,9 @@ $installationCoherent = $coreProduct !== null && $coreProduct['installed'] && !$
                     <span class="xdecaro-suite__eyebrow"><?php echo Text::_('COM_XDECAROCORE_DEVELOPMENT'); ?></span>
                     <h3 class="xdecaro-card__title"><?php echo Text::_('COM_XDECAROCORE_COMMERCIAL_LICENSING'); ?></h3>
                 </div>
-                <span class="xdecaro-badge xdecaro-badge--warning"><?php echo Text::_('COM_XDECAROCORE_IN_DEVELOPMENT'); ?></span>
+                <div>
+                    <span class="xdecaro-badge xdecaro-badge--warning"><?php echo Text::_('COM_XDECAROCORE_IN_DEVELOPMENT'); ?></span>
+                </div>
             </div>
             <div class="xdecaro-card__body">
                 <p class="xdecaro-suite__note"><?php echo Text::_('COM_XDECAROCORE_LICENSING_DEFERRED'); ?></p>
