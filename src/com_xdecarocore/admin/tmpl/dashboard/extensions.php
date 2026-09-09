@@ -40,15 +40,19 @@ $label = static function (string $key): string {
                 <div class="xdecaro-empty"><?php echo Text::_('COM_XDECAROCORE_NO_EXTENSIONS'); ?></div>
             <?php else : ?>
                 <div class="xdecaro-table-wrap xdecaro-suite__responsive-wrap">
-                    <table class="xdecaro-table xdecaro-suite__responsive-table">
+                    <table class="xdecaro-table xdecaro-suite__responsive-table xdecaro-suite__extensions-table">
                         <thead><tr><th><?php echo Text::_('COM_XDECAROCORE_EXTENSION'); ?></th><th><?php echo Text::_('COM_XDECAROCORE_TYPE'); ?></th><th><?php echo Text::_('COM_XDECAROCORE_ELEMENT'); ?></th><th><?php echo Text::_('COM_XDECAROCORE_VERSION'); ?></th><th><?php echo Text::_('COM_XDECAROCORE_STATE'); ?></th><th><?php echo Text::_('COM_XDECAROCORE_PACKAGE_ID'); ?></th></tr></thead>
                         <tbody>
                         <?php foreach ($extensions as $extension) : ?>
                             <?php $switchable = in_array($extension['type'], ['plugin', 'module'], true); ?>
                             <tr>
-                                <td data-label="<?php echo $label('COM_XDECAROCORE_EXTENSION'); ?>"><strong><?php echo htmlspecialchars($extensionLabel($extension), ENT_QUOTES, 'UTF-8'); ?></strong><?php if ($extension['folder'] !== '') : ?><div class="xdecaro-suite__muted"><?php echo htmlspecialchars($extension['folder'], ENT_QUOTES, 'UTF-8'); ?></div><?php endif; ?></td>
+                                <td class="xdecaro-suite__extension-primary" data-label="<?php echo $label('COM_XDECAROCORE_EXTENSION'); ?>">
+                                    <strong><?php echo htmlspecialchars($extensionLabel($extension), ENT_QUOTES, 'UTF-8'); ?></strong>
+                                    <div class="xdecaro-suite__extension-element-mobile xdecaro-suite__muted"><code><?php echo htmlspecialchars($extension['element'], ENT_QUOTES, 'UTF-8'); ?></code></div>
+                                    <?php if ($extension['folder'] !== '') : ?><div class="xdecaro-suite__muted"><?php echo htmlspecialchars($extension['folder'], ENT_QUOTES, 'UTF-8'); ?></div><?php endif; ?>
+                                </td>
                                 <td data-label="<?php echo $label('COM_XDECAROCORE_TYPE'); ?>"><?php echo htmlspecialchars($extension['type'], ENT_QUOTES, 'UTF-8'); ?></td>
-                                <td data-label="<?php echo $label('COM_XDECAROCORE_ELEMENT'); ?>"><code><?php echo htmlspecialchars($extension['element'], ENT_QUOTES, 'UTF-8'); ?></code></td>
+                                <td class="xdecaro-suite__extension-element-cell" data-label="<?php echo $label('COM_XDECAROCORE_ELEMENT'); ?>"><code><?php echo htmlspecialchars($extension['element'], ENT_QUOTES, 'UTF-8'); ?></code></td>
                                 <td data-label="<?php echo $label('COM_XDECAROCORE_VERSION'); ?>"><?php echo $extension['version'] !== '' ? htmlspecialchars($extension['version'], ENT_QUOTES, 'UTF-8') : '—'; ?></td>
                                 <td data-label="<?php echo $label('COM_XDECAROCORE_STATE'); ?>"><span class="xdecaro-badge <?php echo (!$switchable || (int) $extension['enabled'] === 1) ? 'xdecaro-badge--success' : 'xdecaro-badge--warning'; ?>"><?php echo (!$switchable || (int) $extension['enabled'] === 1) ? Text::_('JENABLED') : Text::_('JDISABLED'); ?></span></td>
                                 <td data-label="<?php echo $label('COM_XDECAROCORE_PACKAGE_ID'); ?>"><?php echo (int) $extension['package_id'] > 0 ? (int) $extension['package_id'] : '—'; ?></td>

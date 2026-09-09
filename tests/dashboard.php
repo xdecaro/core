@@ -1,6 +1,7 @@
 <?php
 /**
- * Dependency-free smoke test for the Core ecosystem dashboard catalog, UI assets and menu contract.
+ * Dependency-free smoke test for the Core ecosystem dashboard catalog, UI assets, responsive
+ * contracts and Joomla administrator navigation.
  */
 
 namespace Joomla\Database {
@@ -28,7 +29,7 @@ namespace {
     }
 
     $required = [
-        'core' => ['pkg_xdecarocore', '1.5.7'],
+        'core' => ['pkg_xdecarocore', '1.5.8'],
         'forms' => ['pkg_decaroforms', '1.7.0'],
         'courses' => ['pkg_decarocourses', '1.5.0'],
         'competitions' => ['pkg_xdecarocompetitions', '1.3.0'],
@@ -85,6 +86,16 @@ namespace {
         }
     }
 
+    $adminFiles = [];
+    foreach ($manifest->administration->files->children() as $file) {
+        if ($file->getName() === 'filename') {
+            $adminFiles[] = trim((string) $file);
+        }
+    }
+    if (!in_array('config.xml', $adminFiles, true) || !is_file(__DIR__ . '/../src/com_xdecarocore/admin/config.xml')) {
+        throw new \RuntimeException('Native Joomla component Options configuration is not packaged.');
+    }
+
     file_put_contents(
         $manifestRoot . '/packages/pkg_decaroforms.xml',
         '<?xml version="1.0"?><extension type="package"><files>'
@@ -131,19 +142,34 @@ namespace {
     }
 
     $assetRegistry = json_decode(file_get_contents(__DIR__ . '/../src/com_xdecarocore/media/joomla.asset.json'), true);
-    $assetTypes = [];
+    $assets = [];
     foreach (($assetRegistry['assets'] ?? []) as $asset) {
-        if (($asset['name'] ?? '') === 'com_xdecarocore.admin') {
-            $assetTypes[$asset['type'] ?? ''] = $asset['uri'] ?? '';
+        $name = (string) ($asset['name'] ?? '');
+        $type = (string) ($asset['type'] ?? '');
+        if ($name !== '' && $type !== '') {
+            $assets[$name . ':' . $type] = $asset;
         }
     }
-    if (($assetTypes['style'] ?? '') !== 'com_xdecarocore/admin.css'
-        || ($assetTypes['script'] ?? '') !== 'com_xdecarocore/admin.js'
-        || !is_file(__DIR__ . '/../src/com_xdecarocore/media/js/admin.js')) {
-        throw new \RuntimeException('Dashboard style/script Web Asset Manager URIs are incomplete or invalid.');
+
+    $expectedAssets = [
+        'com_xdecarocore.admin:style' => 'com_xdecarocore/admin.css',
+        'com_xdecarocore.responsive:style' => 'com_xdecarocore/responsive.css',
+        'com_xdecarocore.admin:script' => 'com_xdecarocore/admin.js',
+    ];
+    foreach ($expectedAssets as $key => $uri) {
+        if (($assets[$key]['uri'] ?? '') !== $uri) {
+            throw new \RuntimeException('Dashboard Web Asset Manager entry is incomplete: ' . $key);
+        }
+        if (strpos($uri, '/css/') !== false || strpos($uri, '/js/') !== false) {
+            throw new \RuntimeException('Dashboard Web Asset Manager URI duplicates a Joomla media type directory.');
+        }
     }
-    if (strpos($assetTypes['style'] ?? '', '/css/') !== false || strpos($assetTypes['script'] ?? '', '/js/') !== false) {
-        throw new \RuntimeException('Dashboard Web Asset Manager URIs must not duplicate Joomla css/js media directories.');
+    if (($assets['com_xdecarocore.responsive:style']['dependencies'][0] ?? '') !== 'com_xdecarocore.admin') {
+        throw new \RuntimeException('Responsive dashboard style must depend on the base administrator style.');
+    }
+    if (!is_file(__DIR__ . '/../src/com_xdecarocore/media/css/responsive.css')
+        || !is_file(__DIR__ . '/../src/com_xdecarocore/media/js/admin.js')) {
+        throw new \RuntimeException('Dashboard responsive style/script files are missing.');
     }
 
     $templates = [
@@ -173,8 +199,14 @@ namespace {
         throw new \RuntimeException('Information card status badges must remain wrapped in compact badge slots.');
     }
 
+    if (strpos($templates['default'], 'xdecaro-suite__dashboard-products-table') === false
+        || strpos($templates['default'], 'xdecaro-suite__responsive-table') === false
+        || strpos($templates['default'], 'data-label=') === false) {
+        throw new \RuntimeException('Dashboard product summary must share the responsive card contract.');
+    }
+
     $productsTemplate = $templates['products'];
-    foreach (['data-xdecaro-package-toggle', 'xdecaro-suite__expansion-row', 'xdecaro-suite__child-table', 'COM_XDECAROCORE_ACTIONS', 'xdecaro-suite__action-cell', 'xdecaro-suite__responsive-table', 'data-label='] as $marker) {
+    foreach (['data-xdecaro-package-toggle', 'xdecaro-suite__expansion-row', 'xdecaro-suite__child-table', 'COM_XDECAROCORE_ACTIONS', 'xdecaro-suite__action-cell', 'xdecaro-suite__responsive-table', 'data-label=', 'xdecaro-suite__warning-compact'] as $marker) {
         if (strpos($productsTemplate, $marker) === false) {
             throw new \RuntimeException('Package detail/action/responsive UI marker missing: ' . $marker);
         }
@@ -190,19 +222,41 @@ namespace {
     }
 
     $extensionsTemplate = $templates['extensions'];
-    if (strpos($extensionsTemplate, 'Text::_($name)') === false || strpos($extensionsTemplate, '$extensionLabel($extension)') === false) {
-        throw new \RuntimeException('All Extensions must translate manifest language keys and provide a readable fallback.');
-    }
-    foreach (['extensions', 'updates'] as $name) {
-        if (strpos($templates[$name], 'xdecaro-suite__responsive-table') === false || strpos($templates[$name], 'data-label=') === false) {
-            throw new \RuntimeException('Narrow-container responsive table contract missing from dashboard layout: ' . $name);
+    foreach (['Text::_($name)', '$extensionLabel($extension)', 'xdecaro-suite__extension-element-mobile', 'xdecaro-suite__extension-element-cell'] as $marker) {
+        if (strpos($extensionsTemplate, $marker) === false) {
+            throw new \RuntimeException('All Extensions compact/readable contract missing: ' . $marker);
         }
     }
 
-    $dashboardCss = file_get_contents(__DIR__ . '/../src/com_xdecarocore/media/css/admin.css');
-    foreach (['repeat(5, minmax(0, 1fr))', 'xdecaro-suite__diagnostic-row', 'xdecaro-suite__info-grid', 'xdecaro-suite__expansion-panel', 'container-name: xdecaro-suite', '@container xdecaro-suite (max-width: 38rem)', 'xdecaro-suite__responsive-table'] as $marker) {
-        if (strpos($dashboardCss, $marker) === false) {
-            throw new \RuntimeException('Dashboard responsive CSS marker missing: ' . $marker);
+    if (strpos($templates['updates'], 'xdecaro-suite__updates-table') === false
+        || strpos($templates['updates'], 'xdecaro-suite__update-status-cell') === false) {
+        throw new \RuntimeException('Updates compact responsive contract is missing.');
+    }
+
+    foreach (['extensions', 'updates'] as $name) {
+        if (strpos($templates[$name], 'xdecaro-suite__responsive-table') === false || strpos($templates[$name], 'data-label=') === false) {
+            throw new \RuntimeException('Responsive table contract missing from dashboard layout: ' . $name);
+        }
+    }
+
+    $baseCss = file_get_contents(__DIR__ . '/../src/com_xdecarocore/media/css/admin.css');
+    foreach (['repeat(5, minmax(0, 1fr))', 'xdecaro-suite__diagnostic-row', 'xdecaro-suite__info-grid', 'xdecaro-suite__expansion-panel', 'container-name: xdecaro-suite', 'xdecaro-suite__responsive-table'] as $marker) {
+        if (strpos($baseCss, $marker) === false) {
+            throw new \RuntimeException('Dashboard base CSS marker missing: ' . $marker);
+        }
+    }
+
+    $responsiveCss = file_get_contents(__DIR__ . '/../src/com_xdecarocore/media/css/responsive.css');
+    foreach (['@container xdecaro-suite (max-width: 55rem)', '@container xdecaro-suite (max-width: 20rem)', 'min-width: 0', 'max-width: 100%', 'grid-template-columns: repeat(2, minmax(0, 1fr))', '.xdecaro-suite__metric:last-child', 'safe-area-inset-top', 'safe-area-inset-bottom', 'xdecaro-suite__warning-compact'] as $marker) {
+        if (strpos($responsiveCss, $marker) === false) {
+            throw new \RuntimeException('Dashboard 1.5.8 responsive CSS marker missing: ' . $marker);
+        }
+    }
+
+    $viewSource = file_get_contents(__DIR__ . '/../src/com_xdecarocore/admin/src/View/Dashboard/HtmlView.php');
+    foreach (["useStyle('com_xdecarocore.responsive')", 'ToolbarHelper::back(', "ToolbarHelper::preferences('com_xdecarocore')"] as $marker) {
+        if (strpos($viewSource, $marker) === false) {
+            throw new \RuntimeException('Native dashboard toolbar/responsive asset contract missing: ' . $marker);
         }
     }
 
@@ -212,5 +266,5 @@ namespace {
     @rmdir($manifestRoot . '/packages');
     @rmdir($manifestRoot);
 
-    echo "xdecaro Core dashboard catalog, package resolution and UI tests passed.\n";
+    echo "xdecaro Core dashboard catalog, package resolution, toolbar and responsive UI tests passed.\n";
 }

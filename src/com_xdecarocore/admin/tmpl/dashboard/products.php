@@ -95,7 +95,10 @@ $label = static function (string $key): string {
                             <td data-label="<?php echo $label('COM_XDECAROCORE_STATUS'); ?>">
                                 <span class="xdecaro-badge <?php echo $statusClass($product['status']); ?>"><?php echo $statusLabel($product['status']); ?></span>
                                 <?php if ($product['disabled_count'] > 0) : ?>
-                                    <div class="xdecaro-suite__warning"><?php echo Text::sprintf('COM_XDECAROCORE_DISABLED_CHILDREN', (int) $product['disabled_count']); ?></div>
+                                    <div class="xdecaro-suite__warning">
+                                        <span class="xdecaro-suite__warning-full"><?php echo Text::sprintf('COM_XDECAROCORE_DISABLED_CHILDREN', (int) $product['disabled_count']); ?></span>
+                                        <span class="xdecaro-suite__warning-compact"><?php echo Text::sprintf('COM_XDECAROCORE_DISABLED_CHILDREN_COMPACT', (int) $product['disabled_count']); ?></span>
+                                    </div>
                                 <?php endif; ?>
                             </td>
                             <td data-label="<?php echo $label('COM_XDECAROCORE_CHANNEL'); ?>"><span class="xdecaro-badge <?php echo $channelClass($product['channel']); ?>"><?php echo $channelLabel($product['channel']); ?></span></td>
