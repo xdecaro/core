@@ -4,6 +4,33 @@ All notable changes to **Core by xdecaro** are documented here.
 
 The project follows Semantic Versioning.
 
+## 1.5.9 — 2026-09-10
+
+### Added
+
+- Added **Feedback** to the Core ecosystem catalog as a planned product using the reserved identifiers `pkg_xdecarofeedback` and `com_xdecarofeedback`, without advertising an invented release version.
+- Added an internal **Guide** view accessible from Joomla's native administrator toolbar. The guide explains suite pages, product states, toolbar actions and package-content details in Italian and English.
+
+### Fixed
+
+- Restored horizontal and bottom padding inside expanded package details on constrained tablet and phone layouts, so headings such as `Core · Included extensions` and their child cards no longer touch the parent card edges.
+
+### Changed
+
+- Secondary Core pages keep **Back** to the xdecaro Dashboard and now expose the native **Guide** action alongside **Options**.
+- Dashboard product count now includes the planned Feedback product while stable/prerelease “To install” counts remain unchanged.
+
+### Tests
+
+- Added regression guards for Feedback's planned/no-version contract, the internal Guide view and toolbar action, and mobile package-detail padding.
+- Runtime upgrade coverage now installs Core 1.5.8 before upgrading to 1.5.9 on Joomla 5.4.8 and 6.1.3.
+
+### Compatibility
+
+- Existing `xdecaro\Core` public integration contracts remain unchanged.
+- The temporary `Xdecaro\Core` legacy namespace compatibility library remains packaged.
+- No database changes, destructive migrations or product-data changes are introduced.
+
 ## 1.5.8 — 2026-09-09
 
 ### Fixed
