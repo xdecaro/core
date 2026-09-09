@@ -47,6 +47,8 @@ jobs:
           - joomla: '5.4.8'
             product: competitions
           - joomla: '5.4.8'
+            product: membership
+          - joomla: '5.4.8'
             product: editor
     steps:
       - name: Setup PHP
@@ -114,13 +116,13 @@ jobs:
             documents)
               URL='https://github.com/xdecaro/documents/releases/download/v1.2.2/pkg_decarodocuments_1.2.2.zip'; SHA='0b82aef86ffd094cc2453e129e285bfb6274d08c930453a519fbf876e641114f'; MODE='hard'; PACKAGE='pkg_decarodocuments'; COMPONENT='com_decarodocuments' ;;
             membership)
-              URL='https://github.com/xdecaro/membership/releases/download/v1.2.0/pkg_decaromembership_1.2.0.zip'; SHA='ab2eabfa6d248b7d5f03a786d0d1fd62ba7f71802b5fa646a1c080a23decfa7f'; MODE='optional'; PACKAGE='pkg_decaromembership'; COMPONENT='' ;;
+              URL='https://github.com/xdecaro/membership/releases/download/v1.4.0/pkg_decaromembership_1.4.0.zip'; SHA='0399497475e4d0e82c15120758ecd635f387dd5bdf7cf8b007dd5bb6b940413b'; MODE='optional'; PACKAGE='pkg_decaromembership'; COMPONENT='' ;;
             events)
               URL='https://github.com/xdecaro/events/releases/download/v1.2.0/pkg_decaroevents_1.2.0.zip'; SHA='822c9498a44f2353cd52af4027319e793b6b222969c8af30a4b908daeca2ffef'; MODE='hard'; PACKAGE='pkg_decaroevents'; COMPONENT='com_decaroevents' ;;
             editor)
               URL='https://github.com/xdecaro/editor/releases/download/v0.1.0-alpha6/pkg_decaroeditor_0.1.0-alpha6.zip'; SHA='6ece2b5330321e0e2dbc2ac7c388d0cc2e24d977cd415dccc9cc0a922dece616'; MODE='optional'; PACKAGE='pkg_decaroeditor'; COMPONENT='' ;;
             finance)
-              URL='https://github.com/xdecaro/finance/releases/download/v1.2.1/pkg_decarofinance_1.2.1.zip'; SHA='85fa382e406076c13d5196198e4310b63f66a73ea989b00ea08c31a59dd6be61'; MODE='optional'; PACKAGE='pkg_decarofinance'; COMPONENT='' ;;
+              URL='https://github.com/xdecaro/finance/releases/download/v1.3.0/pkg_decarofinance_1.3.0.zip'; SHA='9659b3325960a65126f24a9d8906e3fa02db88198d369367e086d36265255c6c'; MODE='optional'; PACKAGE='pkg_decarofinance'; COMPONENT='' ;;
             protocol)
               URL='https://github.com/xdecaro/protocol/releases/download/v1.4.0/pkg_decaroprotocol_1.4.0.zip'; SHA='2f762928fb2944611356b3568643700eb0af1af6a0be65fcfd0f3b287431eef9'; MODE='optional'; PACKAGE='pkg_decaroprotocol'; COMPONENT='' ;;
             *) echo "Unknown product: $PRODUCT" >&2; exit 1 ;;
