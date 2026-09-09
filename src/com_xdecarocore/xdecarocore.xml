@@ -6,7 +6,7 @@
     <creationDate>2026-09-09</creationDate>
     <copyright>Copyright (C) 2026 Luca De Caro</copyright>
     <license>GNU General Public License version 2 or later</license>
-    <version>1.5.3</version>
+    <version>1.5.4</version>
     <description>COM_XDECAROCORE_XML_DESCRIPTION</description>
     <namespace path="src">xdecaro\Component\Core</namespace>
     <targetplatform name="joomla" version="(4|5|6).*" />
