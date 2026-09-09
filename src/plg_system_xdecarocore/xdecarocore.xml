@@ -2,10 +2,10 @@
 <extension type="plugin" group="system" method="upgrade">
     <name>System - Core by xdecaro</name>
     <author>Luca De Caro</author>
-    <creationDate>2026-09-09</creationDate>
+    <creationDate>2026-09-10</creationDate>
     <copyright>Copyright (C) 2026 Luca De Caro</copyright>
     <license>GNU General Public License version 2 or later</license>
-    <version>1.5.11</version>
+    <version>1.5.12</version>
     <description>Lightweight Joomla system integration point for Core by xdecaro.</description>
     <namespace path="src">xdecaro\Plugin\System\XdecaroCore</namespace>
     <files>
