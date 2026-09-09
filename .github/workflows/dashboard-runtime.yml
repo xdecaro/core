@@ -104,10 +104,10 @@ jobs:
 
           if [ '${{ matrix.scenario }}' = 'upgrade' ]; then
             curl --fail --location --retry 3 \
-              'https://github.com/xdecaro/core/releases/download/v1.5.8/pkg_xdecarocore_1.5.8.zip' \
-              --output /tmp/core-1.5.8.zip
-            echo '1396fac59a8097a7c65d4ae246422a936b9c8f9e1402719d99f2503ac1a3a8ed  /tmp/core-1.5.8.zip' | sha256sum --check --strict
-            php cli/joomla.php extension:install --path=/tmp/core-1.5.8.zip
+              'https://github.com/xdecaro/core/releases/download/v1.5.10/pkg_xdecarocore_1.5.10.zip' \
+              --output /tmp/core-1.5.10.zip
+            echo '3f451e5f3b4d32ba6df533e1e4ff6c0ac2322be9fc69eed38980b400e30c29bb  /tmp/core-1.5.10.zip' | sha256sum --check --strict
+            php cli/joomla.php extension:install --path=/tmp/core-1.5.10.zip
           fi
 
           php cli/joomla.php extension:install --path="$PACKAGE"
@@ -172,6 +172,11 @@ jobs:
           ! grep -Fq 'com_xdecarocore/js/admin.js' joomla/media/com_xdecarocore/joomla.asset.json
           grep -Fq 'container-name: xdecaro-suite' joomla/media/com_xdecarocore/css/admin.css
           grep -Fq '@container xdecaro-suite (max-width: 55rem)' joomla/media/com_xdecarocore/css/responsive.css
+          grep -Fq 'border-right: 0.125rem solid currentColor;' joomla/media/com_xdecarocore/css/responsive.css
+          grep -Fq 'border-bottom: 0.125rem solid currentColor;' joomla/media/com_xdecarocore/css/responsive.css
+          grep -Fq 'transform: rotate(45deg);' joomla/media/com_xdecarocore/css/responsive.css
+          grep -Fq 'transform: rotate(225deg);' joomla/media/com_xdecarocore/css/responsive.css
+          ! grep -Fq '⌄' joomla/administrator/components/com_xdecarocore/tmpl/dashboard/products.php
           grep -Fq 'padding: var(--xdecaro-space-3, 0.75rem);' joomla/media/com_xdecarocore/css/responsive.css
           grep -Fq 'safe-area-inset-top' joomla/media/com_xdecarocore/css/responsive.css
           grep -Fq 'safe-area-inset-bottom' joomla/media/com_xdecarocore/css/responsive.css
@@ -227,7 +232,7 @@ jobs:
           if (($assets['com_xdecarocore.admin:style'] ?? '') !== 'com_xdecarocore/admin.css') exit(1);
           if (($assets['com_xdecarocore.responsive:style'] ?? '') !== 'com_xdecarocore/responsive.css') exit(1);
           if (($assets['com_xdecarocore.admin:script'] ?? '') !== 'com_xdecarocore/admin.js') exit(1);
-          echo "Core dashboard runtime, guide, Feedback catalog and responsive assets OK\n";
+          echo "Core dashboard runtime and geometric package chevron OK\n";
           PHP
           php core-dashboard-probe.php
           rm core-dashboard-probe.php

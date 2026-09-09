@@ -29,7 +29,7 @@ namespace {
     }
 
     $required = [
-        'core' => ['pkg_xdecarocore', '1.5.10'],
+        'core' => ['pkg_xdecarocore', '1.5.11'],
         'forms' => ['pkg_decaroforms', '1.7.0'],
         'courses' => ['pkg_decarocourses', '1.5.0'],
         'competitions' => ['pkg_xdecarocompetitions', '1.3.0'],
@@ -217,10 +217,16 @@ namespace {
     }
 
     $productsTemplate = $templates['products'];
-    foreach (['data-xdecaro-package-toggle', 'xdecaro-suite__expansion-row', 'xdecaro-suite__child-table', 'COM_XDECAROCORE_ACTIONS', 'xdecaro-suite__action-cell', 'xdecaro-suite__responsive-table', 'data-label=', 'xdecaro-suite__warning-compact'] as $marker) {
+    foreach (['data-xdecaro-package-toggle', 'xdecaro-suite__expansion-row', 'xdecaro-suite__child-table', 'COM_XDECAROCORE_ACTIONS', 'xdecaro-suite__action-cell', 'xdecaro-suite__responsive-table', 'data-label=', 'xdecaro-suite__warning-compact', 'xdecaro-suite__chevron'] as $marker) {
         if (strpos($productsTemplate, $marker) === false) {
             throw new \RuntimeException('Package detail/action/responsive UI marker missing: ' . $marker);
         }
+    }
+    if (strpos($productsTemplate, '⌄') !== false) {
+        throw new \RuntimeException('Package toggle must not depend on a font chevron glyph.');
+    }
+    if (strpos($productsTemplate, '<span class="xdecaro-suite__chevron" aria-hidden="true"></span>') === false) {
+        throw new \RuntimeException('Package toggle must expose an empty geometric chevron hook.');
     }
     if (strpos($productsTemplate, '<td colspan="7"') === false) {
         throw new \RuntimeException('Expanded package details must span the dedicated Actions column.');
@@ -258,9 +264,9 @@ namespace {
     }
 
     $responsiveCss = file_get_contents(__DIR__ . '/../src/com_xdecarocore/media/css/responsive.css');
-    foreach (['@container xdecaro-suite (max-width: 55rem)', '@container xdecaro-suite (max-width: 20rem)', 'min-width: 0', 'max-width: 100%', 'grid-template-columns: repeat(2, minmax(0, 1fr))', '.xdecaro-suite__metric:last-child', 'safe-area-inset-top', 'safe-area-inset-bottom', 'xdecaro-suite__warning-compact', 'padding: var(--xdecaro-space-3, 0.75rem);', '.xdecaro-suite__filter-button {', 'align-items: center;', 'justify-content: center;', 'transform-origin: 50% 50%;'] as $marker) {
+    foreach (['@container xdecaro-suite (max-width: 55rem)', '@container xdecaro-suite (max-width: 20rem)', 'min-width: 0', 'max-width: 100%', 'grid-template-columns: repeat(2, minmax(0, 1fr))', '.xdecaro-suite__metric:last-child', 'safe-area-inset-top', 'safe-area-inset-bottom', 'xdecaro-suite__warning-compact', 'padding: var(--xdecaro-space-3, 0.75rem);', '.xdecaro-suite__filter-button {', 'align-items: center;', 'justify-content: center;', 'border-right: 0.125rem solid currentColor;', 'border-bottom: 0.125rem solid currentColor;', 'transform: rotate(45deg);', 'transform: rotate(225deg);', 'transform-origin: 50% 50%;'] as $marker) {
         if (strpos($responsiveCss, $marker) === false) {
-            throw new \RuntimeException('Dashboard 1.5.10 responsive CSS marker missing: ' . $marker);
+            throw new \RuntimeException('Dashboard 1.5.11 responsive CSS marker missing: ' . $marker);
         }
     }
 
