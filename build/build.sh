@@ -104,12 +104,24 @@ $componentAssets = json_decode(file_get_contents($argv[8]), true);
 if (!is_array($componentAssets) || ($componentAssets["name"] ?? "") !== "com_xdecarocore" || ($componentAssets["version"] ?? "") !== $version) {
     fwrite(STDERR, "Invalid Core administrator asset registry metadata.\n"); exit(1);
 }
-$componentStyle = $componentAssets["assets"][0] ?? [];
-if (($componentStyle["name"] ?? "") !== "com_xdecarocore.admin"
-    || ($componentStyle["type"] ?? "") !== "style"
-    || ($componentStyle["uri"] ?? "") !== "com_xdecarocore/css/admin.css"
-    || ($componentStyle["version"] ?? "") !== $version) {
-    fwrite(STDERR, "Core administrator stylesheet asset is missing or inconsistent.\n"); exit(1);
+$componentFound = [];
+foreach (($componentAssets["assets"] ?? []) as $asset) {
+    if (($asset["name"] ?? "") === "com_xdecarocore.admin" && isset($asset["type"], $asset["uri"])) {
+        $componentFound[$asset["type"]] = $asset;
+    }
+}
+$expectedComponentAssets = [
+    "style" => "com_xdecarocore/admin.css",
+    "script" => "com_xdecarocore/admin.js",
+];
+foreach ($expectedComponentAssets as $type => $uri) {
+    $asset = $componentFound[$type] ?? null;
+    if (!is_array($asset) || ($asset["uri"] ?? "") !== $uri || ($asset["version"] ?? "") !== $version) {
+        fwrite(STDERR, "Core administrator {$type} asset is missing or inconsistent.\n"); exit(1);
+    }
+    if (strpos($uri, "/css/") !== false || strpos($uri, "/js/") !== false) {
+        fwrite(STDERR, "Core administrator Web Asset Manager URI duplicates a Joomla media type directory.\n"); exit(1);
+    }
 }
 $feed = simplexml_load_file($argv[9]);
 if ($feed === false || count($feed->update) < 1) {
@@ -206,6 +218,7 @@ with zipfile.ZipFile(component) as archive:
         "admin/tmpl/dashboard/information.php",
         "media/joomla.asset.json",
         "media/css/admin.css",
+        "media/js/admin.js",
     }
     if not required.issubset(set(archive.namelist())):
         raise SystemExit("Core administrator component ZIP is incomplete")
