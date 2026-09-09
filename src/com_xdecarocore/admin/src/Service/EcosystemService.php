@@ -17,7 +17,7 @@ final class EcosystemService
      * The catalog version is the newest version known when this Core release was built.
      */
     private const CATALOG = [
-        'core' => ['name' => 'Core', 'package' => 'pkg_xdecarocore', 'component' => 'com_xdecarocore', 'version' => '1.5.1', 'channel' => 'stable'],
+        'core' => ['name' => 'Core', 'package' => 'pkg_xdecarocore', 'component' => 'com_xdecarocore', 'version' => '1.5.2', 'channel' => 'stable'],
         'people' => ['name' => 'People', 'package' => 'pkg_xdecaropeople', 'component' => 'com_xdecaropeople', 'version' => '1.0.1', 'channel' => 'stable'],
         'organizations' => ['name' => 'Organizations', 'package' => 'pkg_xdecaroorganizations', 'component' => 'com_xdecaroorganizations', 'version' => '1.0.0', 'channel' => 'stable'],
         'notifications' => ['name' => 'Notifications', 'package' => 'pkg_xdecaronotifications', 'component' => 'com_xdecaronotifications', 'version' => '1.0.2', 'channel' => 'stable'],
@@ -205,11 +205,7 @@ final class EcosystemService
 
         $children = [];
         if ($package !== null) {
-            foreach ($extensions as $extension) {
-                if ($extension['package_id'] === $package['extension_id']) {
-                    $children[] = $extension;
-                }
-            }
+            $children = $this->resolvePackageChildren($package, $definition, $extensions);
         } elseif ($component !== null) {
             $children[] = $component;
         }
@@ -259,6 +255,120 @@ final class EcosystemService
             'disabled_count' => $disabledCount,
             'open_url' => $component !== null ? 'index.php?option=' . rawurlencode((string) $definition['component']) : '',
         ];
+    }
+
+    /**
+     * Resolve the real children declared by the installed package manifest.
+     * Joomla package_id is retained only as a fallback because older/manual installs can leave stale relationships.
+     */
+    private function resolvePackageChildren(array $package, array $definition, array $extensions): array
+    {
+        $members = $this->loadPackageManifestMembers((string) $package['element']);
+        $children = [];
+        $seen = [];
+
+        if ($members !== null) {
+            foreach ($members as $member) {
+                $extension = $this->findPackageMemberExtension($extensions, $member);
+                if ($extension === null || isset($seen[$extension['extension_id']])) {
+                    continue;
+                }
+
+                $children[] = $extension;
+                $seen[$extension['extension_id']] = true;
+            }
+        } else {
+            foreach ($extensions as $extension) {
+                if ($extension['package_id'] !== $package['extension_id']) {
+                    continue;
+                }
+
+                $children[] = $extension;
+                $seen[$extension['extension_id']] = true;
+            }
+        }
+
+        // Always retain the catalog component when it exists, even if a legacy package manifest is incomplete.
+        if ($definition['component'] !== '') {
+            $component = $this->findExtension($extensions, 'component', (string) $definition['component']);
+            if ($component !== null && !isset($seen[$component['extension_id']])) {
+                $children[] = $component;
+            }
+        }
+
+        return $children;
+    }
+
+    /**
+     * @return array<int,array{type:string,id:string,group:string,client:string}>|null
+     */
+    private function loadPackageManifestMembers(string $packageElement): ?array
+    {
+        if (!defined('JPATH_MANIFESTS') || $packageElement === '') {
+            return null;
+        }
+
+        $path = JPATH_MANIFESTS . '/packages/' . basename($packageElement) . '.xml';
+        if (!is_file($path)) {
+            return null;
+        }
+
+        $contents = file_get_contents($path);
+        if ($contents === false || trim($contents) === '') {
+            return null;
+        }
+
+        try {
+            $manifest = new \SimpleXMLElement($contents);
+        } catch (\Throwable $exception) {
+            return null;
+        }
+
+        if (!isset($manifest->files)) {
+            return [];
+        }
+
+        $members = [];
+        foreach ($manifest->files->file as $file) {
+            $type = trim((string) $file['type']);
+            $id = trim((string) $file['id']);
+            if ($type === '' || $id === '') {
+                continue;
+            }
+
+            $members[] = [
+                'type' => $type,
+                'id' => $id,
+                'group' => trim((string) $file['group']),
+                'client' => strtolower(trim((string) $file['client'])),
+            ];
+        }
+
+        return $members;
+    }
+
+    private function findPackageMemberExtension(array $extensions, array $member): ?array
+    {
+        foreach ($extensions as $extension) {
+            if ($extension['type'] !== $member['type'] || $extension['element'] !== $member['id']) {
+                continue;
+            }
+
+            if ($member['type'] === 'plugin' && $member['group'] !== '' && $extension['folder'] !== $member['group']) {
+                continue;
+            }
+
+            if ($member['type'] === 'module' && $member['client'] !== '') {
+                $expectedClient = in_array($member['client'], ['administrator', 'admin'], true) ? 1 : 0;
+                if ((int) $extension['client_id'] !== $expectedClient) {
+                    continue;
+                }
+            }
+
+            return $extension;
+        }
+
+        return null;
     }
 
     private function buildDiagnostics(array $products, array $extensions): array
