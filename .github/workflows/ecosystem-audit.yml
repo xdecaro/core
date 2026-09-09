@@ -18,6 +18,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        # draw is private and is guarded by its own repository CI.
         repository:
           - courses
           - forms
@@ -28,7 +29,6 @@ jobs:
           - editor
           - finance
           - protocol
-          - draw
           - organizations
           - people
           - resources

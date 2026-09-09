@@ -36,49 +36,50 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        joomla: ['5', '6']
+        joomla: ['5.4.8', '6.1.3']
         product: [core, courses, forms, competitions, documents, membership, events, editor, finance, protocol]
         exclude:
-          - joomla: '5'
+          # These released packages currently declare Joomla 6 / PHP 8.3 only.
+          - joomla: '5.4.8'
+            product: courses
+          - joomla: '5.4.8'
+            product: forms
+          - joomla: '5.4.8'
+            product: competitions
+          - joomla: '5.4.8'
             product: editor
     steps:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ matrix.joomla == '6' && '8.3' || '8.1' }}
+          php-version: ${{ startsWith(matrix.joomla, '6.') && '8.3' || '8.1' }}
           extensions: mysqli, zip, intl, mbstring, gd
           coverage: none
 
       - name: Install tooling
-        run: sudo apt-get update -qq && sudo apt-get install -y -qq jq unzip curl
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq unzip curl
 
-      - name: Resolve latest stable Joomla package for major
-        id: joomla
+      - name: Download and verify pinned Joomla package
         shell: bash
         run: |
           set -euo pipefail
-          MAJOR='${{ matrix.joomla }}'
-          RELEASES="$(curl -fsSL 'https://api.github.com/repos/joomla/joomla-cms/releases?per_page=100')"
-          URL="$(printf '%s' "$RELEASES" | jq -r --arg major "$MAJOR" '
-            [ .[]
-              | select(.draft == false)
-              | select(.tag_name | startswith($major + "."))
-              | select((.tag_name | test("alpha|beta|rc"; "i")) | not)
-            ][0].assets[]
-            | select(.name | test("Stable-Full_Package\\.zip$"))
-            | .browser_download_url
-          ' | head -n1)"
-          test -n "$URL" && test "$URL" != null
-          echo "url=$URL" >> "$GITHUB_OUTPUT"
-          echo "Resolved Joomla $MAJOR package: $URL"
+          JOOMLA='${{ matrix.joomla }}'
+          case "$JOOMLA" in
+            5.4.8) SHA='8d3585939bca8e6b1d5f3e97dda2cc557c61e610daf488c871e1f62a97be9bd0' ;;
+            6.1.3) SHA='a49305652503f9344d046d55471f324a07882996132ed967c3b0fe34707ae4a1' ;;
+            *) echo "Unsupported pinned Joomla version: $JOOMLA" >&2; exit 1 ;;
+          esac
+          FILE="Joomla_${JOOMLA}-Stable-Full_Package.zip"
+          URL="https://github.com/joomla/joomla-cms/releases/download/${JOOMLA}/${FILE}"
+          curl --fail --location --retry 3 "$URL" --output /tmp/joomla.zip
+          echo "${SHA}  /tmp/joomla.zip" | sha256sum --check --strict
+          mkdir joomla
+          unzip -q /tmp/joomla.zip -d joomla
 
       - name: Install Joomla
         shell: bash
         run: |
           set -euo pipefail
-          mkdir joomla
-          curl -fL '${{ steps.joomla.outputs.url }}' -o /tmp/joomla.zip
-          unzip -q /tmp/joomla.zip -d joomla
           cd joomla
           php installation/joomla.php install \
             --site-name='Xdecaro Runtime Smoke' \
@@ -95,7 +96,7 @@ jobs:
           test -f configuration.php
           php cli/joomla.php extension:list >/tmp/extensions-before.txt
 
-      - name: Resolve and download released package
+      - name: Resolve download and verify distributed package
         id: product
         shell: bash
         run: |
@@ -103,46 +104,66 @@ jobs:
           PRODUCT='${{ matrix.product }}'
           case "$PRODUCT" in
             core)
-              URL='https://github.com/xdecaro/core/releases/download/v1.4.0/pkg_xdecarocore_1.4.0.zip'; MODE='core' ;;
+              URL='https://github.com/xdecaro/core/releases/download/v1.4.0/pkg_xdecarocore_1.4.0.zip'; SHA='4248f7e3de514c2ae2402ffc8ba12845647dca1ebac963da370650e88ac45def'; MODE='core'; PACKAGE='pkg_xdecarocore'; COMPONENT='' ;;
             courses)
-              URL='https://github.com/xdecaro/courses/releases/download/v1.3.0/pkg_decarocourses_1.3.0.zip'; MODE='optional' ;;
+              URL='https://raw.githubusercontent.com/xdecaro/courses/main/releases/1.3.0/pkg_decarocourses_1.3.0.zip'; SHA='e1429f9189e6e9c21b98d05b6cb597e3b957fee7f0f3911c1607165b639cb22c'; MODE='optional'; PACKAGE='pkg_decarocourses'; COMPONENT='' ;;
             forms)
-              URL='https://github.com/xdecaro/forms/releases/download/v1.6.0/pkg_decaroforms_1.6.0.zip'; MODE='optional' ;;
+              URL='https://raw.githubusercontent.com/xdecaro/forms/main/releases/1.6.0/pkg_decaroforms_1.6.0.zip'; SHA='5e7df40f442444eb0e12bb4f1441cd7bc53549f458273f94879f6304f266e286'; MODE='optional'; PACKAGE='pkg_decaroforms'; COMPONENT='' ;;
             competitions)
-              URL='https://github.com/xdecaro/competitions/releases/download/v1.1.0/pkg_xdecarocompetitions_1.1.0.zip'; MODE='optional' ;;
+              URL='https://github.com/xdecaro/competitions/releases/download/v1.1.0/pkg_xdecarocompetitions_1.1.0.zip'; SHA='6a84af789c87da646e4141786bd8226051571289017ecd482b1b31cdcf457cb0'; MODE='optional'; PACKAGE='pkg_xdecarocompetitions'; COMPONENT='' ;;
             documents)
-              URL='https://github.com/xdecaro/documents/releases/download/v1.1.0/pkg_decarodocuments_1.1.0.zip'; MODE='hard' ;;
+              URL='https://github.com/xdecaro/documents/releases/download/v1.2.2/pkg_decarodocuments_1.2.2.zip'; SHA='0b82aef86ffd094cc2453e129e285bfb6274d08c930453a519fbf876e641114f'; MODE='hard'; PACKAGE='pkg_decarodocuments'; COMPONENT='com_decarodocuments' ;;
             membership)
-              URL='https://github.com/xdecaro/membership/releases/download/v1.2.0/pkg_decaromembership_1.2.0.zip'; MODE='optional' ;;
+              URL='https://github.com/xdecaro/membership/releases/download/v1.2.0/pkg_decaromembership_1.2.0.zip'; SHA='ab2eabfa6d248b7d5f03a786d0d1fd62ba7f71802b5fa646a1c080a23decfa7f'; MODE='optional'; PACKAGE='pkg_decaromembership'; COMPONENT='' ;;
             events)
-              URL='https://github.com/xdecaro/events/releases/download/v1.1.0/pkg_decaroevents_1.1.0.zip'; MODE='hard' ;;
+              URL='https://github.com/xdecaro/events/releases/download/v1.1.2/pkg_decaroevents_1.1.2.zip'; SHA='29ebb4b89d3e8adff24cd3f1a38477b8371aadeb58c53468d7d91e1170c60ecb'; MODE='hard'; PACKAGE='pkg_decaroevents'; COMPONENT='com_decaroevents' ;;
             editor)
-              URL='https://github.com/xdecaro/editor/releases/download/v0.1.0-alpha4/pkg_decaroeditor_0.1.0-alpha4.zip'; MODE='optional' ;;
+              URL='https://github.com/xdecaro/editor/releases/download/v0.1.0-alpha5/pkg_decaroeditor_0.1.0-alpha5.zip'; SHA='65dd999dd11b98b55f2ccc70d74b194221a7429bb9ac165e1f325d4ba2c984da'; MODE='optional'; PACKAGE='pkg_decaroeditor'; COMPONENT='' ;;
             finance)
-              URL='https://github.com/xdecaro/finance/releases/download/v1.1.0/pkg_decarofinance_1.1.0.zip'; MODE='optional' ;;
+              URL='https://github.com/xdecaro/finance/releases/download/v1.1.0/pkg_decarofinance_1.1.0.zip'; SHA='268ce39810135191dc95cd70f9f46847425fe37b6212f5897cf205d5fd7e0c84'; MODE='optional'; PACKAGE='pkg_decarofinance'; COMPONENT='' ;;
             protocol)
-              URL='https://github.com/xdecaro/protocol/releases/download/v1.2.0/pkg_decaroprotocol_1.2.0.zip'; MODE='optional' ;;
+              URL='https://github.com/xdecaro/protocol/releases/download/v1.3.0/pkg_decaroprotocol_1.3.0.zip'; SHA='3dbf32cb15ba0f5993ecc56f883e720653945cca7159233330e54b81bb0236b4'; MODE='optional'; PACKAGE='pkg_decaroprotocol'; COMPONENT='' ;;
             *) echo "Unknown product: $PRODUCT" >&2; exit 1 ;;
           esac
           echo "mode=$MODE" >> "$GITHUB_OUTPUT"
-          echo "url=$URL" >> "$GITHUB_OUTPUT"
-          curl -fL "$URL" -o /tmp/product.zip
-          curl -fL 'https://github.com/xdecaro/core/releases/download/v1.4.0/pkg_xdecarocore_1.4.0.zip' -o /tmp/core.zip
+          echo "package=$PACKAGE" >> "$GITHUB_OUTPUT"
+          echo "component=$COMPONENT" >> "$GITHUB_OUTPUT"
+          curl --fail --location --retry 3 "$URL" --output /tmp/product.zip
+          echo "${SHA}  /tmp/product.zip" | sha256sum --check --strict
+          curl --fail --location --retry 3 'https://github.com/xdecaro/core/releases/download/v1.4.0/pkg_xdecarocore_1.4.0.zip' --output /tmp/core.zip
+          echo '4248f7e3de514c2ae2402ffc8ba12845647dca1ebac963da370650e88ac45def  /tmp/core.zip' | sha256sum --check --strict
           unzip -t /tmp/product.zip >/dev/null
           unzip -t /tmp/core.zip >/dev/null
 
-      - name: Verify optional/hard dependency installation behavior
+      - name: Verify optional and hard dependency installation behavior
         shell: bash
         run: |
           set -euo pipefail
           cd joomla
           MODE='${{ steps.product.outputs.mode }}'
           PRODUCT='${{ matrix.product }}'
+          PACKAGE='${{ steps.product.outputs.package }}'
+          COMPONENT='${{ steps.product.outputs.component }}'
+
+          extension_count() {
+            php -r '
+              $db = new mysqli("127.0.0.1", "root", "root", "joomla");
+              if ($db->connect_errno) { fwrite(STDERR, $db->connect_error . PHP_EOL); exit(2); }
+              $stmt = $db->prepare("SELECT COUNT(*) FROM jos_extensions WHERE element = ?");
+              $stmt->bind_param("s", $argv[1]);
+              $stmt->execute();
+              $stmt->bind_result($count);
+              $stmt->fetch();
+              echo (int) $count;
+            ' "$1"
+          }
 
           if [ "$MODE" = 'core' ]; then
             php cli/joomla.php extension:install --path=/tmp/core.zip
+            test "$(extension_count "$PACKAGE")" -eq 1
           elif [ "$MODE" = 'optional' ]; then
             php cli/joomla.php extension:install --path=/tmp/product.zip
+            test "$(extension_count "$PACKAGE")" -eq 1
             php cli/joomla.php extension:list >/tmp/extensions-without-core.txt
             php cli/joomla.php extension:install --path=/tmp/core.zip
           elif [ "$MODE" = 'hard' ]; then
@@ -150,21 +171,37 @@ jobs:
             php cli/joomla.php extension:install --path=/tmp/product.zip >/tmp/hard-before-core.log 2>&1
             STATUS=$?
             set -e
-            if [ "$STATUS" -eq 0 ]; then
-              cat /tmp/hard-before-core.log
-              echo "$PRODUCT unexpectedly installed without Core." >&2
+            echo "Pre-Core CLI status for $PRODUCT: $STATUS"
+            cat /tmp/hard-before-core.log
+
+            if [ "$(extension_count "$PACKAGE")" -ne 0 ]; then
+              echo "$PRODUCT package was registered without Core." >&2
               exit 1
             fi
+            if [ -n "$COMPONENT" ] && [ "$(extension_count "$COMPONENT")" -ne 0 ]; then
+              echo "$PRODUCT component was partially registered without Core." >&2
+              exit 1
+            fi
+            if [ -n "$COMPONENT" ] && [ -d "administrator/components/$COMPONENT" ]; then
+              echo "$PRODUCT component files were partially installed without Core." >&2
+              exit 1
+            fi
+
             php cli/joomla.php extension:install --path=/tmp/core.zip
             php cli/joomla.php extension:install --path=/tmp/product.zip
+            test "$(extension_count "$PACKAGE")" -eq 1
+            if [ -n "$COMPONENT" ]; then
+              test "$(extension_count "$COMPONENT")" -eq 1
+            fi
           else
             echo "Unknown Core mode: $MODE" >&2
             exit 1
           fi
 
+          test "$(extension_count pkg_xdecarocore)" -eq 1
           php cli/joomla.php extension:list >/tmp/extensions-final.txt
 
-      - name: Probe canonical Core runtime
+      - name: Probe canonical Core runtime through Joomla namespace map
         shell: bash
         run: |
           set -euo pipefail
@@ -175,8 +212,19 @@ jobs:
           define('JPATH_BASE', __DIR__);
           require JPATH_BASE . '/includes/defines.php';
           require JPATH_BASE . '/includes/framework.php';
+
+          $container = \Joomla\CMS\Factory::getContainer();
+          $container->alias('session', 'session.cli')
+              ->alias('JSession', 'session.cli')
+              ->alias(\Joomla\CMS\Session\Session::class, 'session.cli')
+              ->alias(\Joomla\Session\Session::class, 'session.cli')
+              ->alias(\Joomla\Session\SessionInterface::class, 'session.cli');
+          $app = $container->get(\Joomla\Console\Application::class);
+          \Joomla\CMS\Factory::$application = $app;
+          $app->createExtensionNamespaceMap();
+
           if (!class_exists(\xdecaro\Core\Version::class)) {
-              fwrite(STDERR, "Canonical Core Version class is not autoloadable.\n");
+              fwrite(STDERR, "Canonical Core Version class is not autoloadable through Joomla.\n");
               exit(1);
           }
           if (version_compare((string) \xdecaro\Core\Version::VERSION, '1.4.0', '<')) {
@@ -184,7 +232,7 @@ jobs:
               exit(1);
           }
           if (!class_exists(\xdecaro\Core\Integration\CapabilityRegistry::class)) {
-              fwrite(STDERR, "CapabilityRegistry is not autoloadable.\n");
+              fwrite(STDERR, "CapabilityRegistry is not autoloadable through Joomla.\n");
               exit(1);
           }
           echo 'Core runtime ' . \xdecaro\Core\Version::VERSION . " OK\n";
@@ -211,34 +259,86 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        joomla: ['5', '6']
+        joomla: ['5.4.8', '6.1.3']
     steps:
       - uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ matrix.joomla == '6' && '8.3' || '8.1' }}
+          php-version: ${{ startsWith(matrix.joomla, '6.') && '8.3' || '8.1' }}
           extensions: mysqli, zip, intl, mbstring, gd
           coverage: none
-      - run: sudo apt-get update -qq && sudo apt-get install -y -qq jq unzip curl
-      - name: Resolve and install Joomla
+      - run: sudo apt-get update -qq && sudo apt-get install -y -qq unzip curl
+      - name: Download verify and install pinned Joomla
         shell: bash
         run: |
           set -euo pipefail
-          MAJOR='${{ matrix.joomla }}'
-          RELEASES="$(curl -fsSL 'https://api.github.com/repos/joomla/joomla-cms/releases?per_page=100')"
-          URL="$(printf '%s' "$RELEASES" | jq -r --arg major "$MAJOR" '[.[] | select(.draft == false) | select(.tag_name | startswith($major + ".")) | select((.tag_name | test("alpha|beta|rc"; "i")) | not)][0].assets[] | select(.name | test("Stable-Full_Package\\.zip$")) | .browser_download_url' | head -n1)"
-          test -n "$URL" && test "$URL" != null
+          JOOMLA='${{ matrix.joomla }}'
+          case "$JOOMLA" in
+            5.4.8) SHA='8d3585939bca8e6b1d5f3e97dda2cc557c61e610daf488c871e1f62a97be9bd0' ;;
+            6.1.3) SHA='a49305652503f9344d046d55471f324a07882996132ed967c3b0fe34707ae4a1' ;;
+            *) exit 1 ;;
+          esac
+          FILE="Joomla_${JOOMLA}-Stable-Full_Package.zip"
+          curl --fail --location --retry 3 "https://github.com/joomla/joomla-cms/releases/download/${JOOMLA}/${FILE}" --output /tmp/joomla.zip
+          echo "${SHA}  /tmp/joomla.zip" | sha256sum --check --strict
           mkdir joomla
-          curl -fL "$URL" -o /tmp/joomla.zip
           unzip -q /tmp/joomla.zip -d joomla
           cd joomla
           php installation/joomla.php install --site-name='Core Upgrade Smoke' --admin-user='Runtime Admin' --admin-username='runtimeadmin' --admin-password='Runtime-Only-12345!' --admin-email='runtime@example.invalid' --db-type='mysqli' --db-host='127.0.0.1' --db-user='root' --db-pass='root' --db-name='joomla' --db-prefix='jos_'
-      - name: Install old then current Core
+
+      - name: Install old then current Core and verify runtime
         shell: bash
         run: |
           set -euo pipefail
-          curl -fL 'https://github.com/xdecaro/core/releases/download/v1.3.0/pkg_xdecarocore_1.3.0.zip' -o /tmp/core-1.3.0.zip
-          curl -fL 'https://github.com/xdecaro/core/releases/download/v1.4.0/pkg_xdecarocore_1.4.0.zip' -o /tmp/core-1.4.0.zip
+          curl --fail --location --retry 3 'https://github.com/xdecaro/core/releases/download/v1.3.0/pkg_xdecarocore_1.3.0.zip' --output /tmp/core-1.3.0.zip
+          echo '85da967c34353e1b33af6f3dadd937118c172097f82cd3677966d567493a68e8  /tmp/core-1.3.0.zip' | sha256sum --check --strict
+          curl --fail --location --retry 3 'https://github.com/xdecaro/core/releases/download/v1.4.0/pkg_xdecarocore_1.4.0.zip' --output /tmp/core-1.4.0.zip
+          echo '4248f7e3de514c2ae2402ffc8ba12845647dca1ebac963da370650e88ac45def  /tmp/core-1.4.0.zip' | sha256sum --check --strict
           cd joomla
           php cli/joomla.php extension:install --path=/tmp/core-1.3.0.zip
           php cli/joomla.php extension:install --path=/tmp/core-1.4.0.zip
           php cli/joomla.php extension:list >/tmp/core-upgrade-final.txt
+
+          php -r '
+            $db = new mysqli("127.0.0.1", "root", "root", "joomla");
+            if ($db->connect_errno) { fwrite(STDERR, $db->connect_error . PHP_EOL); exit(2); }
+            $stmt = $db->prepare("SELECT manifest_cache FROM jos_extensions WHERE type = ? AND element = ? LIMIT 1");
+            $type = "package";
+            $element = "pkg_xdecarocore";
+            $stmt->bind_param("ss", $type, $element);
+            $stmt->execute();
+            $stmt->bind_result($cache);
+            if (!$stmt->fetch()) { fwrite(STDERR, "Core package is not registered after upgrade.\n"); exit(1); }
+            $manifest = json_decode((string) $cache, true);
+            if (!is_array($manifest) || ($manifest["version"] ?? "") !== "1.4.0") {
+              fwrite(STDERR, "Core package manifest cache is not 1.4.0 after upgrade.\n");
+              exit(1);
+            }
+          '
+
+          cat > core-upgrade-probe.php <<'PHP'
+          <?php
+          define('_JEXEC', 1);
+          define('JPATH_BASE', __DIR__);
+          require JPATH_BASE . '/includes/defines.php';
+          require JPATH_BASE . '/includes/framework.php';
+          $container = \Joomla\CMS\Factory::getContainer();
+          $container->alias('session', 'session.cli')
+              ->alias('JSession', 'session.cli')
+              ->alias(\Joomla\CMS\Session\Session::class, 'session.cli')
+              ->alias(\Joomla\Session\Session::class, 'session.cli')
+              ->alias(\Joomla\Session\SessionInterface::class, 'session.cli');
+          $app = $container->get(\Joomla\Console\Application::class);
+          \Joomla\CMS\Factory::$application = $app;
+          $app->createExtensionNamespaceMap();
+          if (!class_exists(\xdecaro\Core\Version::class) || (string) \xdecaro\Core\Version::VERSION !== '1.4.0') {
+              fwrite(STDERR, "Core 1.4.0 is not autoloadable after upgrade.\n");
+              exit(1);
+          }
+          if (!class_exists(\xdecaro\Core\Integration\CapabilityRegistry::class)) {
+              fwrite(STDERR, "CapabilityRegistry is not autoloadable after upgrade.\n");
+              exit(1);
+          }
+          echo "Core upgrade runtime OK\n";
+          PHP
+          php core-upgrade-probe.php
+          rm core-upgrade-probe.php

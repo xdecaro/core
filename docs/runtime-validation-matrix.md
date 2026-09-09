@@ -2,50 +2,64 @@
 
 This matrix is the stabilization gate for the Core `1.4.x` line and for functional cross-product integrations.
 
-Repository CI, deterministic ZIP generation and successful GitHub Releases are necessary but are not sufficient proof of Joomla runtime compatibility. Runtime claims must be backed by an actual Joomla installation.
+Repository CI, deterministic ZIP generation and successful publication are necessary but are not sufficient proof of Joomla runtime compatibility. Runtime claims must be backed by an actual Joomla installation.
 
 ## Automated runtime baseline
 
-`.github/workflows/runtime-smoke.yml` installs real Joomla instances with MariaDB and exercises released packages through Joomla CLI.
+`.github/workflows/runtime-smoke.yml` installs real Joomla instances with MariaDB and exercises distributed packages through Joomla CLI.
 
-Current automated majors:
+The stabilization baseline is deliberately pinned so that a new Joomla patch release cannot change the result of an already-defined gate:
 
-- Joomla 5 with PHP 8.1;
-- Joomla 6 with PHP 8.3;
-- Editor only on Joomla 6, matching its current manifest/runtime target.
+- Joomla `5.4.8` with PHP `8.1` for products whose current distribution declares Joomla 5 support;
+- Joomla `6.1.3` with PHP `8.3` for all applicable products;
+- Courses, Forms, Competitions and Editor are tested only on Joomla 6 because their current distributed metadata/manifests target Joomla 6 / PHP 8.3.
 
-The workflow resolves the latest stable release for each Joomla major and rejects alpha, beta and RC packages. Extension installation uses Joomla's `extension:install --path` command.
+Joomla ZIPs and all product package ZIPs are SHA-256 verified before installation. The gate follows the real distribution channel of each product rather than assuming every package is a GitHub Release asset:
 
-Released packages under the initial runtime gate:
+- Courses and Forms are downloaded from their versioned repository `releases/<version>/` paths, matching their Joomla update feeds;
+- Core, Competitions, Documents, Membership, Events, Editor, Finance and Protocol are downloaded from their published GitHub Release assets;
+- package checksums are pinned to the actual distributed artifact or its authoritative Joomla update feed.
+
+Distributed packages under the runtime gate:
 
 - Core `1.4.0`;
 - Courses `1.3.0`;
 - Forms `1.6.0`;
 - Competitions `1.1.0`;
-- Documents `1.1.0`;
+- Documents `1.2.2`;
 - Membership `1.2.0`;
-- Events `1.1.0`;
-- Editor `0.1.0-alpha4`;
+- Events `1.1.2`;
+- Editor `0.1.0-alpha5`;
 - Finance `1.1.0`;
-- Protocol `1.2.0`.
+- Protocol `1.3.0`.
+
+Notifications is not duplicated in this central package matrix because its own repository CI already performs clean package installation on Joomla `4.4.14`, `5.4.8` and `6.1.3`. It remains part of the ecosystem namespace audit.
 
 The automated gate verifies:
 
 1. clean Joomla installation;
-2. package ZIP integrity;
+2. package ZIP integrity and authoritative SHA-256;
 3. package installation using Joomla CLI;
-4. optional consumers can install before Core;
-5. hard Core dependencies reject installation before Core and install after Core;
-6. canonical `xdecaro\Core\Version` autoloading after package installation;
-7. Core `1.4.0+` availability;
+4. optional consumers are genuinely registered before Core is installed;
+5. hard Core dependencies leave neither package/component registration nor component files behind before Core, then install after Core;
+6. canonical `xdecaro\Core\Version` autoloading through Joomla's real extension namespace map;
+7. Core `1.4.0` availability;
 8. `xdecaro\Core\Integration\CapabilityRegistry` availability;
-9. Core upgrade from `1.3.0` to `1.4.0` on Joomla 5 and 6.
+9. Core upgrade from the actually published `1.3.0` package to `1.4.0` on Joomla 5.4.8 and 6.1.3, including manifest-cache and runtime-autoload verification.
+
+The hard-dependency assertion deliberately does not trust only the exit status of `extension:install`: Joomla CLI can report command success while an extension installer script has rejected the package. The gate checks `#__extensions` and the component filesystem directly to detect partial installation.
+
+Documents additionally owns repository-level clean-install, `1.2.0 -> 1.2.2` repair and missing-Core rejection tests on Joomla 5.4.8 and 6.1.3. These tests verify the Joomla SQL manifest repair, preserve the non-destructive `CREATE TABLE IF NOT EXISTS` recovery path and prove that the mandatory Core preflight leaves no package/component registration or component files behind.
+
+Events additionally owns repository-level clean-install, `1.1.1 -> 1.1.2` repair and missing-Core rejection tests on Joomla 5.4.8 and 6.1.3. These tests verify the corrected package installer class, Joomla SQL manifest compatibility and non-destructive repair of Events-owned tables.
+
+Protocol additionally owns a repository-level integration gate that installs Core `1.4.0`, Documents `1.2.1` and Protocol `1.3.0` together on Joomla 5.4.8 and 6.1.3, verifies the installed schemas and rejects direct Protocol access to `#__decarodocuments_*`. It also exercises repair from the published Protocol 1.2.0 package.
 
 This is a runtime smoke gate, not a replacement for browser/UI/security regression testing.
 
 ## Core dependency policy
 
-Current initial matrix:
+Current matrix:
 
 | Product | Core policy | Runtime minimum for Core-backed features |
 | --- | --- | --- |
@@ -60,7 +74,7 @@ Current initial matrix:
 | Finance | optional | 1.3.0 |
 | Protocol | optional | 1.3.0 |
 
-Core `1.4.0` remains compatible with consumers requiring Core `1.3.0+` because the new Capability Registry is additive.
+Core `1.4.0` remains compatible with consumers requiring Core `1.3.0+` because the Capability Registry is additive.
 
 ## Manual runtime checks still required
 
@@ -92,16 +106,21 @@ Record PASS / FAIL / N/A with Joomla version, PHP version, product version and d
 - package installs library, legacy compatibility library and system plugin;
 - canonical `xdecaro\Core` source remains authoritative;
 - `Xdecaro\Core` exists only through the compatibility library;
+- runtime smoke creates Joomla's extension namespace map before probing Core classes, matching the CMS lifecycle;
 - `AssetService` calls remain idempotent;
 - `EntityReference`, `RelationReference`, `IntegrationEvent`, `Capability` and `CapabilityRegistry` stay additive and domain-neutral.
 
 ### Documents
-- mandatory Core preflight remains atomic;
+- mandatory Core preflight remains atomic and is runtime-tested with Core absent;
 - private storage creation, MIME/extension validation and download ACL are tested;
-- document relations never expose private storage paths.
+- public relation API owns relation persistence and never exposes private storage paths;
+- Joomla SQL manifest uses `charset="utf8"` while table definitions remain `utf8mb4`;
+- the 1.2.1 repair for affected 1.2.0 installations remains non-destructive in 1.2.2; 1.2.2 additionally fixes Joomla discovery of the mandatory-Core package installer.
 
 ### Events
-- mandatory Core preflight remains atomic;
+- mandatory Core preflight remains atomic and is runtime-tested with Core absent;
+- Joomla SQL manifest uses `charset="utf8"` while table definitions remain `utf8mb4`;
+- 1.1.2 repairs affected prior installations using only `CREATE TABLE IF NOT EXISTS` for Events-owned tables;
 - capacity/waitlist/check-in changes preserve ACL and CSRF.
 
 ### Editor
@@ -115,11 +134,17 @@ Record PASS / FAIL / N/A with Joomla version, PHP version, product version and d
 
 ### Protocol
 - register numbering remains atomic and immutable after assignment;
-- Documents integration remains optional and public-contract based.
+- Documents integration remains optional and public-contract based;
+- Protocol checks its own ACL before delegating;
+- Documents keeps document ACL and relation persistence ownership;
+- Protocol never reads or writes `#__decarodocuments_*` directly;
+- Protocol 1.3.0 repairs its own affected older installs non-destructively.
 
 ## Namespace audit
 
-`.github/workflows/ecosystem-audit.yml` checks runtime PHP in current xdecaro repositories and rejects new `Xdecaro\Core` consumption. Core itself is checked separately: canonical sources must use `xdecaro\Core`; the legacy manifest is the only compatibility boundary.
+`.github/workflows/ecosystem-audit.yml` checks runtime PHP in current public xdecaro repositories and rejects new `Xdecaro\Core` consumption. Core itself is checked separately: canonical sources must use `xdecaro\Core`; the legacy manifest is the only compatibility boundary.
+
+`xdecaro/draw` is private, so the Core repository token cannot perform cross-repository checkout for it. Draw remains covered by its own CI, which rejects `Xdecaro\` runtime usage and cross-component private-table coupling. It is intentionally excluded only from the central checkout matrix, not from the architectural rule.
 
 ## Stabilization rule
 
