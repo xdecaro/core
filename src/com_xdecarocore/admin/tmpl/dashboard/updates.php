@@ -12,6 +12,9 @@ foreach ($products as $product) {
         $updateCount++;
     }
 }
+$label = static function (string $key): string {
+    return htmlspecialchars(Text::_($key), ENT_QUOTES, 'UTF-8');
+};
 ?>
 <div class="xdecaro-scope xdecaro-suite">
     <div class="xdecaro-suite__hero">
@@ -27,17 +30,17 @@ foreach ($products as $product) {
 
     <div class="xdecaro-card">
         <div class="xdecaro-card__body">
-            <div class="xdecaro-table-wrap">
-                <table class="xdecaro-table">
+            <div class="xdecaro-table-wrap xdecaro-suite__responsive-wrap">
+                <table class="xdecaro-table xdecaro-suite__responsive-table">
                     <thead><tr><th><?php echo Text::_('COM_XDECAROCORE_PRODUCT'); ?></th><th><?php echo Text::_('COM_XDECAROCORE_INSTALLED_VERSION'); ?></th><th><?php echo Text::_('COM_XDECAROCORE_AVAILABLE_VERSION'); ?></th><th><?php echo Text::_('COM_XDECAROCORE_STATUS'); ?></th></tr></thead>
                     <tbody>
                     <?php foreach ($products as $product) : ?>
                         <?php if (!$product['installed']) continue; ?>
                         <tr>
-                            <td><strong><?php echo htmlspecialchars($product['name'], ENT_QUOTES, 'UTF-8'); ?></strong><div class="xdecaro-suite__muted"><?php echo htmlspecialchars($product['package'], ENT_QUOTES, 'UTF-8'); ?></div></td>
-                            <td><?php echo $product['installed_version'] !== '' ? htmlspecialchars($product['installed_version'], ENT_QUOTES, 'UTF-8') : '—'; ?></td>
-                            <td><?php echo $product['available_version'] !== '' ? htmlspecialchars($product['available_version'], ENT_QUOTES, 'UTF-8') : '—'; ?></td>
-                            <td>
+                            <td data-label="<?php echo $label('COM_XDECAROCORE_PRODUCT'); ?>"><strong><?php echo htmlspecialchars($product['name'], ENT_QUOTES, 'UTF-8'); ?></strong><div class="xdecaro-suite__muted"><?php echo htmlspecialchars($product['package'], ENT_QUOTES, 'UTF-8'); ?></div></td>
+                            <td data-label="<?php echo $label('COM_XDECAROCORE_INSTALLED_VERSION'); ?>"><?php echo $product['installed_version'] !== '' ? htmlspecialchars($product['installed_version'], ENT_QUOTES, 'UTF-8') : '—'; ?></td>
+                            <td data-label="<?php echo $label('COM_XDECAROCORE_AVAILABLE_VERSION'); ?>"><?php echo $product['available_version'] !== '' ? htmlspecialchars($product['available_version'], ENT_QUOTES, 'UTF-8') : '—'; ?></td>
+                            <td data-label="<?php echo $label('COM_XDECAROCORE_STATUS'); ?>">
                                 <?php if ($product['status'] === 'update') : ?><span class="xdecaro-badge xdecaro-badge--warning"><?php echo Text::_('COM_XDECAROCORE_STATUS_UPDATE'); ?></span>
                                 <?php elseif ($product['status'] === 'partial') : ?><span class="xdecaro-badge xdecaro-badge--danger"><?php echo Text::_('COM_XDECAROCORE_STATUS_PARTIAL'); ?></span>
                                 <?php else : ?><span class="xdecaro-badge xdecaro-badge--success"><?php echo Text::_('COM_XDECAROCORE_STATUS_CURRENT'); ?></span><?php endif; ?>
