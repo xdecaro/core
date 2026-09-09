@@ -2,7 +2,7 @@
 
 **Core by xdecaro** is the shared technical foundation for the xdecaro Joomla ecosystem.
 
-Version `1.5.0` adds a central Joomla administrator dashboard while keeping the public `xdecaro\Core` contracts backward compatible and product business logic outside Core.
+Version `1.5.3` keeps the central Joomla administrator dashboard introduced on the 1.5.x line and fixes its component-specific Web Asset Manager delivery while preserving the public `xdecaro\Core` contracts and keeping product business logic outside Core.
 
 ## Package
 
@@ -19,15 +19,15 @@ New code must use `xdecaro\Core`. The legacy namespace is compatibility-only, re
 
 Install the versioned package ZIP directly through Joomla:
 
-`pkg_xdecarocore_1.5.0.zip`
+`pkg_xdecarocore_1.5.3.zip`
 
-Core `1.5.0` can be installed over Core `1.4.0`; the package uses Joomla's normal upgrade path and adds the administrator component without removing the existing libraries or system plugin.
+Core `1.5.3` can be installed directly over an existing 1.5.x installation; the package uses Joomla's normal upgrade path without removing the existing libraries, administrator component, system plugin, data or configuration.
 
 The package registers the official update feed at `updates/pkg_xdecarocore.xml`. Releases are deterministic and verified with SHA-256. The feed targets Joomla 4, 5 and 6 where technically possible and declares PHP 7.4 or newer; the installed Joomla major may require a newer PHP version.
 
 ## xdecaro administrator dashboard
 
-After Core `1.5.0` is installed, Joomla exposes **Components → xdecaro**.
+After Core is installed, Joomla exposes **Components → xdecaro**.
 
 The dashboard provides:
 
@@ -38,13 +38,15 @@ The dashboard provides:
 - **Diagnostics** — Core presence, partial package detection and disabled package plugins/modules;
 - **Information** — Core/Joomla/PHP runtime information and development status.
 
-Installed state is read from Joomla `#__extensions`. Package contents are grouped using Joomla's `package_id`, so the dashboard reflects the real extensions installed on the site instead of assuming a fixed child list.
+Installed state is read from Joomla `#__extensions`. Package contents are resolved from each installed Joomla package manifest first and use `package_id` only as a fallback, so legacy or stale package relationships do not mix extensions from different products.
 
 The product catalog is a release-time baseline for products that are not installed yet. For installed extensions, a newer version already discovered by Joomla's updater takes precedence over the bundled catalog value. The dashboard deliberately does not perform remote network requests on every administrator page load.
 
+Core 1.5.3 registers its administrator-specific assets through Joomla's Web Asset Manager using the canonical component URIs `com_xdecarocore/admin.css` and `com_xdecarocore/admin.js`; Joomla resolves those to the standard media `css/` and `js/` directories.
+
 ### Licensing during development
 
-Core `1.5.0` does **not** enforce commercial licensing. The Information screen only reports that licensing is deferred while the suite is still under development. Installed components, updates and features are not blocked by a license check in this release.
+Core `1.5.3` does **not** enforce commercial licensing. The Information screen only reports that licensing is deferred while the suite is still under development. Installed components, updates and features are not blocked by a license check in this release.
 
 ## Shared Web Asset Manager API
 
