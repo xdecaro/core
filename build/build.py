@@ -8,8 +8,10 @@ ROOT = Path(__file__).resolve().parents[1]
 VERSION = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
 LIB_SRC = ROOT / "src/lib_xdecarocore"
 LEGACY_MANIFEST = ROOT / "src/lib_xdecarocorelegacy/xdecarocorelegacy.xml"
+COMPONENT_SRC = ROOT / "src/com_xdecarocore"
 PLUGIN_SRC = ROOT / "src/plg_system_xdecarocore"
 PACKAGE_MANIFEST = ROOT / "package/pkg_xdecarocore/pkg_xdecarocore.xml"
+PACKAGE_SCRIPT = ROOT / "package/pkg_xdecarocore/script.php"
 DIST = ROOT / "dist"
 FIXED_TIME = (1980, 1, 1, 0, 0, 0)
 
@@ -50,6 +52,12 @@ if not VERSION:
 if not LEGACY_MANIFEST.is_file():
     raise SystemExit("Legacy Core namespace manifest is missing")
 
+if not (COMPONENT_SRC / "xdecarocore.xml").is_file():
+    raise SystemExit("Core administrator component manifest is missing")
+
+if not PACKAGE_SCRIPT.is_file():
+    raise SystemExit("Core package installer script is missing")
+
 DIST.mkdir(exist_ok=True)
 for old in DIST.glob("*.zip"):
     old.unlink()
@@ -58,20 +66,24 @@ for old in DIST.glob("SHA256SUMS.txt"):
 
 library_zip = DIST / f"lib_xdecarocore_{VERSION}.zip"
 legacy_library_zip = DIST / f"lib_xdecarocorelegacy_{VERSION}.zip"
+component_zip = DIST / f"com_xdecarocore_{VERSION}.zip"
 plugin_zip = DIST / f"plg_system_xdecarocore_{VERSION}.zip"
 package_zip = DIST / f"pkg_xdecarocore_{VERSION}.zip"
 
 zip_directory(LIB_SRC, library_zip)
 zip_legacy_library(legacy_library_zip)
+zip_directory(COMPONENT_SRC, component_zip)
 zip_directory(PLUGIN_SRC, plugin_zip)
 
 with zipfile.ZipFile(package_zip, "w") as archive:
     add_bytes(archive, "pkg_xdecarocore.xml", PACKAGE_MANIFEST.read_bytes())
+    add_bytes(archive, "script.php", PACKAGE_SCRIPT.read_bytes())
     add_bytes(archive, "lib_xdecarocore.zip", library_zip.read_bytes())
     add_bytes(archive, "lib_xdecarocorelegacy.zip", legacy_library_zip.read_bytes())
+    add_bytes(archive, "com_xdecarocore.zip", component_zip.read_bytes())
     add_bytes(archive, "plg_system_xdecarocore.zip", plugin_zip.read_bytes())
 
-artifacts = [library_zip, legacy_library_zip, plugin_zip, package_zip]
+artifacts = [library_zip, legacy_library_zip, component_zip, plugin_zip, package_zip]
 (DIST / "SHA256SUMS.txt").write_text(
     "".join(f"{sha256(path)}  {path.name}\n" for path in artifacts),
     encoding="utf-8",

@@ -4,6 +4,28 @@ All notable changes to **Core by xdecaro** are documented here.
 
 The project follows Semantic Versioning.
 
+## 1.5.0 — 2026-09-09
+
+### Added
+
+- New `com_xdecarocore` administrator component, shown in Joomla as **xdecaro**.
+- Central Dashboard with counts for known products, installed products, missing released products, available updates and detected technical extensions.
+- Product inventory covering stable, prerelease, development and planned xdecaro products.
+- Installed-version discovery from Joomla `#__extensions` and available-version comparison using the Core catalog plus Joomla's local update cache.
+- Real package-child inspection through Joomla `package_id`, including components, plugins, libraries and modules contained by installed packages.
+- Local diagnostics for partial installations and disabled package plugins/modules.
+- Dedicated views for Components, All extensions, Updates, Diagnostics and Information.
+- Responsive administrator styling built on the existing scoped Core light/dark design tokens.
+- Italian and English administrator language strings.
+- Dependency-free dashboard catalog smoke coverage and deterministic component ZIP packaging.
+
+### Compatibility
+
+- Existing `xdecaro\Core` public contracts remain unchanged.
+- The temporary `Xdecaro\Core` legacy namespace compatibility library remains packaged.
+- Core still has no product-specific tables and does not read private data owned by another xdecaro product.
+- Licensing is intentionally not enforced in 1.5.0; the dashboard only reports that commercial licensing is deferred while the suite is under development.
+
 ## 1.4.0 — 2026-09-09
 
 ### Added

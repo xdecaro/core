@@ -3,6 +3,22 @@
   <changelog>
     <element>pkg_xdecarocore</element>
     <type>package</type>
+    <version>1.5.0</version>
+    <addition>
+      <item>Added the xdecaro administrator dashboard component to the Core package.</item>
+      <item>Added central product inventory with installed, missing, development and prerelease states.</item>
+      <item>Added installed and available version comparison using the Core catalog and Joomla update cache.</item>
+      <item>Added real package-child inspection for components, plugins, libraries and modules registered in Joomla.</item>
+      <item>Added local diagnostics for partial installations and disabled package plugins or modules.</item>
+      <item>Added responsive light/dark administrator UI and Italian/English language strings.</item>
+    </addition>
+    <change>
+      <item>Commercial licensing remains intentionally inactive during development and does not block any installed feature.</item>
+    </change>
+  </changelog>
+  <changelog>
+    <element>pkg_xdecarocore</element>
+    <type>package</type>
     <version>1.4.0</version>
     <addition>
       <item>Added runtime in-memory CapabilityRegistry for optional product capability discovery.</item>
