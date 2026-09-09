@@ -104,10 +104,10 @@ jobs:
 
           if [ '${{ matrix.scenario }}' = 'upgrade' ]; then
             curl --fail --location --retry 3 \
-              'https://github.com/xdecaro/core/releases/download/v1.5.3/pkg_xdecarocore_1.5.3.zip' \
-              --output /tmp/core-1.5.3.zip
-            echo '0772b5b3040111cdb60258fd22d7dfdcc226685ea46dbde0baa3d02d7212b003  /tmp/core-1.5.3.zip' | sha256sum --check --strict
-            php cli/joomla.php extension:install --path=/tmp/core-1.5.3.zip
+              'https://github.com/xdecaro/core/releases/download/v1.5.4/pkg_xdecarocore_1.5.4.zip' \
+              --output /tmp/core-1.5.4.zip
+            echo '09b6cd8563fe2998968e559add76b8d5da2a57b697bc047d5c3dc0654dc604af  /tmp/core-1.5.4.zip' | sha256sum --check --strict
+            php cli/joomla.php extension:install --path=/tmp/core-1.5.4.zip
           fi
 
           php cli/joomla.php extension:install --path="$PACKAGE"

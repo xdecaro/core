@@ -32,6 +32,27 @@ $channelLabel = static function (string $channel): string {
     ];
     return Text::_($map[$channel] ?? 'COM_XDECAROCORE_STATUS_UNKNOWN');
 };
+$channelClass = static function (string $channel): string {
+    if ($channel === 'stable') return 'xdecaro-badge--success';
+    if (in_array($channel, ['prerelease', 'development', 'planned'], true)) return 'xdecaro-badge--warning';
+    return '';
+};
+$extensionLabel = static function (array $extension): string {
+    $name = trim((string) ($extension['name'] ?? ''));
+    if ($name !== '') {
+        $translated = Text::_($name);
+        if ($translated !== $name || !preg_match('/^[A-Z][A-Z0-9_]+$/', $name)) {
+            return $translated;
+        }
+    }
+
+    $element = trim((string) ($extension['element'] ?? ''));
+    $fallback = preg_replace('/^(com|pkg|plg|mod|lib)_/i', '', $element);
+    $fallback = preg_replace('/^(xdecaro|decaro)/i', '', (string) $fallback);
+    $fallback = trim(str_replace(['_', '-', '/'], ' ', (string) $fallback));
+
+    return $fallback !== '' ? ucwords($fallback) : ($element !== '' ? $element : $name);
+};
 ?>
 <div class="xdecaro-scope xdecaro-suite">
     <div class="xdecaro-suite__hero">
@@ -74,7 +95,7 @@ $channelLabel = static function (string $channel): string {
                                     <div class="xdecaro-suite__warning"><?php echo Text::sprintf('COM_XDECAROCORE_DISABLED_CHILDREN', (int) $product['disabled_count']); ?></div>
                                 <?php endif; ?>
                             </td>
-                            <td><span class="xdecaro-badge"><?php echo $channelLabel($product['channel']); ?></span></td>
+                            <td><span class="xdecaro-badge <?php echo $channelClass($product['channel']); ?>"><?php echo $channelLabel($product['channel']); ?></span></td>
                             <td><?php echo $product['installed_version'] !== '' ? htmlspecialchars($product['installed_version'], ENT_QUOTES, 'UTF-8') : '—'; ?></td>
                             <td><?php echo $product['available_version'] !== '' ? htmlspecialchars($product['available_version'], ENT_QUOTES, 'UTF-8') : '—'; ?></td>
                             <td>
@@ -128,7 +149,7 @@ $channelLabel = static function (string $channel): string {
                                                         <?php foreach ($children as $child) : ?>
                                                             <?php $switchable = in_array($child['type'], ['plugin', 'module'], true); ?>
                                                             <tr>
-                                                                <td><strong><?php echo htmlspecialchars($child['name'], ENT_QUOTES, 'UTF-8'); ?></strong></td>
+                                                                <td><strong><?php echo htmlspecialchars($extensionLabel($child), ENT_QUOTES, 'UTF-8'); ?></strong></td>
                                                                 <td><?php echo htmlspecialchars($child['type'], ENT_QUOTES, 'UTF-8'); ?></td>
                                                                 <td><code><?php echo htmlspecialchars($child['element'], ENT_QUOTES, 'UTF-8'); ?></code></td>
                                                                 <td><?php echo $child['folder'] !== '' ? htmlspecialchars($child['folder'], ENT_QUOTES, 'UTF-8') : '—'; ?></td>

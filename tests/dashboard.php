@@ -28,7 +28,7 @@ namespace {
     }
 
     $required = [
-        'core' => ['pkg_xdecarocore', '1.5.4'],
+        'core' => ['pkg_xdecarocore', '1.5.5'],
         'forms' => ['pkg_decaroforms', '1.7.0'],
         'courses' => ['pkg_decarocourses', '1.5.0'],
         'competitions' => ['pkg_xdecarocompetitions', '1.3.0'],
@@ -163,6 +163,15 @@ namespace {
         }
     }
 
+    foreach (['products', 'extensions', 'updates', 'diagnostics', 'information'] as $name) {
+        if (strpos($templates[$name], 'xdecaro-suite__hero') === false) {
+            throw new \RuntimeException('Shared suite hero missing from dashboard layout: ' . $name);
+        }
+    }
+    if (strpos($templates['information'], 'xdecaro-suite__page-header') !== false) {
+        throw new \RuntimeException('Information must not use a separate page-header structure.');
+    }
+
     $productsTemplate = $templates['products'];
     foreach (['data-xdecaro-package-toggle', 'xdecaro-suite__expansion-row', 'xdecaro-suite__child-table', 'COM_XDECAROCORE_ACTIONS', 'xdecaro-suite__action-cell'] as $marker) {
         if (strpos($productsTemplate, $marker) === false) {
@@ -171,6 +180,17 @@ namespace {
     }
     if (strpos($productsTemplate, '<td colspan="7"') === false) {
         throw new \RuntimeException('Expanded package details must span the dedicated Actions column.');
+    }
+    if (strpos($productsTemplate, "if (\$channel === 'stable') return 'xdecaro-badge--success';") === false) {
+        throw new \RuntimeException('Stable product channels must use the success badge.');
+    }
+    if (strpos($productsTemplate, '$extensionLabel($child)') === false) {
+        throw new \RuntimeException('Expanded package extension names must use readable labels.');
+    }
+
+    $extensionsTemplate = $templates['extensions'];
+    if (strpos($extensionsTemplate, 'Text::_($name)') === false || strpos($extensionsTemplate, '$extensionLabel($extension)') === false) {
+        throw new \RuntimeException('All Extensions must translate manifest language keys and provide a readable fallback.');
     }
 
     $dashboardCss = file_get_contents(__DIR__ . '/../src/com_xdecarocore/media/css/admin.css');

@@ -5,6 +5,22 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Language\Text;
 
 $extensions = $this->snapshot['extensions'];
+$extensionLabel = static function (array $extension): string {
+    $name = trim((string) ($extension['name'] ?? ''));
+    if ($name !== '') {
+        $translated = Text::_($name);
+        if ($translated !== $name || !preg_match('/^[A-Z][A-Z0-9_]+$/', $name)) {
+            return $translated;
+        }
+    }
+
+    $element = trim((string) ($extension['element'] ?? ''));
+    $fallback = preg_replace('/^(com|pkg|plg|mod|lib)_/i', '', $element);
+    $fallback = preg_replace('/^(xdecaro|decaro)/i', '', (string) $fallback);
+    $fallback = trim(str_replace(['_', '-', '/'], ' ', (string) $fallback));
+
+    return $fallback !== '' ? ucwords($fallback) : ($element !== '' ? $element : $name);
+};
 ?>
 <div class="xdecaro-scope xdecaro-suite">
     <div class="xdecaro-suite__hero">
@@ -27,7 +43,7 @@ $extensions = $this->snapshot['extensions'];
                         <?php foreach ($extensions as $extension) : ?>
                             <?php $switchable = in_array($extension['type'], ['plugin', 'module'], true); ?>
                             <tr>
-                                <td><strong><?php echo htmlspecialchars($extension['name'], ENT_QUOTES, 'UTF-8'); ?></strong><?php if ($extension['folder'] !== '') : ?><div class="xdecaro-suite__muted"><?php echo htmlspecialchars($extension['folder'], ENT_QUOTES, 'UTF-8'); ?></div><?php endif; ?></td>
+                                <td><strong><?php echo htmlspecialchars($extensionLabel($extension), ENT_QUOTES, 'UTF-8'); ?></strong><?php if ($extension['folder'] !== '') : ?><div class="xdecaro-suite__muted"><?php echo htmlspecialchars($extension['folder'], ENT_QUOTES, 'UTF-8'); ?></div><?php endif; ?></td>
                                 <td><?php echo htmlspecialchars($extension['type'], ENT_QUOTES, 'UTF-8'); ?></td>
                                 <td><code><?php echo htmlspecialchars($extension['element'], ENT_QUOTES, 'UTF-8'); ?></code></td>
                                 <td><?php echo $extension['version'] !== '' ? htmlspecialchars($extension['version'], ENT_QUOTES, 'UTF-8') : '—'; ?></td>

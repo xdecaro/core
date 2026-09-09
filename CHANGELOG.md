@@ -4,6 +4,26 @@ All notable changes to **Core by xdecaro** are documented here.
 
 The project follows Semantic Versioning.
 
+## 1.5.5 — 2026-09-09
+
+### Fixed
+
+- Information now uses the same shared suite hero structure as Components, All extensions, Updates and Diagnostics instead of a separate page-header variant.
+- Manifest language keys such as `COM_XDECAROCORE` are translated before rendering in All extensions and expanded package contents; unresolved keys fall back to a readable label derived from the technical element.
+- Stable product channels now use the green success badge consistently, including the Information summary.
+
+### Tests
+
+- Added regression guards requiring the shared hero on every secondary Core administrator view.
+- Added checks for readable extension labels and the stable-channel success color.
+- Runtime upgrade coverage now installs Core 1.5.4 before upgrading to 1.5.5 on Joomla 5.4.8 and 6.1.3.
+
+### Compatibility
+
+- Existing `xdecaro\Core` public contracts remain unchanged.
+- The temporary `Xdecaro\Core` legacy namespace compatibility library remains packaged.
+- No product data or configuration is migrated or deleted by this release.
+
 ## 1.5.4 — 2026-09-09
 
 ### Changed
@@ -104,7 +124,7 @@ The project follows Semantic Versioning.
 
 - Public `xdecaro\Core\Integration\CapabilityRegistry` for runtime, in-memory registration and discovery of product capabilities.
 - Minimum-version capability matching through `supports()`.
-- Capability filtering by component and deterministic array serialization/round-trip support.
+- Capability filtering by component and deterministic registry serialization/round-trip support.
 - Registry smoke coverage using Notifications, Tasks and Analytics capability declarations.
 
 ### Architecture
