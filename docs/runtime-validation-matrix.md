@@ -31,7 +31,7 @@ Distributed packages under the runtime gate:
 - Events `1.1.2`;
 - Editor `0.1.0-alpha5`;
 - Finance `1.1.0`;
-- Protocol `1.3.0`.
+- Protocol `1.4.0`.
 
 Notifications is not duplicated in this central package matrix because its own repository CI already performs clean package installation on Joomla `4.4.14`, `5.4.8` and `6.1.3`. It remains part of the ecosystem namespace audit.
 
@@ -53,7 +53,7 @@ Documents additionally owns repository-level clean-install, `1.2.0 -> 1.2.2` rep
 
 Events additionally owns repository-level clean-install, `1.1.1 -> 1.1.2` repair and missing-Core rejection tests on Joomla 5.4.8 and 6.1.3. These tests verify the corrected package installer class, Joomla SQL manifest compatibility and non-destructive repair of Events-owned tables.
 
-Protocol additionally owns a repository-level integration gate that installs Core `1.4.0`, Documents `1.2.1` and Protocol `1.3.0` together on Joomla 5.4.8 and 6.1.3, verifies the installed schemas and rejects direct Protocol access to `#__decarodocuments_*`. It also exercises repair from the published Protocol 1.2.0 package.
+Protocol additionally owns a repository-level functional integration gate that installs Core `1.4.0`, Documents `1.2.2` and Protocol `1.4.0` together on Joomla 5.4.8 and 6.1.3. It verifies clean installation and repair from published Protocol `1.2.0`, validates the installed schemas, rejects direct Protocol access to `#__decarodocuments_*`, and exercises the provider-owned Documents relation API end to end: attach and read on a draft record, protocol finalization, then server-side rejection of further attach/detach operations. Protocol enforces Documents `1.2.1+` for this optional integration.
 
 This is a runtime smoke gate, not a replacement for browser/UI/security regression testing.
 
@@ -135,10 +135,13 @@ Record PASS / FAIL / N/A with Joomla version, PHP version, product version and d
 ### Protocol
 - register numbering remains atomic and immutable after assignment;
 - Documents integration remains optional and public-contract based;
-- Protocol checks its own ACL before delegating;
-- Documents keeps document ACL and relation persistence ownership;
+- Protocol `1.4.0` exposes linked Documents in the record editor without transferring document ownership into Protocol;
+- saved draft records may attach/detach existing Documents records; protocolled records keep linked documents read-only;
+- mutation tasks use Joomla CSRF validation and server-side Protocol state/ACL checks;
+- Documents keeps document ACL, storage and relation persistence ownership;
+- Documents `1.2.1+` is enforced before enabling the integration;
 - Protocol never reads or writes `#__decarodocuments_*` directly;
-- Protocol 1.3.0 repairs its own affected older installs non-destructively.
+- Protocol 1.4.0 retains the non-destructive repair path for affected older Protocol installations.
 
 ## Namespace audit
 

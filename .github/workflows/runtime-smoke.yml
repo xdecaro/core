@@ -122,7 +122,7 @@ jobs:
             finance)
               URL='https://github.com/xdecaro/finance/releases/download/v1.1.0/pkg_decarofinance_1.1.0.zip'; SHA='268ce39810135191dc95cd70f9f46847425fe37b6212f5897cf205d5fd7e0c84'; MODE='optional'; PACKAGE='pkg_decarofinance'; COMPONENT='' ;;
             protocol)
-              URL='https://github.com/xdecaro/protocol/releases/download/v1.3.0/pkg_decaroprotocol_1.3.0.zip'; SHA='3dbf32cb15ba0f5993ecc56f883e720653945cca7159233330e54b81bb0236b4'; MODE='optional'; PACKAGE='pkg_decaroprotocol'; COMPONENT='' ;;
+              URL='https://github.com/xdecaro/protocol/releases/download/v1.4.0/pkg_decaroprotocol_1.4.0.zip'; SHA='2f762928fb2944611356b3568643700eb0af1af6a0be65fcfd0f3b287431eef9'; MODE='optional'; PACKAGE='pkg_decaroprotocol'; COMPONENT='' ;;
             *) echo "Unknown product: $PRODUCT" >&2; exit 1 ;;
           esac
           echo "mode=$MODE" >> "$GITHUB_OUTPUT"
