@@ -17,7 +17,7 @@ final class EcosystemService
      * The catalog version is the newest version known when this Core release was built.
      */
     private const CATALOG = [
-        'core' => ['name' => 'Core', 'package' => 'pkg_xdecarocore', 'component' => 'com_xdecarocore', 'version' => '1.5.8', 'channel' => 'stable'],
+        'core' => ['name' => 'Core', 'package' => 'pkg_xdecarocore', 'component' => 'com_xdecarocore', 'version' => '1.5.9', 'channel' => 'stable'],
         'people' => ['name' => 'People', 'package' => 'pkg_xdecaropeople', 'component' => 'com_xdecaropeople', 'version' => '1.0.1', 'channel' => 'stable'],
         'organizations' => ['name' => 'Organizations', 'package' => 'pkg_xdecaroorganizations', 'component' => 'com_xdecaroorganizations', 'version' => '1.0.0', 'channel' => 'stable'],
         'notifications' => ['name' => 'Notifications', 'package' => 'pkg_xdecaronotifications', 'component' => 'com_xdecaronotifications', 'version' => '1.0.2', 'channel' => 'stable'],
@@ -36,6 +36,7 @@ final class EcosystemService
         'resources' => ['name' => 'Resources', 'package' => 'pkg_xdecaroresources', 'component' => 'com_xdecaroresources', 'version' => '0.2.0', 'channel' => 'development'],
         'inventory' => ['name' => 'Inventory', 'package' => 'pkg_xdecaroinventory', 'component' => 'com_xdecaroinventory', 'version' => '0.2.0', 'channel' => 'development'],
         'communications' => ['name' => 'Communications', 'package' => '', 'component' => '', 'version' => '', 'channel' => 'planned'],
+        'feedback' => ['name' => 'Feedback', 'package' => 'pkg_xdecarofeedback', 'component' => 'com_xdecarofeedback', 'version' => '', 'channel' => 'planned'],
     ];
 
     /** @var DatabaseInterface */
