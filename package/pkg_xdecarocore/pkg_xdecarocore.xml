@@ -9,6 +9,7 @@
     <license>GNU General Public License version 2 or later</license>
     <version>1.5.0</version>
     <description>Shared xdecaro Joomla infrastructure package with central ecosystem dashboard.</description>
+    <scriptfile>script.php</scriptfile>
     <blockChildUninstall>true</blockChildUninstall>
     <files>
         <file type="library" id="xdecaro/core">lib_xdecarocore.zip</file>
