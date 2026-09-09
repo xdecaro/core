@@ -89,7 +89,7 @@ jobs:
           test -f configuration.php
           php cli/joomla.php extension:list >/tmp/extensions-before.txt
 
-      - name: Resolve and download released package
+      - name: Resolve download and verify released package
         id: product
         shell: bash
         run: |
@@ -97,29 +97,30 @@ jobs:
           PRODUCT='${{ matrix.product }}'
           case "$PRODUCT" in
             core)
-              URL='https://github.com/xdecaro/core/releases/download/v1.4.0/pkg_xdecarocore_1.4.0.zip'; MODE='core' ;;
+              URL='https://github.com/xdecaro/core/releases/download/v1.4.0/pkg_xdecarocore_1.4.0.zip'; SHA='4248f7e3de514c2ae2402ffc8ba12845647dca1ebac963da370650e88ac45def'; MODE='core' ;;
             courses)
-              URL='https://github.com/xdecaro/courses/releases/download/v1.3.0/pkg_decarocourses_1.3.0.zip'; MODE='optional' ;;
+              URL='https://github.com/xdecaro/courses/releases/download/v1.3.0/pkg_decarocourses_1.3.0.zip'; SHA='e1429f9189e6e9c21b98d05b6cb597e3b957fee7f0f3911c1607165b639cb22c'; MODE='optional' ;;
             forms)
-              URL='https://github.com/xdecaro/forms/releases/download/v1.6.0/pkg_decaroforms_1.6.0.zip'; MODE='optional' ;;
+              URL='https://github.com/xdecaro/forms/releases/download/v1.6.0/pkg_decaroforms_1.6.0.zip'; SHA='5e7df40f442444eb0e12bb4f1441cd7bc53549f458273f94879f6304f266e286'; MODE='optional' ;;
             competitions)
-              URL='https://github.com/xdecaro/competitions/releases/download/v1.1.0/pkg_xdecarocompetitions_1.1.0.zip'; MODE='optional' ;;
+              URL='https://github.com/xdecaro/competitions/releases/download/v1.1.0/pkg_xdecarocompetitions_1.1.0.zip'; SHA='e069ebdab4aadf61dfac92782b9b1e2cf7919165316d34a3eff3c20946268217'; MODE='optional' ;;
             documents)
-              URL='https://github.com/xdecaro/documents/releases/download/v1.2.0/pkg_decarodocuments_1.2.0.zip'; MODE='hard' ;;
+              URL='https://github.com/xdecaro/documents/releases/download/v1.2.1/pkg_decarodocuments_1.2.1.zip'; SHA='5904768ac5e7e1582a07f339b2926f14c141f434cbb586b451397bf6dc7649ea'; MODE='hard' ;;
             membership)
-              URL='https://github.com/xdecaro/membership/releases/download/v1.2.0/pkg_decaromembership_1.2.0.zip'; MODE='optional' ;;
+              URL='https://github.com/xdecaro/membership/releases/download/v1.2.0/pkg_decaromembership_1.2.0.zip'; SHA='ab2eabfa6d248b7d5f03a786d0d1fd62ba7f71802b5fa646a1c080a23decfa7f'; MODE='optional' ;;
             events)
-              URL='https://github.com/xdecaro/events/releases/download/v1.1.1/pkg_decaroevents_1.1.1.zip'; MODE='hard' ;;
+              URL='https://github.com/xdecaro/events/releases/download/v1.1.1/pkg_decaroevents_1.1.1.zip'; SHA='fff2229d4189f1b870fc8a8bf636e94e894726ae14ceb080b5f5dcd36af9433e'; MODE='hard' ;;
             editor)
-              URL='https://github.com/xdecaro/editor/releases/download/v0.1.0-alpha5/pkg_decaroeditor_0.1.0-alpha5.zip'; MODE='optional' ;;
+              URL='https://github.com/xdecaro/editor/releases/download/v0.1.0-alpha5/pkg_decaroeditor_0.1.0-alpha5.zip'; SHA='65dd999dd11b98b55f2ccc70d74b194221a7429bb9ac165e1f325d4ba2c984da'; MODE='optional' ;;
             finance)
-              URL='https://github.com/xdecaro/finance/releases/download/v1.1.0/pkg_decarofinance_1.1.0.zip'; MODE='optional' ;;
+              URL='https://github.com/xdecaro/finance/releases/download/v1.1.0/pkg_decarofinance_1.1.0.zip'; SHA='268ce39810135191dc95cd70f9f46847425fe37b6212f5897cf205d5fd7e0c84'; MODE='optional' ;;
             protocol)
-              URL='https://github.com/xdecaro/protocol/releases/download/v1.3.0/pkg_decaroprotocol_1.3.0.zip'; MODE='optional' ;;
+              URL='https://github.com/xdecaro/protocol/releases/download/v1.3.0/pkg_decaroprotocol_1.3.0.zip'; SHA='3dbf32cb15ba0f5993ecc56f883e720653945cca7159233330e54b81bb0236b4'; MODE='optional' ;;
             *) echo "Unknown product: $PRODUCT" >&2; exit 1 ;;
           esac
           echo "mode=$MODE" >> "$GITHUB_OUTPUT"
           curl --fail --location --retry 3 "$URL" --output /tmp/product.zip
+          echo "${SHA}  /tmp/product.zip" | sha256sum --check --strict
           curl --fail --location --retry 3 'https://github.com/xdecaro/core/releases/download/v1.4.0/pkg_xdecarocore_1.4.0.zip' --output /tmp/core.zip
           echo '4248f7e3de514c2ae2402ffc8ba12845647dca1ebac963da370650e88ac45def  /tmp/core.zip' | sha256sum --check --strict
           unzip -t /tmp/product.zip >/dev/null
