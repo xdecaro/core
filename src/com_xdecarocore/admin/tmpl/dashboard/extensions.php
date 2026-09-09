@@ -7,7 +7,13 @@ use Joomla\CMS\Language\Text;
 $extensions = $this->snapshot['extensions'];
 ?>
 <div class="xdecaro-scope xdecaro-suite">
-    <div class="xdecaro-suite__hero"><div><h2><?php echo Text::_('COM_XDECAROCORE_EXTENSIONS'); ?></h2><p><?php echo Text::_('COM_XDECAROCORE_EXTENSIONS_DESC'); ?></p></div><span class="xdecaro-badge"><?php echo count($extensions); ?></span></div>
+    <div class="xdecaro-suite__hero">
+        <div>
+            <h2><?php echo Text::_('COM_XDECAROCORE_EXTENSIONS'); ?></h2>
+            <p><?php echo Text::_('COM_XDECAROCORE_EXTENSIONS_DESC'); ?></p>
+        </div>
+        <span class="xdecaro-badge xdecaro-suite__count-badge"><?php echo Text::sprintf('COM_XDECAROCORE_EXTENSIONS_DETECTED', count($extensions)); ?></span>
+    </div>
     <div class="xdecaro-card">
         <div class="xdecaro-card__body">
             <?php if (!$extensions) : ?>
