@@ -1,4 +1,4 @@
-/* Core by xdecaro 1.5.8 - responsive administrator refinements. */
+/* Core by xdecaro 1.5.9 - responsive administrator refinements. */
 
 /* Never let intrinsic table/card width enlarge the Joomla administrator canvas. */
 .xdecaro-suite,
@@ -196,8 +196,9 @@
         display: none;
     }
 
+    /* Keep expanded package details visually inset from the parent card on phones/tablets. */
     .xdecaro-suite__expansion-content {
-        padding: var(--xdecaro-space-3, 0.75rem) 0 0;
+        padding: var(--xdecaro-space-3, 0.75rem);
     }
 
     /* All Extensions: keep the technical element with the card heading, then pair the four
