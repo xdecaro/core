@@ -104,10 +104,10 @@ jobs:
 
           if [ '${{ matrix.scenario }}' = 'upgrade' ]; then
             curl --fail --location --retry 3 \
-              'https://github.com/xdecaro/core/releases/download/v1.5.4/pkg_xdecarocore_1.5.4.zip' \
-              --output /tmp/core-1.5.4.zip
-            echo '09b6cd8563fe2998968e559add76b8d5da2a57b697bc047d5c3dc0654dc604af  /tmp/core-1.5.4.zip' | sha256sum --check --strict
-            php cli/joomla.php extension:install --path=/tmp/core-1.5.4.zip
+              'https://github.com/xdecaro/core/releases/download/v1.5.5/pkg_xdecarocore_1.5.5.zip' \
+              --output /tmp/core-1.5.5.zip
+            echo 'a54ebb95e33d6a24bd5e0ff7950cdd6c12d53583737409f1e7797214b76593f3  /tmp/core-1.5.5.zip' | sha256sum --check --strict
+            php cli/joomla.php extension:install --path=/tmp/core-1.5.5.zip
           fi
 
           php cli/joomla.php extension:install --path="$PACKAGE"
@@ -165,6 +165,8 @@ jobs:
           grep -Fq '"uri": "com_xdecarocore/admin.js"' joomla/media/com_xdecarocore/joomla.asset.json
           ! grep -Fq 'com_xdecarocore/css/admin.css' joomla/media/com_xdecarocore/joomla.asset.json
           ! grep -Fq 'com_xdecarocore/js/admin.js' joomla/media/com_xdecarocore/joomla.asset.json
+          grep -Fq 'container-name: xdecaro-suite' joomla/media/com_xdecarocore/css/admin.css
+          grep -Fq '@container xdecaro-suite (max-width: 38rem)' joomla/media/com_xdecarocore/css/admin.css
 
       - name: Probe dashboard through Joomla runtime
         shell: bash
