@@ -1,19 +1,19 @@
 {
   "$schema": "https://developer.joomla.org/schemas/json-schema/web_assets.json",
   "name": "com_xdecarocore",
-  "version": "1.5.2",
+  "version": "1.5.3",
   "assets": [
     {
       "name": "com_xdecarocore.admin",
       "type": "style",
-      "uri": "com_xdecarocore/css/admin.css",
-      "version": "1.5.2"
+      "uri": "com_xdecarocore/admin.css",
+      "version": "1.5.3"
     },
     {
       "name": "com_xdecarocore.admin",
       "type": "script",
-      "uri": "com_xdecarocore/js/admin.js",
-      "version": "1.5.2",
+      "uri": "com_xdecarocore/admin.js",
+      "version": "1.5.3",
       "attributes": {
         "defer": true
       }
