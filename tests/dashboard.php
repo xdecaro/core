@@ -28,7 +28,7 @@ namespace {
     }
 
     $required = [
-        'core' => ['pkg_xdecarocore', '1.5.3'],
+        'core' => ['pkg_xdecarocore', '1.5.4'],
         'forms' => ['pkg_decaroforms', '1.7.0'],
         'courses' => ['pkg_decarocourses', '1.5.0'],
         'competitions' => ['pkg_xdecarocompetitions', '1.3.0'],
@@ -148,13 +148,32 @@ namespace {
         throw new \RuntimeException('Dashboard Web Asset Manager URIs must not duplicate Joomla css/js media directories.');
     }
 
-    $productsTemplate = file_get_contents(__DIR__ . '/../src/com_xdecarocore/admin/tmpl/dashboard/products.php');
-    $dashboardCss = file_get_contents(__DIR__ . '/../src/com_xdecarocore/media/css/admin.css');
-    foreach (['data-xdecaro-package-toggle', 'xdecaro-suite__expansion-row', 'xdecaro-suite__child-table'] as $marker) {
-        if (strpos($productsTemplate, $marker) === false) {
-            throw new \RuntimeException('Package detail UI marker missing: ' . $marker);
+    $templates = [
+        'default' => file_get_contents(__DIR__ . '/../src/com_xdecarocore/admin/tmpl/dashboard/default.php'),
+        'products' => file_get_contents(__DIR__ . '/../src/com_xdecarocore/admin/tmpl/dashboard/products.php'),
+        'extensions' => file_get_contents(__DIR__ . '/../src/com_xdecarocore/admin/tmpl/dashboard/extensions.php'),
+        'updates' => file_get_contents(__DIR__ . '/../src/com_xdecarocore/admin/tmpl/dashboard/updates.php'),
+        'diagnostics' => file_get_contents(__DIR__ . '/../src/com_xdecarocore/admin/tmpl/dashboard/diagnostics.php'),
+        'information' => file_get_contents(__DIR__ . '/../src/com_xdecarocore/admin/tmpl/dashboard/information.php'),
+    ];
+
+    foreach ($templates as $name => $template) {
+        if (strpos($template, "Text::_('COM_XDECAROCORE_SUITE')") === false) {
+            throw new \RuntimeException('Suite eyebrow missing from dashboard layout: ' . $name);
         }
     }
+
+    $productsTemplate = $templates['products'];
+    foreach (['data-xdecaro-package-toggle', 'xdecaro-suite__expansion-row', 'xdecaro-suite__child-table', 'COM_XDECAROCORE_ACTIONS', 'xdecaro-suite__action-cell'] as $marker) {
+        if (strpos($productsTemplate, $marker) === false) {
+            throw new \RuntimeException('Package detail/action UI marker missing: ' . $marker);
+        }
+    }
+    if (strpos($productsTemplate, '<td colspan="7"') === false) {
+        throw new \RuntimeException('Expanded package details must span the dedicated Actions column.');
+    }
+
+    $dashboardCss = file_get_contents(__DIR__ . '/../src/com_xdecarocore/media/css/admin.css');
     foreach (['repeat(5, minmax(0, 1fr))', 'xdecaro-suite__diagnostic-row', 'xdecaro-suite__info-grid', 'xdecaro-suite__expansion-panel'] as $marker) {
         if (strpos($dashboardCss, $marker) === false) {
             throw new \RuntimeException('Dashboard responsive CSS marker missing: ' . $marker);
