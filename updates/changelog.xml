@@ -3,6 +3,20 @@
   <changelog>
     <element>pkg_xdecarocore</element>
     <type>package</type>
+    <version>1.5.5</version>
+    <fix>
+      <item>Information now uses the same shared suite hero structure as the other Core administrator views.</item>
+      <item>Manifest language keys are translated before rendering extension names, with a readable technical-element fallback when no translation is available.</item>
+      <item>Stable product channels now use the green success badge consistently.</item>
+    </fix>
+    <change>
+      <item>Added dashboard regression coverage for shared page heroes, readable extension labels and stable-channel color semantics.</item>
+      <item>Runtime upgrade coverage now validates Core 1.5.4 to 1.5.5 on Joomla 5.4.8 and 6.1.3.</item>
+    </change>
+  </changelog>
+  <changelog>
+    <element>pkg_xdecarocore</element>
+    <type>package</type>
     <version>1.5.4</version>
     <change>
       <item>Moved product Open actions into a dedicated Actions column so the Component column contains only product identity and package information.</item>
