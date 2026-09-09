@@ -26,9 +26,9 @@ Distributed packages under the runtime gate:
 - Courses `1.3.0`;
 - Forms `1.6.0`;
 - Competitions `1.1.0`;
-- Documents `1.2.1`;
+- Documents `1.2.2`;
 - Membership `1.2.0`;
-- Events `1.1.1`;
+- Events `1.1.2`;
 - Editor `0.1.0-alpha5`;
 - Finance `1.1.0`;
 - Protocol `1.3.0`.
@@ -49,7 +49,9 @@ The automated gate verifies:
 
 The hard-dependency assertion deliberately does not trust only the exit status of `extension:install`: Joomla CLI can report command success while an extension installer script has rejected the package. The gate checks `#__extensions` and the component filesystem directly to detect partial installation.
 
-Documents additionally owns repository-level clean-install and `1.2.0 -> 1.2.1` repair tests on Joomla 5.4.8 and 6.1.3. These tests verify the Joomla SQL manifest compatibility fix and confirm that the repair creates missing Documents-owned tables without destructive SQL.
+Documents additionally owns repository-level clean-install, `1.2.0 -> 1.2.2` repair and missing-Core rejection tests on Joomla 5.4.8 and 6.1.3. These tests verify the Joomla SQL manifest repair, preserve the non-destructive `CREATE TABLE IF NOT EXISTS` recovery path and prove that the mandatory Core preflight leaves no package/component registration or component files behind.
+
+Events additionally owns repository-level clean-install, `1.1.1 -> 1.1.2` repair and missing-Core rejection tests on Joomla 5.4.8 and 6.1.3. These tests verify the corrected package installer class, Joomla SQL manifest compatibility and non-destructive repair of Events-owned tables.
 
 Protocol additionally owns a repository-level integration gate that installs Core `1.4.0`, Documents `1.2.1` and Protocol `1.3.0` together on Joomla 5.4.8 and 6.1.3, verifies the installed schemas and rejects direct Protocol access to `#__decarodocuments_*`. It also exercises repair from the published Protocol 1.2.0 package.
 
@@ -109,14 +111,16 @@ Record PASS / FAIL / N/A with Joomla version, PHP version, product version and d
 - `EntityReference`, `RelationReference`, `IntegrationEvent`, `Capability` and `CapabilityRegistry` stay additive and domain-neutral.
 
 ### Documents
-- mandatory Core preflight remains atomic;
+- mandatory Core preflight remains atomic and is runtime-tested with Core absent;
 - private storage creation, MIME/extension validation and download ACL are tested;
 - public relation API owns relation persistence and never exposes private storage paths;
 - Joomla SQL manifest uses `charset="utf8"` while table definitions remain `utf8mb4`;
-- 1.2.1 repairs affected 1.2.0 installations using only `CREATE TABLE IF NOT EXISTS`.
+- the 1.2.1 repair for affected 1.2.0 installations remains non-destructive in 1.2.2; 1.2.2 additionally fixes Joomla discovery of the mandatory-Core package installer.
 
 ### Events
-- mandatory Core preflight remains atomic;
+- mandatory Core preflight remains atomic and is runtime-tested with Core absent;
+- Joomla SQL manifest uses `charset="utf8"` while table definitions remain `utf8mb4`;
+- 1.1.2 repairs affected prior installations using only `CREATE TABLE IF NOT EXISTS` for Events-owned tables;
 - capacity/waitlist/check-in changes preserve ACL and CSRF.
 
 ### Editor
