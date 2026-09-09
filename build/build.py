@@ -11,6 +11,7 @@ LEGACY_MANIFEST = ROOT / "src/lib_xdecarocorelegacy/xdecarocorelegacy.xml"
 COMPONENT_SRC = ROOT / "src/com_xdecarocore"
 PLUGIN_SRC = ROOT / "src/plg_system_xdecarocore"
 PACKAGE_MANIFEST = ROOT / "package/pkg_xdecarocore/pkg_xdecarocore.xml"
+PACKAGE_SCRIPT = ROOT / "package/pkg_xdecarocore/script.php"
 DIST = ROOT / "dist"
 FIXED_TIME = (1980, 1, 1, 0, 0, 0)
 
@@ -54,6 +55,9 @@ if not LEGACY_MANIFEST.is_file():
 if not (COMPONENT_SRC / "xdecarocore.xml").is_file():
     raise SystemExit("Core administrator component manifest is missing")
 
+if not PACKAGE_SCRIPT.is_file():
+    raise SystemExit("Core package installer script is missing")
+
 DIST.mkdir(exist_ok=True)
 for old in DIST.glob("*.zip"):
     old.unlink()
@@ -73,6 +77,7 @@ zip_directory(PLUGIN_SRC, plugin_zip)
 
 with zipfile.ZipFile(package_zip, "w") as archive:
     add_bytes(archive, "pkg_xdecarocore.xml", PACKAGE_MANIFEST.read_bytes())
+    add_bytes(archive, "script.php", PACKAGE_SCRIPT.read_bytes())
     add_bytes(archive, "lib_xdecarocore.zip", library_zip.read_bytes())
     add_bytes(archive, "lib_xdecarocorelegacy.zip", legacy_library_zip.read_bytes())
     add_bytes(archive, "com_xdecarocore.zip", component_zip.read_bytes())
