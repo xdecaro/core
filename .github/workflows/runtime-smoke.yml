@@ -108,7 +108,7 @@ jobs:
             courses)
               URL='https://raw.githubusercontent.com/xdecaro/courses/main/releases/1.3.0/pkg_decarocourses_1.3.0.zip'; SHA='e1429f9189e6e9c21b98d05b6cb597e3b957fee7f0f3911c1607165b639cb22c'; MODE='optional'; PACKAGE='pkg_decarocourses'; COMPONENT='' ;;
             forms)
-              URL='https://raw.githubusercontent.com/xdecaro/forms/main/releases/1.6.0/pkg_decaroforms_1.6.0.zip'; SHA='5e7df40f442444eb0e12bb4f1441cd7bc53549f458273f94879f6304f266e286'; MODE='optional'; PACKAGE='pkg_decaroforms'; COMPONENT='' ;;
+              URL='https://raw.githubusercontent.com/xdecaro/forms/main/releases/1.7.0/pkg_decaroforms_1.7.0.zip'; SHA='f7fa1987abe73efd614978a0746ba8850e87e3f1a7100abd62f4cb9dec3b90b4'; MODE='optional'; PACKAGE='pkg_decaroforms'; COMPONENT='' ;;
             competitions)
               URL='https://github.com/xdecaro/competitions/releases/download/v1.1.0/pkg_xdecarocompetitions_1.1.0.zip'; SHA='6a84af789c87da646e4141786bd8226051571289017ecd482b1b31cdcf457cb0'; MODE='optional'; PACKAGE='pkg_xdecarocompetitions'; COMPONENT='' ;;
             documents)
@@ -118,7 +118,7 @@ jobs:
             events)
               URL='https://github.com/xdecaro/events/releases/download/v1.1.2/pkg_decaroevents_1.1.2.zip'; SHA='29ebb4b89d3e8adff24cd3f1a38477b8371aadeb58c53468d7d91e1170c60ecb'; MODE='hard'; PACKAGE='pkg_decaroevents'; COMPONENT='com_decaroevents' ;;
             editor)
-              URL='https://github.com/xdecaro/editor/releases/download/v0.1.0-alpha5/pkg_decaroeditor_0.1.0-alpha5.zip'; SHA='65dd999dd11b98b55f2ccc70d74b194221a7429bb9ac165e1f325d4ba2c984da'; MODE='optional'; PACKAGE='pkg_decaroeditor'; COMPONENT='' ;;
+              URL='https://github.com/xdecaro/editor/releases/download/v0.1.0-alpha6/pkg_decaroeditor_0.1.0-alpha6.zip'; SHA='6ece2b5330321e0e2dbc2ac7c388d0cc2e24d977cd415dccc9cc0a922dece616'; MODE='optional'; PACKAGE='pkg_decaroeditor'; COMPONENT='' ;;
             finance)
               URL='https://github.com/xdecaro/finance/releases/download/v1.1.0/pkg_decarofinance_1.1.0.zip'; SHA='268ce39810135191dc95cd70f9f46847425fe37b6212f5897cf205d5fd7e0c84'; MODE='optional'; PACKAGE='pkg_decarofinance'; COMPONENT='' ;;
             protocol)
