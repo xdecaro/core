@@ -22,6 +22,10 @@
     overflow-wrap: anywhere;
 }
 
+.xdecaro-suite__warning-compact {
+    display: none;
+}
+
 /* The measured seven-column tables need roughly 55rem. Below that width a card layout is safer
    than horizontal document overflow. This reacts to the real Core container, not the viewport. */
 @container xdecaro-suite (max-width: 55rem) {
@@ -157,6 +161,20 @@
     .xdecaro-suite__responsive-table .xdecaro-suite__filter-button {
         max-width: 100%;
         white-space: normal;
+    }
+
+    .xdecaro-suite__warning {
+        margin-top: 0.3rem;
+        font-size: 0.75rem;
+        line-height: 1.25;
+    }
+
+    .xdecaro-suite__warning-full {
+        display: none;
+    }
+
+    .xdecaro-suite__warning-compact {
+        display: inline;
     }
 
     .xdecaro-suite__responsive-table > tbody > .xdecaro-suite__expansion-row {
