@@ -8,26 +8,28 @@ Repository CI, deterministic ZIP generation and successful GitHub Releases are n
 
 `.github/workflows/runtime-smoke.yml` installs real Joomla instances with MariaDB and exercises released packages through Joomla CLI.
 
-Current automated majors:
+The stabilization baseline is deliberately pinned so that a new Joomla patch release cannot change the result of an already-defined gate:
 
-- Joomla 5 with PHP 8.1;
-- Joomla 6 with PHP 8.3;
+- Joomla `5.4.8` with PHP `8.1`;
+- Joomla `6.1.3` with PHP `8.3`;
 - Editor only on Joomla 6, matching its current manifest/runtime target.
 
-The workflow resolves the latest stable release for each Joomla major and rejects alpha, beta and RC packages. Extension installation uses Joomla's `extension:install --path` command.
+The Joomla ZIPs and Core release ZIPs are SHA-256 verified before installation.
 
-Released packages under the initial runtime gate:
+Released packages under the runtime gate:
 
 - Core `1.4.0`;
 - Courses `1.3.0`;
 - Forms `1.6.0`;
 - Competitions `1.1.0`;
-- Documents `1.1.0`;
+- Documents `1.2.0`;
 - Membership `1.2.0`;
-- Events `1.1.0`;
-- Editor `0.1.0-alpha4`;
+- Events `1.1.1`;
+- Editor `0.1.0-alpha5`;
 - Finance `1.1.0`;
-- Protocol `1.2.0`.
+- Protocol `1.3.0`.
+
+Notifications is not duplicated in this central package matrix because its own repository CI already performs clean package installation on Joomla `4.4.14`, `5.4.8` and `6.1.3`. It remains part of the ecosystem namespace audit.
 
 The automated gate verifies:
 
@@ -39,13 +41,15 @@ The automated gate verifies:
 6. canonical `xdecaro\Core\Version` autoloading after package installation;
 7. Core `1.4.0+` availability;
 8. `xdecaro\Core\Integration\CapabilityRegistry` availability;
-9. Core upgrade from `1.3.0` to `1.4.0` on Joomla 5 and 6.
+9. Core upgrade from `1.3.0` to `1.4.0` on Joomla 5.4.8 and 6.1.3.
+
+Protocol additionally owns a repository-level integration gate that installs Core `1.4.0`, Documents `1.2.0` and Protocol `1.3.0` together on Joomla 5.4.8 and 6.1.3, verifies the installed schemas and rejects direct Protocol access to `#__decarodocuments_*`.
 
 This is a runtime smoke gate, not a replacement for browser/UI/security regression testing.
 
 ## Core dependency policy
 
-Current initial matrix:
+Current matrix:
 
 | Product | Core policy | Runtime minimum for Core-backed features |
 | --- | --- | --- |
@@ -60,7 +64,7 @@ Current initial matrix:
 | Finance | optional | 1.3.0 |
 | Protocol | optional | 1.3.0 |
 
-Core `1.4.0` remains compatible with consumers requiring Core `1.3.0+` because the new Capability Registry is additive.
+Core `1.4.0` remains compatible with consumers requiring Core `1.3.0+` because the Capability Registry is additive.
 
 ## Manual runtime checks still required
 
@@ -98,7 +102,7 @@ Record PASS / FAIL / N/A with Joomla version, PHP version, product version and d
 ### Documents
 - mandatory Core preflight remains atomic;
 - private storage creation, MIME/extension validation and download ACL are tested;
-- document relations never expose private storage paths.
+- public relation API owns relation persistence and never exposes private storage paths.
 
 ### Events
 - mandatory Core preflight remains atomic;
@@ -115,11 +119,16 @@ Record PASS / FAIL / N/A with Joomla version, PHP version, product version and d
 
 ### Protocol
 - register numbering remains atomic and immutable after assignment;
-- Documents integration remains optional and public-contract based.
+- Documents integration remains optional and public-contract based;
+- Protocol checks its own ACL before delegating;
+- Documents keeps document ACL and relation persistence ownership;
+- Protocol never reads or writes `#__decarodocuments_*` directly.
 
 ## Namespace audit
 
-`.github/workflows/ecosystem-audit.yml` checks runtime PHP in current xdecaro repositories and rejects new `Xdecaro\Core` consumption. Core itself is checked separately: canonical sources must use `xdecaro\Core`; the legacy manifest is the only compatibility boundary.
+`.github/workflows/ecosystem-audit.yml` checks runtime PHP in current public xdecaro repositories and rejects new `Xdecaro\Core` consumption. Core itself is checked separately: canonical sources must use `xdecaro\Core`; the legacy manifest is the only compatibility boundary.
+
+`xdecaro/draw` is private, so the Core repository token cannot perform cross-repository checkout for it. Draw remains covered by its own CI, which rejects `Xdecaro\` runtime usage and cross-component private-table coupling. It is intentionally excluded only from the central checkout matrix, not from the architectural rule.
 
 ## Stabilization rule
 
