@@ -1,0 +1,13 @@
+{
+  "$schema": "https://developer.joomla.org/schemas/json-schema/web_assets.json",
+  "name": "com_xdecarocore",
+  "version": "1.5.0",
+  "assets": [
+    {
+      "name": "com_xdecarocore.admin",
+      "type": "style",
+      "uri": "com_xdecarocore/css/admin.css",
+      "version": "1.5.0"
+    }
+  ]
+}
