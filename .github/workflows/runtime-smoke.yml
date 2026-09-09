@@ -112,11 +112,11 @@ jobs:
             competitions)
               URL='https://github.com/xdecaro/competitions/releases/download/v1.1.0/pkg_xdecarocompetitions_1.1.0.zip'; SHA='6a84af789c87da646e4141786bd8226051571289017ecd482b1b31cdcf457cb0'; MODE='optional'; PACKAGE='pkg_xdecarocompetitions'; COMPONENT='' ;;
             documents)
-              URL='https://github.com/xdecaro/documents/releases/download/v1.2.1/pkg_decarodocuments_1.2.1.zip'; SHA='5904768ac5e7e1582a07f339b2926f14c141f434cbb586b451397bf6dc7649ea'; MODE='hard'; PACKAGE='pkg_decarodocuments'; COMPONENT='com_decarodocuments' ;;
+              URL='https://github.com/xdecaro/documents/releases/download/v1.2.2/pkg_decarodocuments_1.2.2.zip'; SHA='0b82aef86ffd094cc2453e129e285bfb6274d08c930453a519fbf876e641114f'; MODE='hard'; PACKAGE='pkg_decarodocuments'; COMPONENT='com_decarodocuments' ;;
             membership)
               URL='https://github.com/xdecaro/membership/releases/download/v1.2.0/pkg_decaromembership_1.2.0.zip'; SHA='ab2eabfa6d248b7d5f03a786d0d1fd62ba7f71802b5fa646a1c080a23decfa7f'; MODE='optional'; PACKAGE='pkg_decaromembership'; COMPONENT='' ;;
             events)
-              URL='https://github.com/xdecaro/events/releases/download/v1.1.1/pkg_decaroevents_1.1.1.zip'; SHA='fff2229d4189f1b870fc8a8bf636e94e894726ae14ceb080b5f5dcd36af9433e'; MODE='hard'; PACKAGE='pkg_decaroevents'; COMPONENT='com_decaroevents' ;;
+              URL='https://github.com/xdecaro/events/releases/download/v1.1.2/pkg_decaroevents_1.1.2.zip'; SHA='29ebb4b89d3e8adff24cd3f1a38477b8371aadeb58c53468d7d91e1170c60ecb'; MODE='hard'; PACKAGE='pkg_decaroevents'; COMPONENT='com_decaroevents' ;;
             editor)
               URL='https://github.com/xdecaro/editor/releases/download/v0.1.0-alpha5/pkg_decaroeditor_0.1.0-alpha5.zip'; SHA='65dd999dd11b98b55f2ccc70d74b194221a7429bb9ac165e1f325d4ba2c984da'; MODE='optional'; PACKAGE='pkg_decaroeditor'; COMPONENT='' ;;
             finance)
