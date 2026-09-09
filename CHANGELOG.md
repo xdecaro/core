@@ -4,6 +4,25 @@ All notable changes to **Core by xdecaro** are documented here.
 
 The project follows Semantic Versioning.
 
+## 1.5.4 — 2026-09-09
+
+### Changed
+
+- Moved each product **Open** action out of the Component cell and into a dedicated **Actions** column, keeping product identity and package metadata visually separate from navigation controls.
+- Standardized the page hierarchy across Dashboard, Components, All extensions, Updates, Diagnostics and Information with the same blue **Suite** eyebrow above the main title.
+- Kept package-content expansion as a separate control and extended expanded rows across the new Actions column.
+
+### Tests
+
+- Added dashboard smoke guards requiring the **Suite** eyebrow on every administrator layout.
+- Added product-table regression checks for the dedicated Actions column and seven-column package expansion.
+
+### Compatibility
+
+- Existing `xdecaro\Core` public contracts remain unchanged.
+- The temporary `Xdecaro\Core` legacy namespace compatibility library remains packaged.
+- No product data or configuration is migrated or deleted by this release.
+
 ## 1.5.3 — 2026-09-09
 
 ### Fixed
