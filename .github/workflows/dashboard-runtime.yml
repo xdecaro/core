@@ -99,7 +99,7 @@ jobs:
             --db-prefix='jos_'
           test -f configuration.php
 
-      - name: Install Core 1.5.0
+      - name: Install current Core
         shell: bash
         run: |
           set -euo pipefail
@@ -110,21 +110,23 @@ jobs:
 
           if [ '${{ matrix.scenario }}' = 'upgrade' ]; then
             curl --fail --location --retry 3 \
-              'https://github.com/xdecaro/core/releases/download/v1.4.0/pkg_xdecarocore_1.4.0.zip' \
-              --output /tmp/core-1.4.0.zip
-            echo '4248f7e3de514c2ae2402ffc8ba12845647dca1ebac963da370650e88ac45def  /tmp/core-1.4.0.zip' | sha256sum --check --strict
-            php cli/joomla.php extension:install --path=/tmp/core-1.4.0.zip
+              'https://github.com/xdecaro/core/releases/download/v1.5.0/pkg_xdecarocore_1.5.0.zip' \
+              --output /tmp/core-1.5.0.zip
+            echo '4b76e86209823345813c8a56eb0e0526b9f13c7fab6d28ef5c53dc7a07e7e70f  /tmp/core-1.5.0.zip' | sha256sum --check --strict
+            php cli/joomla.php extension:install --path=/tmp/core-1.5.0.zip
           fi
 
           php cli/joomla.php extension:install --path="$PACKAGE"
           php cli/joomla.php extension:list >/tmp/core-extensions.txt
           cat /tmp/core-extensions.txt
 
-      - name: Verify installed extension records and menu
+      - name: Verify installed extension records and administrator menu routes
         shell: bash
         run: |
           set -euo pipefail
+          export CORE_VERSION="$(tr -d '[:space:]' < VERSION)"
           php -r '
+            $version = (string) getenv("CORE_VERSION");
             $db = new mysqli("127.0.0.1", "root", "root", "joomla");
             if ($db->connect_errno) { fwrite(STDERR, $db->connect_error . PHP_EOL); exit(2); }
             $expected = [
@@ -143,24 +145,44 @@ jobs:
               $row = $result->fetch_assoc();
               if (!$row) { fwrite(STDERR, "Missing extension: {$type} {$element} {$folder}\n"); exit(1); }
               $manifest = json_decode($row["manifest_cache"], true) ?: [];
-              if (($manifest["version"] ?? "") !== "1.5.0") { fwrite(STDERR, "Unexpected version for {$element}\n"); exit(1); }
+              if (($manifest["version"] ?? "") !== $version) { fwrite(STDERR, "Unexpected version for {$element}\n"); exit(1); }
               if ($type === "plugin" && (int) $row["enabled"] !== 1) { fwrite(STDERR, "Core system plugin is disabled\n"); exit(1); }
             }
+
             $component = $db->query("SELECT extension_id, package_id FROM jos_extensions WHERE type=\"component\" AND element=\"com_xdecarocore\" LIMIT 1")->fetch_assoc();
             $package = $db->query("SELECT extension_id FROM jos_extensions WHERE type=\"package\" AND element=\"pkg_xdecarocore\" LIMIT 1")->fetch_assoc();
             if (!$component || !$package || (int) $component["package_id"] !== (int) $package["extension_id"]) {
               fwrite(STDERR, "Core administrator component is not linked to the package\n"); exit(1);
             }
+
             $componentId = (int) $component["extension_id"];
-            $menu = $db->query("SELECT id FROM jos_menu WHERE client_id=1 AND component_id={$componentId} AND link LIKE \"index.php?option=com_xdecarocore%\" LIMIT 1")->fetch_assoc();
-            if (!$menu) { fwrite(STDERR, "Core administrator menu entry is missing\n"); exit(1); }
-            echo "Core 1.5.0 extension records and administrator menu OK\n";
+            $menuResult = $db->query("SELECT link FROM jos_menu WHERE client_id=1 AND component_id={$componentId}");
+            $expectedLayouts = ["products", "extensions", "updates", "diagnostics", "information"];
+            $foundLayouts = [];
+            while ($menu = $menuResult->fetch_assoc()) {
+              $link = (string) ($menu["link"] ?? "");
+              if (strpos($link, "index.php?index.php?") !== false) {
+                fwrite(STDERR, "Duplicated index.php? prefix remains in administrator menu: {$link}\n"); exit(1);
+              }
+              foreach ($expectedLayouts as $layout) {
+                if (strpos($link, "option=com_xdecarocore") !== false && strpos($link, "layout={$layout}") !== false) {
+                  $foundLayouts[$layout] = true;
+                }
+              }
+            }
+            foreach ($expectedLayouts as $layout) {
+              if (empty($foundLayouts[$layout])) {
+                fwrite(STDERR, "Missing normalized Core administrator submenu route: {$layout}\n"); exit(1);
+              }
+            }
+            echo "Core {$version} extension records and administrator menu routes OK\n";
           '
 
       - name: Probe dashboard services through Joomla runtime
         shell: bash
         run: |
           set -euo pipefail
+          export CORE_VERSION="$(tr -d '[:space:]' < VERSION)"
           cd joomla
           cat > core-dashboard-probe.php <<'PHP'
           <?php
@@ -169,6 +191,7 @@ jobs:
           require JPATH_BASE . '/includes/defines.php';
           require JPATH_BASE . '/includes/framework.php';
 
+          $expectedVersion = (string) getenv('CORE_VERSION');
           $container = \Joomla\CMS\Factory::getContainer();
           $container->alias('session', 'session.cli')
               ->alias('JSession', 'session.cli')
@@ -179,8 +202,8 @@ jobs:
           \Joomla\CMS\Factory::$application = $app;
           $app->createExtensionNamespaceMap();
 
-          if (!class_exists(\xdecaro\Core\Version::class) || \xdecaro\Core\Version::VERSION !== '1.5.0') {
-              fwrite(STDERR, "Core 1.5.0 runtime class is unavailable.\n"); exit(1);
+          if (!class_exists(\xdecaro\Core\Version::class) || \xdecaro\Core\Version::VERSION !== $expectedVersion) {
+              fwrite(STDERR, "Current Core runtime class is unavailable.\n"); exit(1);
           }
           $component = $app->bootComponent('com_xdecarocore');
           if (!$component instanceof \Joomla\CMS\Extension\ComponentInterface) {
@@ -197,8 +220,11 @@ jobs:
           foreach ($snapshot['products'] ?? [] as $product) {
               if (($product['key'] ?? '') === 'core') { $core = $product; break; }
           }
-          if (!$core || empty($core['installed']) || ($core['installed_version'] ?? '') !== '1.5.0') {
+          if (!$core || empty($core['installed']) || ($core['installed_version'] ?? '') !== $expectedVersion) {
               fwrite(STDERR, "Dashboard did not discover its own installed Core version.\n"); exit(1);
+          }
+          if (($core['status'] ?? '') !== 'current') {
+              fwrite(STDERR, "Dashboard does not classify the installed Core release as current.\n"); exit(1);
           }
           if (($snapshot['summary']['technical_extensions'] ?? 0) < 5) {
               fwrite(STDERR, "Dashboard technical extension inventory is incomplete.\n"); exit(1);
