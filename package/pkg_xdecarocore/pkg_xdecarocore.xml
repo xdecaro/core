@@ -7,7 +7,7 @@
     <creationDate>2026-09-09</creationDate>
     <copyright>Copyright (C) 2026 Luca De Caro</copyright>
     <license>GNU General Public License version 2 or later</license>
-    <version>1.5.9</version>
+    <version>1.5.10</version>
     <description>Shared xdecaro Joomla infrastructure package with central ecosystem dashboard.</description>
     <scriptfile>script.php</scriptfile>
     <blockChildUninstall>true</blockChildUninstall>

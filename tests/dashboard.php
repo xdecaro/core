@@ -29,7 +29,7 @@ namespace {
     }
 
     $required = [
-        'core' => ['pkg_xdecarocore', '1.5.9'],
+        'core' => ['pkg_xdecarocore', '1.5.10'],
         'forms' => ['pkg_decaroforms', '1.7.0'],
         'courses' => ['pkg_decarocourses', '1.5.0'],
         'competitions' => ['pkg_xdecarocompetitions', '1.3.0'],
@@ -258,9 +258,9 @@ namespace {
     }
 
     $responsiveCss = file_get_contents(__DIR__ . '/../src/com_xdecarocore/media/css/responsive.css');
-    foreach (['@container xdecaro-suite (max-width: 55rem)', '@container xdecaro-suite (max-width: 20rem)', 'min-width: 0', 'max-width: 100%', 'grid-template-columns: repeat(2, minmax(0, 1fr))', '.xdecaro-suite__metric:last-child', 'safe-area-inset-top', 'safe-area-inset-bottom', 'xdecaro-suite__warning-compact', 'padding: var(--xdecaro-space-3, 0.75rem);'] as $marker) {
+    foreach (['@container xdecaro-suite (max-width: 55rem)', '@container xdecaro-suite (max-width: 20rem)', 'min-width: 0', 'max-width: 100%', 'grid-template-columns: repeat(2, minmax(0, 1fr))', '.xdecaro-suite__metric:last-child', 'safe-area-inset-top', 'safe-area-inset-bottom', 'xdecaro-suite__warning-compact', 'padding: var(--xdecaro-space-3, 0.75rem);', '.xdecaro-suite__filter-button {', 'align-items: center;', 'justify-content: center;', 'transform-origin: 50% 50%;'] as $marker) {
         if (strpos($responsiveCss, $marker) === false) {
-            throw new \RuntimeException('Dashboard 1.5.9 responsive CSS marker missing: ' . $marker);
+            throw new \RuntimeException('Dashboard 1.5.10 responsive CSS marker missing: ' . $marker);
         }
     }
 
