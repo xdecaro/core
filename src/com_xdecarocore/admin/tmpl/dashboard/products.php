@@ -36,6 +36,7 @@ $channelLabel = static function (string $channel): string {
 <div class="xdecaro-scope xdecaro-suite">
     <div class="xdecaro-suite__hero">
         <div>
+            <span class="xdecaro-suite__eyebrow"><?php echo Text::_('COM_XDECAROCORE_SUITE'); ?></span>
             <h2><?php echo Text::_('COM_XDECAROCORE_PRODUCTS'); ?></h2>
             <p><?php echo Text::_('COM_XDECAROCORE_PRODUCTS_DESC'); ?></p>
         </div>
@@ -53,6 +54,7 @@ $channelLabel = static function (string $channel): string {
                             <th><?php echo Text::_('COM_XDECAROCORE_INSTALLED_VERSION'); ?></th>
                             <th><?php echo Text::_('COM_XDECAROCORE_AVAILABLE_VERSION'); ?></th>
                             <th><?php echo Text::_('COM_XDECAROCORE_CONTENTS'); ?></th>
+                            <th class="xdecaro-suite__action-heading"><?php echo Text::_('COM_XDECAROCORE_ACTIONS'); ?></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -65,9 +67,6 @@ $channelLabel = static function (string $channel): string {
                             <td>
                                 <strong><?php echo htmlspecialchars($product['name'], ENT_QUOTES, 'UTF-8'); ?></strong>
                                 <div class="xdecaro-suite__muted"><?php echo $product['package'] !== '' ? htmlspecialchars($product['package'], ENT_QUOTES, 'UTF-8') : '—'; ?></div>
-                                <?php if ($product['open_url'] !== '') : ?>
-                                    <div class="xdecaro-suite__actions"><a class="xdecaro-button" href="<?php echo htmlspecialchars($product['open_url'], ENT_QUOTES, 'UTF-8'); ?>"><?php echo Text::_('COM_XDECAROCORE_OPEN'); ?></a></div>
-                                <?php endif; ?>
                             </td>
                             <td>
                                 <span class="xdecaro-badge <?php echo $statusClass($product['status']); ?>"><?php echo $statusLabel($product['status']); ?></span>
@@ -94,11 +93,18 @@ $channelLabel = static function (string $channel): string {
                                     <span class="xdecaro-suite__muted"><?php echo Text::_('COM_XDECAROCORE_NO_INSTALLED_CHILDREN'); ?></span>
                                 <?php endif; ?>
                             </td>
+                            <td class="xdecaro-suite__action-cell">
+                                <?php if ($product['open_url'] !== '') : ?>
+                                    <a class="xdecaro-button" href="<?php echo htmlspecialchars($product['open_url'], ENT_QUOTES, 'UTF-8'); ?>"><?php echo Text::_('COM_XDECAROCORE_OPEN'); ?></a>
+                                <?php else : ?>
+                                    <span class="xdecaro-suite__muted" aria-hidden="true">—</span>
+                                <?php endif; ?>
+                            </td>
                         </tr>
 
                         <?php if ($children) : ?>
                             <tr id="<?php echo htmlspecialchars($detailId, ENT_QUOTES, 'UTF-8'); ?>" class="xdecaro-suite__expansion-row" aria-hidden="true">
-                                <td colspan="6" class="xdecaro-suite__expansion-cell">
+                                <td colspan="7" class="xdecaro-suite__expansion-cell">
                                     <div class="xdecaro-suite__expansion-panel">
                                         <div class="xdecaro-suite__expansion-inner">
                                             <div class="xdecaro-suite__expansion-content">
