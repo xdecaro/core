@@ -3,6 +3,18 @@
   <changelog>
     <element>pkg_xdecarocore</element>
     <type>package</type>
+    <version>1.5.7</version>
+    <fix>
+      <item>Information card status badges remain compact when the Joomla administrator sidebar forces the card headers into a vertical layout.</item>
+      <item>Coherent, System OK and In development badges no longer stretch to the full card width in narrow tablet and phone layouts.</item>
+    </fix>
+    <change>
+      <item>Added a dashboard regression guard for the three compact Information badge slots.</item>
+    </change>
+  </changelog>
+  <changelog>
+    <element>pkg_xdecarocore</element>
+    <type>package</type>
     <version>1.5.6</version>
     <fix>
       <item>Core administrator views now react to the component container width when the Joomla sidebar remains open, instead of relying only on the browser viewport width.</item>
