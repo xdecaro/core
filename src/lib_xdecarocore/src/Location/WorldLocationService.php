@@ -11,11 +11,25 @@ namespace xdecaro\Core\Location;
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Component\ComponentHelper;
+
 final class WorldLocationService
 {
     public function __construct(private ?LocationProviderInterface $provider = null)
     {
         $this->provider ??= new OpenMeteoLocationProvider();
+    }
+
+    public static function fromJoomlaConfiguration(): self
+    {
+        $params = ComponentHelper::getParams('com_xdecarocore');
+        $endpoint = trim((string) $params->get('location_provider_endpoint', ''));
+        $apiKey = trim((string) $params->get('location_provider_api_key', ''));
+
+        return new self(new OpenMeteoLocationProvider(
+            $endpoint !== '' ? $endpoint : 'https://geocoding-api.open-meteo.com/v1/search',
+            $apiKey
+        ));
     }
 
     /**
