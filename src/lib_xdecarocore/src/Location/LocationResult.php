@@ -13,19 +13,42 @@ defined('_JEXEC') or die;
 
 final class LocationResult
 {
+    private string $id;
+    private string $name;
+    private string $countryCode;
+    private string $countryName;
+    private string $admin1;
+    private string $admin2;
+    private ?float $latitude;
+    private ?float $longitude;
+    private string $timezone;
+    private string $featureCode;
+    private ?int $population;
+
     public function __construct(
-        private string $id,
-        private string $name,
-        private string $countryCode,
-        private string $countryName = '',
-        private string $admin1 = '',
-        private string $admin2 = '',
-        private ?float $latitude = null,
-        private ?float $longitude = null,
-        private string $timezone = '',
-        private string $featureCode = '',
-        private ?int $population = null
+        string $id,
+        string $name,
+        string $countryCode,
+        string $countryName = '',
+        string $admin1 = '',
+        string $admin2 = '',
+        ?float $latitude = null,
+        ?float $longitude = null,
+        string $timezone = '',
+        string $featureCode = '',
+        ?int $population = null
     ) {
+        $this->id = $id;
+        $this->name = $name;
+        $this->countryCode = $countryCode;
+        $this->countryName = $countryName;
+        $this->admin1 = $admin1;
+        $this->admin2 = $admin2;
+        $this->latitude = $latitude;
+        $this->longitude = $longitude;
+        $this->timezone = $timezone;
+        $this->featureCode = $featureCode;
+        $this->population = $population;
     }
 
     public function getId(): string
