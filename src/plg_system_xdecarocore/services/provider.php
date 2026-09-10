@@ -14,15 +14,15 @@ use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\DI\Container;
 use Joomla\DI\ServiceProviderInterface;
 use Joomla\Event\DispatcherInterface;
-use xdecaro\Plugin\System\XdecaroCore\Extension\XdecaroCore;
+use xdecaro\Plugin\System\Core\Extension\CorePlugin;
 
 return new class implements ServiceProviderInterface {
     public function register(Container $container): void
     {
         $container->set(
             PluginInterface::class,
-            static function (Container $container): XdecaroCore {
-                return new XdecaroCore(
+            static function (Container $container): CorePlugin {
+                return new CorePlugin(
                     $container->get(DispatcherInterface::class),
                     (array) PluginHelper::getPlugin('system', 'xdecarocore')
                 );
