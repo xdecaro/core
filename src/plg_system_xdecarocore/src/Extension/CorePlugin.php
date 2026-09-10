@@ -7,12 +7,12 @@
  * @license     GNU General Public License version 2 or later
  */
 
-namespace xdecaro\Plugin\System\XdecaroCore\Extension;
+namespace xdecaro\Plugin\System\Core\Extension;
 
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Plugin\CMSPlugin;
 
-final class XdecaroCore extends CMSPlugin
+final class CorePlugin extends CMSPlugin
 {
 }

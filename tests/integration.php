@@ -1,6 +1,6 @@
 <?php
 /**
- * Dependency-free smoke test for Core capability and event contracts.
+ * Dependency-free smoke test for Core integration contracts.
  */
 
 define('_JEXEC', 1);
@@ -9,11 +9,17 @@ require_once __DIR__ . '/../src/lib_xdecarocore/src/Integration/EntityReference.
 require_once __DIR__ . '/../src/lib_xdecarocore/src/Integration/Capability.php';
 require_once __DIR__ . '/../src/lib_xdecarocore/src/Integration/CapabilityRegistry.php';
 require_once __DIR__ . '/../src/lib_xdecarocore/src/Integration/IntegrationEvent.php';
+require_once __DIR__ . '/../src/lib_xdecarocore/src/Location/LocationResult.php';
+require_once __DIR__ . '/../src/lib_xdecarocore/src/Location/LocationProviderInterface.php';
+require_once __DIR__ . '/../src/lib_xdecarocore/src/Location/WorldLocationService.php';
 
 use xdecaro\Core\Integration\Capability;
 use xdecaro\Core\Integration\CapabilityRegistry;
 use xdecaro\Core\Integration\EntityReference;
 use xdecaro\Core\Integration\IntegrationEvent;
+use xdecaro\Core\Location\LocationProviderInterface;
+use xdecaro\Core\Location\LocationResult;
+use xdecaro\Core\Location\WorldLocationService;
 
 $capability = new Capability('com_xdecaronotifications', 'notifications.publish', '1');
 if ($capability->key() !== 'com_xdecaronotifications:notifications.publish@1') {
@@ -73,4 +79,25 @@ if (!$invalidRejected) {
     throw new \RuntimeException('Invalid capability identifiers must be rejected.');
 }
 
-echo "xdecaro Core integration capability/event/registry tests passed.\n";
+$locationProvider = new class implements LocationProviderInterface {
+    public function searchCities(string $query, ?string $countryCode = null, string $language = 'en', int $limit = 20): array
+    {
+        return [
+            new LocationResult('3169070', 'Roma', 'IT', 'Italia', 'Lazio', 'Roma', 41.89193, 12.51133, 'Europe/Rome', 'PPLC', 2318895),
+            new LocationResult('3169070', 'Roma', 'IT', 'Italia', 'Lazio', 'Roma'),
+        ];
+    }
+};
+
+$locations = (new WorldLocationService($locationProvider))->searchCities('Rom', 'IT', 'it', 20);
+if (count($locations) !== 1) {
+    throw new \RuntimeException('WorldLocationService must collapse duplicate provider IDs.');
+}
+if (($locations[0]['id'] ?? null) !== '3169070' || ($locations[0]['country_code'] ?? null) !== 'IT') {
+    throw new \RuntimeException('WorldLocationService returned an invalid public location contract.');
+}
+if (($locations[0]['label'] ?? null) !== 'Roma — Lazio — Italia') {
+    throw new \RuntimeException('WorldLocationService generated an invalid display label.');
+}
+
+echo "xdecaro Core integration capability/event/location tests passed.\n";
