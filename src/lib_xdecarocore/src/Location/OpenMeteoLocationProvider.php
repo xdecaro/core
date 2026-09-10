@@ -19,11 +19,13 @@ final class OpenMeteoLocationProvider implements LocationProviderInterface
 {
     private const DEFAULT_ENDPOINT = 'https://geocoding-api.open-meteo.com/v1/search';
 
-    public function __construct(
-        private string $endpoint = self::DEFAULT_ENDPOINT,
-        private string $apiKey = ''
-    ) {
-        $this->endpoint = rtrim(trim($this->endpoint), '?');
+    private string $endpoint;
+    private string $apiKey;
+
+    public function __construct(string $endpoint = self::DEFAULT_ENDPOINT, string $apiKey = '')
+    {
+        $this->endpoint = rtrim(trim($endpoint), '?');
+        $this->apiKey = trim($apiKey);
     }
 
     public function searchCities(
@@ -33,7 +35,7 @@ final class OpenMeteoLocationProvider implements LocationProviderInterface
         int $limit = 20
     ): array {
         $query = trim($query);
-        if (mb_strlen($query) < 2) {
+        if (strlen($query) < 2) {
             return [];
         }
 
@@ -87,7 +89,7 @@ final class OpenMeteoLocationProvider implements LocationProviderInterface
             }
 
             $featureCode = strtoupper(trim((string) ($row['feature_code'] ?? '')));
-            if ($featureCode !== '' && !str_starts_with($featureCode, 'P')) {
+            if ($featureCode !== '' && strpos($featureCode, 'P') !== 0) {
                 continue;
             }
 
