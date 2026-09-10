@@ -41,7 +41,8 @@ $label = static function (string $key): string {
             <?php else : ?>
                 <div class="xdecaro-table-wrap xdecaro-suite__responsive-wrap">
                     <table class="xdecaro-table xdecaro-suite__responsive-table xdecaro-suite__extensions-table">
-                        <thead><tr><th><?php echo Text::_('COM_XDECAROCORE_EXTENSION'); ?></th><th><?php echo Text::_('COM_XDECAROCORE_TYPE'); ?></th><th><?php echo Text::_('COM_XDECAROCORE_ELEMENT'); ?></th><th><?php echo Text::_('COM_XDECAROCORE_VERSION'); ?></th><th><?php echo Text::_('COM_XDECAROCORE_STATE'); ?></th><th><?php echo Text::_('COM_XDECAROCORE_PACKAGE_ID'); ?></th></tr></thead>
+                        <caption class="visually-hidden"><?php echo Text::_('COM_XDECAROCORE_EXTENSIONS'); ?></caption>
+                        <thead><tr><th scope="col"><?php echo Text::_('COM_XDECAROCORE_EXTENSION'); ?></th><th scope="col"><?php echo Text::_('COM_XDECAROCORE_TYPE'); ?></th><th scope="col"><?php echo Text::_('COM_XDECAROCORE_ELEMENT'); ?></th><th scope="col"><?php echo Text::_('COM_XDECAROCORE_VERSION'); ?></th><th scope="col"><?php echo Text::_('COM_XDECAROCORE_STATE'); ?></th><th scope="col"><?php echo Text::_('COM_XDECAROCORE_PACKAGE_ID'); ?></th></tr></thead>
                         <tbody>
                         <?php foreach ($extensions as $extension) : ?>
                             <?php $switchable = in_array($extension['type'], ['plugin', 'module'], true); ?>
