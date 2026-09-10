@@ -31,6 +31,7 @@ jobs:
           set -euo pipefail
           VERSION="$(tr -d '[:space:]' < VERSION)"
           test -n "$VERSION"
+          case "$VERSION" in 2.0.*) ;; *) echo "Release workflow is locked to Core 2.0.x" >&2; exit 1;; esac
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Stop if release already exists
@@ -50,7 +51,7 @@ jobs:
       - name: Synchronize Joomla update checksum
         run: php build/update-feed-checksum.php
 
-      - name: Verify release checksum
+      - name: Verify release checksum and package shape
         shell: bash
         run: |
           set -euo pipefail
@@ -59,8 +60,10 @@ jobs:
           SHA256="$(sha256sum "$PACKAGE" | awk '{print $1}')"
           grep -q "<sha256>${SHA256}</sha256>" updates/pkg_xdecarocore.xml
           grep -q "${SHA256}  pkg_xdecarocore_${VERSION}.zip" dist/SHA256SUMS.txt
-          test -f "dist/lib_xdecarocorelegacy_${VERSION}.zip"
+          test -f "dist/lib_xdecarocore_${VERSION}.zip"
           test -f "dist/com_xdecarocore_${VERSION}.zip"
+          test -f "dist/plg_system_xdecarocore_${VERSION}.zip"
+          test ! -e "dist/lib_xdecarocorelegacy_${VERSION}.zip"
 
       - name: Create GitHub release
         env:
@@ -71,13 +74,12 @@ jobs:
           VERSION="${{ steps.version.outputs.version }}"
           gh release create "v${VERSION}" \
             "dist/lib_xdecarocore_${VERSION}.zip" \
-            "dist/lib_xdecarocorelegacy_${VERSION}.zip" \
             "dist/com_xdecarocore_${VERSION}.zip" \
             "dist/plg_system_xdecarocore_${VERSION}.zip" \
             "dist/pkg_xdecarocore_${VERSION}.zip" \
             dist/SHA256SUMS.txt \
             --title "Core by xdecaro ${VERSION}" \
-            --notes "Core by xdecaro ${VERSION}. Adds the xdecaro administrator dashboard for ecosystem inventory, installed/version state, package-child inspection, updates and local diagnostics. Licensing remains intentionally inactive during development. Existing public Core contracts and legacy namespace compatibility remain available."
+            --notes "Core by xdecaro ${VERSION}. Joomla 6 / PHP 8.3 Core 2.x patch with reusable worldwide location search for People, Competitions and other xdecaro consumers. The retired 1.x legacy namespace child remains removed."
 
       - name: Publish update-feed checksum
         shell: bash
