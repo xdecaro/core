@@ -10,20 +10,25 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Installer\Installer;
+use Joomla\CMS\Installer\InstallerScript;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\Log\Log;
 use Joomla\Database\DatabaseInterface;
 use Joomla\Database\ParameterType;
 
-final class pkg_xdecarocoreInstallerScript
+final class pkg_xdecarocoreInstallerScript extends InstallerScript
 {
+    /** @var string */
+    protected $minimumJoomla = '6.0.0';
+
+    /** @var string */
+    protected $minimumPhp = '8.3.0';
+
     /**
-     * Core's system plugin is a required package child. Keep it active after
-     * both clean installs and upgrades so the package has one deterministic
-     * operational state across Joomla installers and CLI installs.
-     *
-     * Core 1.5.0 also shipped administrator submenu links with a duplicated
-     * index.php? prefix. Normalize any already-persisted menu rows during the
-     * 1.5.1 upgrade so existing installations are repaired automatically.
+     * Keep the required Core system plugin active and normalize historical
+     * installation state. Core 2.x also removes the retired 1.x namespace
+     * compatibility library from upgraded installations.
      */
     public function postflight($type, $parent): void
     {
@@ -31,22 +36,64 @@ final class pkg_xdecarocoreInstallerScript
             return;
         }
 
+        $normalizationFailed = false;
+
         try {
             /** @var DatabaseInterface $db */
             $db = Factory::getContainer()->get(DatabaseInterface::class);
-            $this->enableCorePlugin($db);
-            $this->repairAdministratorMenuLinks($db);
         } catch (\Throwable $exception) {
             Log::add(
-                'Core package post-install normalization failed: ' . $exception->getMessage(),
+                'Core package database service resolution failed: ' . $exception->getMessage(),
                 Log::WARNING,
                 'pkg_xdecarocore'
             );
-            Factory::getApplication()->enqueueMessage(
-                'Core by xdecaro was installed, but one or more post-install normalizations could not be completed automatically.',
-                'warning'
-            );
+            $this->enqueueNormalizationWarning();
+
+            return;
         }
+
+        try {
+            $this->enableCorePlugin($db);
+        } catch (\Throwable $exception) {
+            Log::add(
+                'Core package plugin activation failed: ' . $exception->getMessage(),
+                Log::WARNING,
+                'pkg_xdecarocore'
+            );
+            $normalizationFailed = true;
+        }
+
+        try {
+            $this->removeRetiredCompatibilityLibrary($db);
+        } catch (\Throwable $exception) {
+            Log::add(
+                'Core package retired compatibility library removal failed: ' . $exception->getMessage(),
+                Log::WARNING,
+                'pkg_xdecarocore'
+            );
+            $normalizationFailed = true;
+        }
+
+        try {
+            $this->repairAdministratorMenuLinks($db);
+        } catch (\Throwable $exception) {
+            Log::add(
+                'Core package administrator menu normalization failed: ' . $exception->getMessage(),
+                Log::WARNING,
+                'pkg_xdecarocore'
+            );
+            $normalizationFailed = true;
+        }
+
+        if ($normalizationFailed) {
+            $this->enqueueNormalizationWarning();
+        }
+    }
+
+    private function enqueueNormalizationWarning(): void
+    {
+        Factory::getApplication()->getLanguage()->load('com_xdecarocore', JPATH_ADMINISTRATOR);
+        Factory::getApplication()->enqueueMessage(Text::_('COM_XDECAROCORE_POSTFLIGHT_WARNING'), 'warning');
     }
 
     private function enableCorePlugin(DatabaseInterface $db): void
@@ -68,6 +115,41 @@ final class pkg_xdecarocoreInstallerScript
             ->bind(':element', $element);
 
         $db->setQuery($query)->execute();
+    }
+
+    /**
+     * Remove the retired 1.x namespace compatibility child on upgrade.
+     *
+     * The child was part of the 1.5 package, so merely omitting it from the
+     * 2.x manifest would leave its extension record and autoload mapping on
+     * upgraded sites. Joomla's installer performs the removal so files,
+     * manifest data and extension metadata remain consistent.
+     */
+    private function removeRetiredCompatibilityLibrary(DatabaseInterface $db): void
+    {
+        $libraryType = 'library';
+        $libraryElement = 'xdecaro/corelegacy';
+
+        $query = $db->getQuery(true)
+            ->select($db->quoteName('extension_id'))
+            ->from($db->quoteName('#__extensions'))
+            ->where($db->quoteName('type') . ' = :libraryType')
+            ->where($db->quoteName('element') . ' = :libraryElement')
+            ->bind(':libraryType', $libraryType)
+            ->bind(':libraryElement', $libraryElement);
+
+        $extensionId = (int) $db->setQuery($query, 0, 1)->loadResult();
+        if ($extensionId <= 0) {
+            return;
+        }
+
+        $installer = new Installer();
+        $installer->setDatabase($db);
+        $installer->setPackageUninstall(true);
+
+        if (!$installer->uninstall($libraryType, $extensionId)) {
+            throw new \RuntimeException('Joomla did not remove extension ID ' . $extensionId . '.');
+        }
     }
 
     private function repairAdministratorMenuLinks(DatabaseInterface $db): void
