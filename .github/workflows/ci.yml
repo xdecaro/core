@@ -10,12 +10,8 @@ permissions:
 
 jobs:
   validate:
-    name: PHP ${{ matrix.php }} validation
+    name: PHP 8.3 / Joomla 6 source validation
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        php: ['7.4', '8.3']
 
     steps:
       - name: Checkout
@@ -24,39 +20,42 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ matrix.php }}
+          php-version: '8.3'
           extensions: simplexml
           coverage: none
 
-      - name: Guard stabilization series
+      - name: Guard Core 2.0 stabilization series
         shell: bash
         run: |
           set -euo pipefail
           VERSION="$(tr -d '[:space:]' < VERSION)"
           SERIES="$(tr -d '[:space:]' < STABILIZATION_SERIES)"
           test -n "$VERSION"
-          test -n "$SERIES"
+          test "$SERIES" = '2.0'
           case "$VERSION" in
-            "$SERIES".*) ;;
+            2.0.*) ;;
             *)
-              echo "Core $VERSION is outside the frozen $SERIES.x stabilization line." >&2
-              echo "Change STABILIZATION_SERIES explicitly when opening a new minor line." >&2
+              echo "Core ${VERSION} is outside the 2.0.x stabilization line." >&2
               exit 1
               ;;
           esac
 
-      - name: Guard canonical namespace
+      - name: Guard Core 2.x namespace and package shape
         shell: bash
         run: |
           set -euo pipefail
           grep -Fq '<namespace path="src">xdecaro\Core</namespace>' src/lib_xdecarocore/xdecarocore.xml
-          grep -Fq '<namespace path="src">Xdecaro\Core</namespace>' src/lib_xdecarocorelegacy/xdecarocorelegacy.xml
           grep -Fq '<namespace path="src">xdecaro\Component\Core</namespace>' src/com_xdecarocore/xdecarocore.xml
-          ! grep -RInE '^namespace Xdecaro\\Core' src/lib_xdecarocore/src
-          ! grep -RInE '^namespace Xdecaro\\Plugin' src/plg_system_xdecarocore/src
-          ! grep -RInE '^namespace Xdecaro\\Component' src/com_xdecarocore/admin/src src/com_xdecarocore/admin/services
-          grep -RInE '^namespace xdecaro\\Core' src/lib_xdecarocore/src >/dev/null
-          grep -RInE '^namespace xdecaro\\Component\\Core' src/com_xdecarocore/admin/src src/com_xdecarocore/admin/services >/dev/null
+          grep -Fq '<namespace path="src">xdecaro\Plugin\System\Core</namespace>' src/plg_system_xdecarocore/xdecarocore.xml
+          grep -Fq '<targetplatform name="joomla" version="6.*"' src/lib_xdecarocore/xdecarocore.xml
+          grep -Fq '<targetplatform name="joomla" version="6.*"' src/com_xdecarocore/xdecarocore.xml
+          grep -Fq '<targetplatform name="joomla" version="6.*"' src/plg_system_xdecarocore/xdecarocore.xml
+          grep -Fq '<targetplatform name="joomla" version="6.*"' package/pkg_xdecarocore/pkg_xdecarocore.xml
+          test ! -e src/lib_xdecarocorelegacy
+          test ! -e src/plg_system_xdecarocore/src/Extension/XdecaroCore.php
+          test -f src/plg_system_xdecarocore/src/Extension/CorePlugin.php
+          ! grep -RInE '^namespace Xdecaro\\Core' src package tests
+          ! grep -RInF 'lib_xdecarocorelegacy.zip' package build
 
       - name: Build and validate
         run: bash build/build.sh
@@ -69,20 +68,20 @@ jobs:
           bash build/build.sh >/tmp/core-second-build.txt
           cmp /tmp/core-first-sha256.txt dist/SHA256SUMS.txt
 
-      - name: Inspect package contents
+      - name: Inspect Core 2.x package contents
         shell: bash
         run: |
           set -euo pipefail
-          VERSION="$(cat VERSION)"
+          VERSION="$(tr -d '[:space:]' < VERSION)"
           python3 - "$VERSION" <<'PY'
           import sys
           import zipfile
           from pathlib import Path
-          version = sys.argv[1].strip()
+
+          version = sys.argv[1]
           names = (
               f"dist/pkg_xdecarocore_{version}.zip",
               f"dist/lib_xdecarocore_{version}.zip",
-              f"dist/lib_xdecarocorelegacy_{version}.zip",
               f"dist/com_xdecarocore_{version}.zip",
               f"dist/plg_system_xdecarocore_{version}.zip",
           )
@@ -93,17 +92,25 @@ jobs:
               with zipfile.ZipFile(path) as archive:
                   if archive.testzip():
                       raise SystemExit(f"Corrupt archive: {path}")
+
           with zipfile.ZipFile(names[0]) as package:
               expected = {
                   'pkg_xdecarocore.xml',
                   'script.php',
                   'lib_xdecarocore.zip',
-                  'lib_xdecarocorelegacy.zip',
                   'com_xdecarocore.zip',
                   'plg_system_xdecarocore.zip',
               }
               if set(package.namelist()) != expected:
-                  raise SystemExit('Unexpected Core package contents')
-              if '<scriptfile>script.php</scriptfile>' not in package.read('pkg_xdecarocore.xml').decode():
-                  raise SystemExit('Core installer script is not declared')
+                  raise SystemExit('Unexpected Core 2.x package contents')
+
+          with zipfile.ZipFile(names[1]) as library:
+              for required in (
+                  'src/Location/LocationProviderInterface.php',
+                  'src/Location/LocationResult.php',
+                  'src/Location/OpenMeteoLocationProvider.php',
+                  'src/Location/WorldLocationService.php',
+              ):
+                  if required not in library.namelist():
+                      raise SystemExit(f'Missing world location contract: {required}')
           PY
