@@ -15,9 +15,11 @@ use Joomla\CMS\Component\ComponentHelper;
 
 final class WorldLocationService
 {
-    public function __construct(private ?LocationProviderInterface $provider = null)
+    private LocationProviderInterface $provider;
+
+    public function __construct(?LocationProviderInterface $provider = null)
     {
-        $this->provider ??= new OpenMeteoLocationProvider();
+        $this->provider = $provider ?: new OpenMeteoLocationProvider();
     }
 
     public static function fromJoomlaConfiguration(): self
