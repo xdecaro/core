@@ -43,7 +43,7 @@ jobs:
           repository: xdecaro/${{ matrix.repository }}
           path: consumer
 
-      - name: Reject deprecated Core namespace in runtime PHP
+      - name: Reject retired Core 1.x namespace in runtime PHP
         shell: bash
         run: |
           set -euo pipefail
@@ -60,21 +60,26 @@ jobs:
             || true)"
           if [ -n "$MATCHES" ]; then
             printf '%s\n' "$MATCHES"
-            echo 'Deprecated Xdecaro\Core usage remains in consumer runtime PHP.' >&2
+            echo 'Retired Xdecaro\Core usage remains in consumer runtime PHP.' >&2
             exit 1
           fi
 
   core-boundary:
-    name: Core canonical/legacy boundary
+    name: Core 2.x namespace boundary
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Verify canonical source and isolated legacy loader
+
+      - name: Verify canonical Core 2.x source only
         shell: bash
         run: |
           set -euo pipefail
           grep -Fq '<namespace path="src">xdecaro\Core</namespace>' src/lib_xdecarocore/xdecarocore.xml
-          grep -Fq '<namespace path="src">Xdecaro\Core</namespace>' src/lib_xdecarocorelegacy/xdecarocorelegacy.xml
-          ! grep -RInE '^namespace Xdecaro\\Core' src/lib_xdecarocore/src
+          grep -Fq '<namespace path="src">xdecaro\Plugin\System\Core</namespace>' src/plg_system_xdecarocore/xdecarocore.xml
+          test ! -e src/lib_xdecarocorelegacy
+          test ! -e src/plg_system_xdecarocore/src/Extension/XdecaroCore.php
+          test -f src/plg_system_xdecarocore/src/Extension/CorePlugin.php
+          ! grep -RInE '^namespace Xdecaro\\Core' src
           ! grep -RInF 'Xdecaro\Core' src/lib_xdecarocore/src --include='*.php'
+          ! grep -RInF 'xdecaro\Plugin\System\XdecaroCore' src --include='*.php' --include='*.xml'
           grep -RInE '^namespace xdecaro\\Core' src/lib_xdecarocore/src >/dev/null
