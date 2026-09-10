@@ -12,6 +12,7 @@ namespace xdecaro\Core\Integration;
 defined('_JEXEC') or die;
 
 use InvalidArgumentException;
+use JsonException;
 
 final class IntegrationEvent
 {
@@ -40,8 +41,14 @@ final class IntegrationEvent
             throw new InvalidArgumentException('Invalid integration event version.');
         }
 
-        if ($occurredAt !== null && $occurredAt !== '' && strtotime($occurredAt) === false) {
+        if ($occurredAt !== null && $occurredAt !== '' && !$this->isRfc3339Timestamp($occurredAt)) {
             throw new InvalidArgumentException('Invalid integration event timestamp.');
+        }
+
+        try {
+            json_encode($payload, JSON_THROW_ON_ERROR);
+        } catch (JsonException $exception) {
+            throw new InvalidArgumentException('Integration event payload must be JSON serializable.', 0, $exception);
         }
 
         $this->name       = $name;
@@ -97,5 +104,19 @@ final class IntegrationEvent
             isset($data['version']) ? (string) $data['version'] : '1',
             isset($data['occurredAt']) && $data['occurredAt'] !== null ? (string) $data['occurredAt'] : null
         );
+    }
+
+    private function isRfc3339Timestamp(string $value): bool
+    {
+        if (!preg_match('/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$/', $value)) {
+            return false;
+        }
+
+        $format = strpos($value, '.') !== false ? 'Y-m-d\\TH:i:s.uP' : 'Y-m-d\\TH:i:sP';
+        $date = \DateTimeImmutable::createFromFormat('!' . $format, $value);
+        $errors = \DateTimeImmutable::getLastErrors();
+
+        return $date !== false
+            && ($errors === false || ($errors['warning_count'] === 0 && $errors['error_count'] === 0));
     }
 }
