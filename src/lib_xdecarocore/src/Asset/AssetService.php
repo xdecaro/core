@@ -23,6 +23,7 @@ final class AssetService
     public const REGISTRY_EXTENSION = 'plg_system_xdecarocore';
     public const STYLE_FOUNDATION = 'xdecaro.core';
     public const STYLE_COMPONENTS = 'xdecaro.components';
+    public const STYLE_LAYOUTS = 'xdecaro.layouts';
 
     public function isAvailable(): bool
     {
@@ -63,6 +64,18 @@ final class AssetService
         }
 
         $webAssets->useStyle(self::STYLE_COMPONENTS);
+
+        return true;
+    }
+
+    public function useLayouts(WebAssetManager $webAssets): bool
+    {
+        if (!$this->register($webAssets)
+            || !$webAssets->assetExists('style', self::STYLE_LAYOUTS)) {
+            return false;
+        }
+
+        $webAssets->useStyle(self::STYLE_LAYOUTS);
 
         return true;
     }
