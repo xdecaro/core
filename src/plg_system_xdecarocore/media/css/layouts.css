@@ -1,0 +1,159 @@
+/* Core by xdecaro - opt-in shared layout primitives. */
+
+.xdecaro-list-detail {
+    --xdecaro-list-detail-nav-width: 4.5rem;
+    --xdecaro-list-detail-list-width: clamp(16rem, 24vw, 22rem);
+    --xdecaro-list-detail-context-width: clamp(16rem, 22vw, 20rem);
+    --xdecaro-list-detail-min-height: 0;
+
+    display: grid;
+    grid-template-columns: var(--xdecaro-list-detail-list-width) minmax(0, 1fr);
+    grid-template-areas: "list detail";
+    min-width: 0;
+    min-height: var(--xdecaro-list-detail-min-height);
+    overflow: hidden;
+    border: 1px solid var(--xdecaro-color-border);
+    border-radius: var(--xdecaro-radius-lg);
+    background: var(--xdecaro-color-surface);
+    color: var(--xdecaro-color-text);
+}
+
+.xdecaro-list-detail--with-nav {
+    grid-template-columns: var(--xdecaro-list-detail-nav-width) var(--xdecaro-list-detail-list-width) minmax(0, 1fr);
+    grid-template-areas: "nav list detail";
+}
+
+.xdecaro-list-detail--with-context {
+    grid-template-columns: var(--xdecaro-list-detail-list-width) minmax(0, 1fr) var(--xdecaro-list-detail-context-width);
+    grid-template-areas: "list detail context";
+}
+
+.xdecaro-list-detail--with-nav-context {
+    grid-template-columns:
+        var(--xdecaro-list-detail-nav-width)
+        var(--xdecaro-list-detail-list-width)
+        minmax(0, 1fr)
+        var(--xdecaro-list-detail-context-width);
+    grid-template-areas: "nav list detail context";
+}
+
+.xdecaro-list-detail__pane {
+    min-width: 0;
+    min-height: 0;
+    overflow: auto;
+    background: var(--xdecaro-color-surface);
+}
+
+.xdecaro-list-detail__pane[hidden] {
+    display: none;
+}
+
+.xdecaro-list-detail__nav {
+    grid-area: nav;
+    border-inline-end: 1px solid var(--xdecaro-color-border);
+    background: var(--xdecaro-color-surface-subtle);
+}
+
+.xdecaro-list-detail__list {
+    grid-area: list;
+    border-inline-end: 1px solid var(--xdecaro-color-border);
+}
+
+.xdecaro-list-detail__detail {
+    grid-area: detail;
+}
+
+.xdecaro-list-detail__context {
+    grid-area: context;
+    border-inline-start: 1px solid var(--xdecaro-color-border);
+    background: var(--xdecaro-color-surface-subtle);
+}
+
+.xdecaro-list-detail__pane-inner {
+    display: flex;
+    min-width: 0;
+    min-height: 100%;
+    flex-direction: column;
+}
+
+.xdecaro-list-detail__header,
+.xdecaro-list-detail__body,
+.xdecaro-list-detail__footer {
+    padding: var(--xdecaro-space-4);
+}
+
+.xdecaro-list-detail__header {
+    border-bottom: 1px solid var(--xdecaro-color-border);
+}
+
+.xdecaro-list-detail__body {
+    min-width: 0;
+    min-height: 0;
+    flex: 1 1 auto;
+    overflow: auto;
+}
+
+.xdecaro-list-detail__footer {
+    border-top: 1px solid var(--xdecaro-color-border);
+}
+
+.xdecaro-list-detail__mobile-only {
+    display: none;
+}
+
+@media (max-width: 1279.98px) {
+    .xdecaro-list-detail--with-nav,
+    .xdecaro-list-detail--with-context,
+    .xdecaro-list-detail--with-nav-context {
+        grid-template-columns: var(--xdecaro-list-detail-list-width) minmax(0, 1fr);
+        grid-template-areas: "list detail";
+    }
+
+    .xdecaro-list-detail__nav,
+    .xdecaro-list-detail__context {
+        display: none;
+    }
+}
+
+@media (max-width: 899.98px) {
+    .xdecaro-list-detail {
+        --xdecaro-list-detail-list-width: clamp(15rem, 36vw, 19rem);
+    }
+}
+
+@media (max-width: 559.98px) {
+    .xdecaro-list-detail,
+    .xdecaro-list-detail--with-nav,
+    .xdecaro-list-detail--with-context,
+    .xdecaro-list-detail--with-nav-context {
+        display: block;
+        min-height: 0;
+    }
+
+    .xdecaro-list-detail__nav,
+    .xdecaro-list-detail__list,
+    .xdecaro-list-detail__detail,
+    .xdecaro-list-detail__context {
+        display: none;
+        min-height: 0;
+        border: 0;
+    }
+
+    .xdecaro-list-detail:not([data-xdecaro-pane]) .xdecaro-list-detail__list:not([hidden]),
+    .xdecaro-list-detail[data-xdecaro-pane="list"] .xdecaro-list-detail__list:not([hidden]),
+    .xdecaro-list-detail[data-xdecaro-pane="detail"] .xdecaro-list-detail__detail:not([hidden]),
+    .xdecaro-list-detail[data-xdecaro-pane="nav"] .xdecaro-list-detail__nav:not([hidden]),
+    .xdecaro-list-detail[data-xdecaro-pane="context"] .xdecaro-list-detail__context:not([hidden]) {
+        display: block;
+    }
+
+    .xdecaro-list-detail__header,
+    .xdecaro-list-detail__body,
+    .xdecaro-list-detail__footer {
+        padding: var(--xdecaro-space-3) var(--xdecaro-space-4);
+    }
+
+    .xdecaro-list-detail__mobile-only {
+        display: initial;
+    }
+}
