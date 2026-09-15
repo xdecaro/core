@@ -74,7 +74,7 @@ $installationCoherent = $coreProduct !== null && $coreProduct['installed'] && !$
                     <div><dt><?php echo Text::_('COM_XDECAROCORE_COMPONENT'); ?></dt><dd><code>com_xdecarocore</code></dd></div>
                     <div><dt><?php echo Text::_('COM_XDECAROCORE_CHANNEL'); ?></dt><dd><span class="xdecaro-badge xdecaro-badge--success"><?php echo Text::_('COM_XDECAROCORE_CHANNEL_STABLE'); ?></span></dd></div>
                     <div><dt><?php echo Text::_('COM_XDECAROCORE_DEVELOPER'); ?></dt><dd>Luca De Caro</dd></div>
-                    <div><dt><?php echo Text::_('COM_XDECAROCORE_REPOSITORY'); ?></dt><dd><a href="https://github.com/xdecaro/core" target="_blank" rel="noopener noreferrer">xdecaro/core <span aria-hidden="true">↗</span></a></dd></div>
+                    <div><dt><?php echo Text::_('COM_XDECAROCORE_REPOSITORY'); ?></dt><dd><a href="https://github.com/xdecaro/core" target="_blank" rel="noopener noreferrer" aria-label="<?php echo htmlspecialchars(Text::_('COM_XDECAROCORE_REPOSITORY_NEW_WINDOW'), ENT_QUOTES, 'UTF-8'); ?>">xdecaro/core <span aria-hidden="true">↗</span></a></dd></div>
                     <div><dt><?php echo Text::_('COM_XDECAROCORE_SOFTWARE_LICENSE'); ?></dt><dd>GNU GPL v2 or later</dd></div>
                 </dl>
             </div>

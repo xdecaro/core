@@ -1,5 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <config>
+    <fieldset name="locations" label="COM_XDECAROCORE_CONFIG_LOCATIONS">
+        <field
+            name="location_provider_endpoint"
+            type="url"
+            label="COM_XDECAROCORE_CONFIG_LOCATION_ENDPOINT"
+            description="COM_XDECAROCORE_CONFIG_LOCATION_ENDPOINT_DESC"
+            default="https://geocoding-api.open-meteo.com/v1/search"
+            filter="url"
+        />
+        <field
+            name="location_provider_api_key"
+            type="password"
+            label="COM_XDECAROCORE_CONFIG_LOCATION_API_KEY"
+            description="COM_XDECAROCORE_CONFIG_LOCATION_API_KEY_DESC"
+            filter="raw"
+        />
+    </fieldset>
     <fieldset name="permissions" label="JCONFIG_PERMISSIONS_LABEL">
         <field
             name="rules"

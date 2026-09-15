@@ -12,7 +12,6 @@ $statusLabel = static function (string $status): string {
     $map = [
         'current' => 'COM_XDECAROCORE_STATUS_CURRENT',
         'update' => 'COM_XDECAROCORE_STATUS_UPDATE',
-        'ahead' => 'COM_XDECAROCORE_STATUS_AHEAD',
         'partial' => 'COM_XDECAROCORE_STATUS_PARTIAL',
         'not_installed' => 'COM_XDECAROCORE_STATUS_NOT_INSTALLED',
         'development' => 'COM_XDECAROCORE_STATUS_DEVELOPMENT',
@@ -21,7 +20,7 @@ $statusLabel = static function (string $status): string {
     return Text::_($map[$status] ?? 'COM_XDECAROCORE_STATUS_UNKNOWN');
 };
 $statusClass = static function (string $status): string {
-    if (in_array($status, ['current', 'ahead'], true)) {
+    if ($status === 'current') {
         return 'xdecaro-badge--success';
     }
     if (in_array($status, ['update', 'development', 'planned'], true)) {
@@ -34,11 +33,13 @@ $statusClass = static function (string $status): string {
 };
 $diagnosticLabel = static function (string $level): string {
     if ($level === 'success') return Text::_('COM_XDECAROCORE_DIAGNOSTIC_OK');
+    if ($level === 'info') return Text::_('COM_XDECAROCORE_DIAGNOSTIC_INFO');
     if ($level === 'warning') return Text::_('COM_XDECAROCORE_DIAGNOSTIC_WARNING');
     return Text::_('COM_XDECAROCORE_DIAGNOSTIC_ERROR');
 };
 $diagnosticClass = static function (string $level): string {
     if ($level === 'success') return 'xdecaro-badge--success';
+    if ($level === 'info') return '';
     if ($level === 'warning') return 'xdecaro-badge--warning';
     return 'xdecaro-badge--danger';
 };
@@ -77,7 +78,8 @@ $label = static function (string $key): string {
         <div class="xdecaro-card__body">
             <div class="xdecaro-table-wrap xdecaro-suite__responsive-wrap">
                 <table class="xdecaro-table xdecaro-suite__responsive-table xdecaro-suite__dashboard-products-table">
-                    <thead><tr><th><?php echo Text::_('COM_XDECAROCORE_PRODUCT'); ?></th><th><?php echo Text::_('COM_XDECAROCORE_STATUS'); ?></th><th><?php echo Text::_('COM_XDECAROCORE_INSTALLED_VERSION'); ?></th><th><?php echo Text::_('COM_XDECAROCORE_AVAILABLE_VERSION'); ?></th><th><?php echo Text::_('COM_XDECAROCORE_ACTIONS'); ?></th></tr></thead>
+                    <caption class="visually-hidden"><?php echo Text::_('COM_XDECAROCORE_PRODUCTS'); ?></caption>
+                    <thead><tr><th scope="col"><?php echo Text::_('COM_XDECAROCORE_PRODUCT'); ?></th><th scope="col"><?php echo Text::_('COM_XDECAROCORE_STATUS'); ?></th><th scope="col"><?php echo Text::_('COM_XDECAROCORE_INSTALLED_VERSION'); ?></th><th scope="col"><?php echo Text::_('COM_XDECAROCORE_AVAILABLE_VERSION'); ?></th><th scope="col"><?php echo Text::_('COM_XDECAROCORE_ACTIONS'); ?></th></tr></thead>
                     <tbody>
                     <?php foreach ($products as $product) : ?>
                         <tr>

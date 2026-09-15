@@ -5,13 +5,27 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Language\Text;
 
 $checks = $this->snapshot['diagnostics'];
+$diagnosticText = static function (array $check, string $field): string {
+    $key = (string) ($check[$field . '_key'] ?? '');
+    $arguments = $check[$field . '_args'] ?? [];
+
+    if ($key !== '') {
+        return is_array($arguments) && $arguments !== []
+            ? Text::sprintf($key, ...$arguments)
+            : Text::_($key);
+    }
+
+    return (string) ($check[$field] ?? '');
+};
 $statusLabel = static function (string $level): string {
     if ($level === 'success') return Text::_('COM_XDECAROCORE_DIAGNOSTIC_OK');
+    if ($level === 'info') return Text::_('COM_XDECAROCORE_DIAGNOSTIC_INFO');
     if ($level === 'warning') return Text::_('COM_XDECAROCORE_DIAGNOSTIC_WARNING');
     return Text::_('COM_XDECAROCORE_DIAGNOSTIC_ERROR');
 };
 $statusClass = static function (string $level): string {
     if ($level === 'success') return 'xdecaro-badge--success';
+    if ($level === 'info') return '';
     if ($level === 'warning') return 'xdecaro-badge--warning';
     return 'xdecaro-badge--danger';
 };
@@ -34,8 +48,8 @@ $statusClass = static function (string $level): string {
             <?php foreach ($checks as $check) : ?>
                 <div class="xdecaro-suite__diagnostic-row">
                     <div>
-                        <strong><?php echo htmlspecialchars($check['label'], ENT_QUOTES, 'UTF-8'); ?></strong>
-                        <div class="xdecaro-suite__muted"><?php echo htmlspecialchars($check['detail'], ENT_QUOTES, 'UTF-8'); ?></div>
+                        <strong><?php echo htmlspecialchars($diagnosticText($check, 'label'), ENT_QUOTES, 'UTF-8'); ?></strong>
+                        <div class="xdecaro-suite__muted"><?php echo htmlspecialchars($diagnosticText($check, 'detail'), ENT_QUOTES, 'UTF-8'); ?></div>
                     </div>
                     <span class="xdecaro-badge <?php echo $statusClass($check['level']); ?>"><?php echo $statusLabel($check['level']); ?></span>
                 </div>
