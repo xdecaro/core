@@ -29,14 +29,14 @@ namespace {
     }
 
     $required = [
-        'core' => ['pkg_xdecarocore', '1.5.12'],
+        'core' => ['pkg_xdecarocore', '2.0.1'],
         'forms' => ['pkg_decaroforms', '1.7.0'],
         'courses' => ['pkg_decarocourses', '1.5.0'],
         'competitions' => ['pkg_xdecarocompetitions', '1.3.0'],
         'documents' => ['pkg_decarodocuments', '1.3.0'],
         'membership' => ['pkg_decaromembership', '1.4.0'],
         'finance' => ['pkg_decarofinance', '1.3.0'],
-        'protocol' => ['pkg_decaroprotocol', '1.4.0'],
+        'protocol' => ['pkg_decaroprotocol', '1.5.0'],
     ];
 
     foreach ($required as $key => $expected) {
@@ -117,7 +117,6 @@ namespace {
         . '<file type="plugin" id="decarocourses" group="task">task.zip</file>'
         . '</files></extension>'
     );
-
     $extensions = [
         ['extension_id' => 10077, 'package_id' => 0, 'name' => 'Forms', 'type' => 'package', 'element' => 'pkg_decaroforms', 'folder' => '', 'client_id' => 0, 'enabled' => 1, 'version' => '1.7.0', 'author' => 'Luca De Caro'],
         ['extension_id' => 10078, 'package_id' => 0, 'name' => 'Courses', 'type' => 'package', 'element' => 'pkg_decarocourses', 'folder' => '', 'client_id' => 0, 'enabled' => 1, 'version' => '1.5.0', 'author' => 'Luca De Caro'],
@@ -237,7 +236,6 @@ namespace {
     if (strpos($productsTemplate, '$extensionLabel($child)') === false) {
         throw new \RuntimeException('Expanded package extension names must use readable labels.');
     }
-
     $extensionsTemplate = $templates['extensions'];
     foreach (['Text::_($name)', '$extensionLabel($extension)', 'xdecaro-suite__extension-element-mobile', 'xdecaro-suite__extension-element-cell'] as $marker) {
         if (strpos($extensionsTemplate, $marker) === false) {
