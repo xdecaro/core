@@ -11,7 +11,7 @@
       <downloadurl type="full" format="zip">https://github.com/xdecaro/core/releases/download/v2.0.1/pkg_xdecarocore_2.0.1.zip</downloadurl>
     </downloads>
     <tags><tag>stable</tag></tags>
-    <sha256>0000000000000000000000000000000000000000000000000000000000000000</sha256>
+    <sha256>cec892dafeea4a0499ad1851ab0f9d0b111495c2248e0147076ad4bb648f64a9</sha256>
     <maintainer>Luca De Caro</maintainer>
     <maintainerurl>https://github.com/xdecaro/core</maintainerurl>
     <changelogurl>https://raw.githubusercontent.com/xdecaro/core/main/updates/changelog.xml</changelogurl>
