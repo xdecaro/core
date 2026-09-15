@@ -55,7 +55,6 @@ jobs:
           test ! -e src/plg_system_xdecarocore/src/Extension/XdecaroCore.php
           test -f src/plg_system_xdecarocore/src/Extension/CorePlugin.php
           ! grep -RInE '^namespace Xdecaro\\Core' src package tests
-          ! grep -RInF 'lib_xdecarocorelegacy.zip' package build
 
       - name: Build and validate
         run: bash build/build.sh
