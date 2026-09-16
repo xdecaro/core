@@ -1,0 +1,27 @@
+name: Core package naming migration
+
+on:
+  pull_request:
+    paths:
+      - 'package/**'
+      - 'build/**'
+      - 'updates/**'
+      - 'tests/package-naming-migration.php'
+      - '.github/workflows/package-naming-migration.yml'
+      - 'VERSION'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+      - name: Canonical package contract
+        run: php tests/package-naming-migration.php
