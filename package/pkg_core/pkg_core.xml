@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="package" method="upgrade">
+    <name>Core</name>
+    <packagename>core</packagename>
+    <author>Luca De Caro</author>
+    <authorUrl>https://github.com/xdecaro/core</authorUrl>
+    <creationDate>2026-09-17</creationDate>
+    <copyright>Copyright (C) 2026 Luca De Caro</copyright>
+    <license>GNU General Public License version 2 or later</license>
+    <version>2.0.1</version>
+    <description>Shared xdecaro Joomla infrastructure package with central ecosystem dashboard.</description>
+    <targetplatform name="joomla" version="6.*" />
+    <scriptfile>script.php</scriptfile>
+    <blockChildUninstall>true</blockChildUninstall>
+    <files>
+        <file type="library" id="xdecaro/core">lib_xdecarocore.zip</file>
+        <file type="component" id="com_xdecarocore">com_xdecarocore.zip</file>
+        <file type="plugin" id="xdecarocore" group="system">plg_system_xdecarocore.zip</file>
+    </files>
+    <updateservers>
+        <server type="extension" priority="1" name="Core Updates">https://raw.githubusercontent.com/xdecaro/core/main/updates/pkg_core.xml</server>
+    </updateservers>
+    <changelogurl>https://raw.githubusercontent.com/xdecaro/core/main/updates/changelog.xml</changelogurl>
+</extension>
