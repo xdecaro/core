@@ -7,8 +7,13 @@ on:
       - 'build/**'
       - 'updates/**'
       - 'tests/package-naming-migration.php'
+      - 'tests/core-2.1-package-contract.php'
       - '.github/workflows/package-naming-migration.yml'
+      - '.github/workflows/release.yml'
+      - '.github/workflows/runtime-smoke.yml'
+      - 'src/**'
       - 'VERSION'
+      - 'STABILIZATION_SERIES'
   workflow_dispatch:
 
 permissions:
@@ -24,4 +29,6 @@ jobs:
           php-version: '8.3'
           coverage: none
       - name: Canonical package contract
-        run: php tests/package-naming-migration.php
+        run: |
+          php tests/package-naming-migration.php
+          php tests/core-2.1-package-contract.php
