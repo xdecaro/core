@@ -113,3 +113,16 @@ jobs:
                   if required not in library.namelist():
                       raise SystemExit(f'Missing world location contract: {required}')
           PY
+
+      - name: Upload verified Core packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: core-${{ github.sha }}
+          path: |
+            dist/pkg_core_*.zip
+            dist/lib_xdecarocore_*.zip
+            dist/com_xdecarocore_*.zip
+            dist/plg_system_xdecarocore_*.zip
+            dist/SHA256SUMS.txt
+          if-no-files-found: error
+          retention-days: 7
