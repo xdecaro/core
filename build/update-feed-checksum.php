@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 $root = dirname(__DIR__);
 $version = trim((string) file_get_contents($root . '/VERSION'));
-$package = $root . '/dist/pkg_xdecarocore_' . $version . '.zip';
-$feed = $root . '/updates/pkg_xdecarocore.xml';
+$package = $root . '/dist/pkg_core_' . $version . '.zip';
+$feed = $root . '/updates/pkg_core.xml';
 
 if ($version === '' || !is_file($package) || !is_file($feed)) {
     fwrite(STDERR, "Core release inputs are incomplete.\n");

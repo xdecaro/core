@@ -18,7 +18,7 @@ final class EcosystemService
      * The catalog version is the newest version known when this Core release was built.
      */
     private const CATALOG = [
-        'core' => ['name' => 'Core', 'package' => 'pkg_xdecarocore', 'component' => 'com_xdecarocore', 'version' => '2.0.1', 'channel' => 'stable'],
+        'core' => ['name' => 'Core', 'package' => 'pkg_core', 'component' => 'com_xdecarocore', 'version' => '2.1.0', 'channel' => 'stable'],
         'people' => ['name' => 'People', 'package' => 'pkg_xdecaropeople', 'component' => 'com_xdecaropeople', 'version' => '1.0.1', 'channel' => 'stable'],
         'organizations' => ['name' => 'Organizations', 'package' => 'pkg_xdecaroorganizations', 'component' => 'com_xdecaroorganizations', 'version' => '1.0.0', 'channel' => 'stable'],
         'notifications' => ['name' => 'Notifications', 'package' => 'pkg_xdecaronotifications', 'component' => 'com_xdecaronotifications', 'version' => '1.0.2', 'channel' => 'stable'],
@@ -403,7 +403,7 @@ final class EcosystemService
     {
         $checks = [];
         $ecosystemCoherent = !$updateLoadFailed;
-        $corePackage = $this->findExtension($extensions, 'package', 'pkg_xdecarocore');
+        $corePackage = $this->findExtension($extensions, 'package', 'pkg_core');
         $coreComponent = $this->findExtension($extensions, 'component', 'com_xdecarocore');
         $coreLibrary = $this->findExtension($extensions, 'library', 'xdecaro/core');
         $corePlugin = $this->findExtension($extensions, 'plugin', 'xdecarocore', 'system');

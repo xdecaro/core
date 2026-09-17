@@ -9,8 +9,8 @@ VERSION = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
 LIB_SRC = ROOT / "src/lib_xdecarocore"
 COMPONENT_SRC = ROOT / "src/com_xdecarocore"
 PLUGIN_SRC = ROOT / "src/plg_system_xdecarocore"
-PACKAGE_MANIFEST = ROOT / "package/pkg_xdecarocore/pkg_xdecarocore.xml"
-PACKAGE_SCRIPT = ROOT / "package/pkg_xdecarocore/script.php"
+PACKAGE_MANIFEST = ROOT / "package/pkg_core/pkg_core.xml"
+PACKAGE_SCRIPT = ROOT / "package/pkg_core/script.php"
 DIST = ROOT / "dist"
 FIXED_TIME = (1980, 1, 1, 0, 0, 0)
 
@@ -57,14 +57,14 @@ for old in DIST.glob("SHA256SUMS.txt"):
 library_zip = DIST / f"lib_xdecarocore_{VERSION}.zip"
 component_zip = DIST / f"com_xdecarocore_{VERSION}.zip"
 plugin_zip = DIST / f"plg_system_xdecarocore_{VERSION}.zip"
-package_zip = DIST / f"pkg_xdecarocore_{VERSION}.zip"
+package_zip = DIST / f"pkg_core_{VERSION}.zip"
 
 zip_directory(LIB_SRC, library_zip)
 zip_directory(COMPONENT_SRC, component_zip)
 zip_directory(PLUGIN_SRC, plugin_zip)
 
 with zipfile.ZipFile(package_zip, "w") as archive:
-    add_bytes(archive, "pkg_xdecarocore.xml", PACKAGE_MANIFEST.read_bytes())
+    add_bytes(archive, "pkg_core.xml", PACKAGE_MANIFEST.read_bytes())
     add_bytes(archive, "script.php", PACKAGE_SCRIPT.read_bytes())
     add_bytes(archive, "lib_xdecarocore.zip", library_zip.read_bytes())
     add_bytes(archive, "com_xdecarocore.zip", component_zip.read_bytes())
