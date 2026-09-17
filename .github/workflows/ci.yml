@@ -24,18 +24,18 @@ jobs:
           extensions: simplexml
           coverage: none
 
-      - name: Guard Core 2.0 stabilization series
+      - name: Guard Core 2.1 stabilization series
         shell: bash
         run: |
           set -euo pipefail
           VERSION="$(tr -d '[:space:]' < VERSION)"
           SERIES="$(tr -d '[:space:]' < STABILIZATION_SERIES)"
           test -n "$VERSION"
-          test "$SERIES" = '2.0'
+          test "$SERIES" = '2.1'
           case "$VERSION" in
-            2.0.*) ;;
+            2.1.*) ;;
             *)
-              echo "Core ${VERSION} is outside the 2.0.x stabilization line." >&2
+              echo "Core ${VERSION} is outside the 2.1.x stabilization line." >&2
               exit 1
               ;;
           esac
@@ -50,7 +50,7 @@ jobs:
           grep -Fq '<targetplatform name="joomla" version="6.*"' src/lib_xdecarocore/xdecarocore.xml
           grep -Fq '<targetplatform name="joomla" version="6.*"' src/com_xdecarocore/xdecarocore.xml
           grep -Fq '<targetplatform name="joomla" version="6.*"' src/plg_system_xdecarocore/xdecarocore.xml
-          grep -Fq '<targetplatform name="joomla" version="6.*"' package/pkg_xdecarocore/pkg_xdecarocore.xml
+          grep -Fq '<targetplatform name="joomla" version="6.*"' package/pkg_core/pkg_core.xml
           test ! -e src/lib_xdecarocorelegacy
           test ! -e src/plg_system_xdecarocore/src/Extension/XdecaroCore.php
           test -f src/plg_system_xdecarocore/src/Extension/CorePlugin.php
@@ -79,7 +79,7 @@ jobs:
 
           version = sys.argv[1]
           names = (
-              f"dist/pkg_xdecarocore_{version}.zip",
+              f"dist/pkg_core_{version}.zip",
               f"dist/lib_xdecarocore_{version}.zip",
               f"dist/com_xdecarocore_{version}.zip",
               f"dist/plg_system_xdecarocore_{version}.zip",
@@ -94,7 +94,7 @@ jobs:
 
           with zipfile.ZipFile(names[0]) as package:
               expected = {
-                  'pkg_xdecarocore.xml',
+                  'pkg_core.xml',
                   'script.php',
                   'lib_xdecarocore.zip',
                   'com_xdecarocore.zip',
