@@ -16,6 +16,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -48,8 +50,28 @@ jobs:
       - name: Build and validate
         run: bash build/build.sh
 
-      - name: Synchronize Joomla update checksum
+      - name: Synchronize canonical Joomla update checksum
         run: php build/update-feed-checksum.php
+
+      - name: Synchronize legacy Joomla update bridge
+        shell: bash
+        run: |
+          set -euo pipefail
+          VERSION="${{ steps.version.outputs.version }}"
+          PACKAGE="dist/pkg_core_${VERSION}.zip"
+          SHA256="$(sha256sum "$PACKAGE" | awk '{print $1}')"
+          python3 - "$VERSION" "$SHA256" <<'PY'
+          import sys, xml.etree.ElementTree as ET
+          version, sha = sys.argv[1:3]
+          path = 'updates/pkg_xdecarocore.xml'
+          tree = ET.parse(path)
+          update = tree.getroot().find('./update')
+          update.find('version').text = version
+          update.find('./downloads/downloadurl').text = f'https://github.com/xdecaro/core/releases/download/v{version}/pkg_core_{version}.zip'
+          update.find('sha256').text = sha
+          ET.indent(tree, space='  ')
+          tree.write(path, encoding='utf-8', xml_declaration=True)
+          PY
 
       - name: Verify release checksum and package shape
         shell: bash
@@ -59,6 +81,9 @@ jobs:
           PACKAGE="dist/pkg_core_${VERSION}.zip"
           SHA256="$(sha256sum "$PACKAGE" | awk '{print $1}')"
           grep -q "<sha256>${SHA256}</sha256>" updates/pkg_core.xml
+          grep -q "<sha256>${SHA256}</sha256>" updates/pkg_xdecarocore.xml
+          grep -q "releases/download/v${VERSION}/pkg_core_${VERSION}.zip" updates/pkg_xdecarocore.xml
+          grep -q '<element>pkg_xdecarocore</element>' updates/pkg_xdecarocore.xml
           grep -q "${SHA256}  pkg_core_${VERSION}.zip" dist/SHA256SUMS.txt
           test -f "dist/lib_xdecarocore_${VERSION}.zip"
           test -f "dist/com_xdecarocore_${VERSION}.zip"
@@ -81,18 +106,18 @@ jobs:
             --title "Core ${VERSION}" \
             --notes "Core ${VERSION}: canonical Joomla package identity pkg_core, migration from pkg_xdecarocore, Joomla 6 / PHP 8.3. Child extension identifiers remain unchanged."
 
-      - name: Publish update-feed checksum
+      - name: Publish canonical and legacy update feeds
         shell: bash
         run: |
           set -euo pipefail
           VERSION="${{ steps.version.outputs.version }}"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add updates/pkg_core.xml
+          git add updates/pkg_core.xml updates/pkg_xdecarocore.xml
           if git diff --cached --quiet; then
-            echo "Update feed checksum already current."
+            echo "Update feeds already current."
             exit 0
           fi
-          git commit -m "Publish SHA-256 for Core ${VERSION}"
+          git commit -m "Publish update feeds for Core ${VERSION}"
           git pull --rebase origin main
           git push origin HEAD:main
