@@ -29,6 +29,7 @@ foreach ([
     'public function update(): void',
     'public function rebuildSites(): void',
     '->rebuild()',
+    "getLanguage()->load('com_installer', JPATH_ADMINISTRATOR)",
     'index.php?option=com_xdecarocore&view=dashboard&layout=updates',
 ] as $fragment) {
     if (!str_contains($controller, $fragment)) {
@@ -57,6 +58,10 @@ foreach ([
     'public $updateSites = [];',
     "if (\$layout === 'updates' && \$this->canManageInstaller)",
     'COM_XDECAROCORE_CHECK_UPDATES',
+    'COM_XDECAROCORE_REBUILD_UPDATE_SITES',
+    'COM_XDECAROCORE_MANAGE_UPDATE_SITES',
+    'update.rebuildSites',
+    'index.php?option=com_installer&view=updatesites',
 ] as $fragment) {
     if (!str_contains($view, $fragment)) {
         throw new RuntimeException('Updates toolbar/view contract missing: ' . $fragment);
@@ -70,12 +75,20 @@ foreach ([
     'COM_XDECAROCORE_VERIFY',
     'COM_XDECAROCORE_UPDATE_SITES',
     'COM_XDECAROCORE_UPDATE_SITE_LAST_CHECK',
-    'COM_XDECAROCORE_REBUILD_UPDATE_SITES',
+    'COM_XDECAROCORE_UPDATES_AVAILABLE_ONE',
     'name="task" value="update.update"',
-    'name="task" value="update.rebuildSites"',
 ] as $fragment) {
     if (!str_contains($template, $fragment)) {
         throw new RuntimeException('Updates template contract missing: ' . $fragment);
+    }
+}
+
+foreach ([
+    'name="task" value="update.rebuildSites"',
+    'COM_XDECAROCORE_MANAGE_UPDATE_SITES',
+] as $fragment) {
+    if (str_contains($template, $fragment)) {
+        throw new RuntimeException('Update-site actions must live in the Joomla toolbar, not in the section body: ' . $fragment);
     }
 }
 
@@ -96,6 +109,7 @@ foreach ([$itPath, $enPath] as $path) {
         'COM_XDECAROCORE_UPDATE_SITE_LAST_CHECK=',
         'COM_XDECAROCORE_REBUILD_UPDATE_SITES=',
         'COM_XDECAROCORE_UPDATE_SITES_REBUILT=',
+        'COM_XDECAROCORE_UPDATES_AVAILABLE_ONE=',
     ] as $fragment) {
         if (!str_contains($source, $fragment)) {
             throw new RuntimeException('Missing updater language key ' . $fragment . ' in ' . basename(dirname($path)) . '.');
