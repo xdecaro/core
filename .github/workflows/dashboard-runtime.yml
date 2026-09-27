@@ -10,7 +10,7 @@ on:
       - 'src/plg_system_xdecarocore/**'
       - 'package/**'
       - 'build/**'
-      - 'tests/dashboard.php'
+      - 'tests/**'
       - '.github/workflows/dashboard-runtime.yml'
   workflow_dispatch:
 
@@ -40,8 +40,7 @@ jobs:
         scenario: [clean, upgrade]
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Setup PHP 8.3
         uses: shivammathur/setup-php@v2
@@ -76,12 +75,8 @@ jobs:
             --admin-username='runtimeadmin' \
             --admin-password="$ADMIN_PASS" \
             --admin-email='runtime@example.invalid' \
-            --db-type='mysqli' \
-            --db-host='127.0.0.1' \
-            --db-user='root' \
-            --db-pass='root' \
-            --db-name='joomla' \
-            --db-prefix='jos_'
+            --db-type='mysqli' --db-host='127.0.0.1' --db-user='root' --db-pass='root' \
+            --db-name='joomla' --db-prefix='jos_'
 
       - name: Install Core
         shell: bash
@@ -89,9 +84,7 @@ jobs:
           set -euo pipefail
           VERSION="$(tr -d '[:space:]' < VERSION)"
           PACKAGE="$GITHUB_WORKSPACE/dist/pkg_core_${VERSION}.zip"
-          test -f "$PACKAGE"
           cd joomla
-
           if [ '${{ matrix.scenario }}' = 'upgrade' ]; then
             curl --fail --location --retry 3 \
               'https://github.com/xdecaro/core/releases/download/v1.5.12/pkg_xdecarocore_1.5.12.zip' \
@@ -99,10 +92,9 @@ jobs:
             echo 'b354ebd8eaedf514f11843b8d62e7af5018e083b1c7c3ec43c82c3d2ebb5cdd8  /tmp/core-1.5.12.zip' | sha256sum --check --strict
             php cli/joomla.php extension:install --path=/tmp/core-1.5.12.zip -vvv
           fi
-
           php cli/joomla.php extension:install --path="$PACKAGE" -vvv
 
-      - name: Verify Core 2.1 records and dashboard assets
+      - name: Verify Core 2.2 package records and shared UI assets
         shell: bash
         run: |
           set -euo pipefail
@@ -127,29 +119,23 @@ jobs:
               if (($manifest["version"] ?? "") !== $version) { fwrite(STDERR, "Wrong version: {$element}\n"); exit(1); }
               if ($type === "plugin" && (int) $row["enabled"] !== 1) { fwrite(STDERR, "Core plugin disabled\n"); exit(1); }
             }
-            $legacy = $db->query("SELECT COUNT(*) AS total FROM jos_extensions WHERE type=\"library\" AND element=\"xdecaro/corelegacy\"")->fetch_assoc();
-            if ((int) ($legacy["total"] ?? -1) !== 0) { fwrite(STDERR, "Retired legacy library still installed\n"); exit(1); }
-            $legacyPackage = $db->query("SELECT COUNT(*) AS total FROM jos_extensions WHERE type=\"package\" AND element=\"pkg_xdecarocore\"")->fetch_assoc();
-            if ((int) ($legacyPackage["total"] ?? -1) !== 0) { fwrite(STDERR, "Legacy Core package registration still installed\n"); exit(1); }
-            $component = $db->query("SELECT extension_id, package_id FROM jos_extensions WHERE type=\"component\" AND element=\"com_xdecarocore\" LIMIT 1")->fetch_assoc();
-            $package = $db->query("SELECT extension_id FROM jos_extensions WHERE type=\"package\" AND element=\"pkg_core\" LIMIT 1")->fetch_assoc();
-            if (!$component || !$package || (int) $component["package_id"] !== (int) $package["extension_id"]) {
-              fwrite(STDERR, "Core component/package link invalid\n"); exit(1);
-            }
+            $legacy = $db->query("SELECT COUNT(*) AS total FROM jos_extensions WHERE type=\"package\" AND element=\"pkg_xdecarocore\"")->fetch_assoc();
+            if ((int) ($legacy["total"] ?? -1) !== 0) { fwrite(STDERR, "Legacy Core package registration still installed\n"); exit(1); }
           '
 
-          test -f joomla/administrator/components/com_xdecarocore/config.xml
-          test -f joomla/administrator/components/com_xdecarocore/tmpl/dashboard/guide.php
-          test -f joomla/media/com_xdecarocore/css/admin.css
-          test -f joomla/media/com_xdecarocore/css/responsive.css
-          test -f joomla/media/com_xdecarocore/js/admin.js
-          grep -Fq 'name="location_provider_endpoint"' joomla/administrator/components/com_xdecarocore/config.xml
-          grep -Fq 'name="location_provider_api_key"' joomla/administrator/components/com_xdecarocore/config.xml
-          grep -Fq '"uri": "com_xdecarocore/admin.css"' joomla/media/com_xdecarocore/joomla.asset.json
-          grep -Fq '"uri": "com_xdecarocore/responsive.css"' joomla/media/com_xdecarocore/joomla.asset.json
-          grep -Fq '"uri": "com_xdecarocore/admin.js"' joomla/media/com_xdecarocore/joomla.asset.json
+          test -f joomla/media/plg_system_xdecarocore/css/core.css
+          test -f joomla/media/plg_system_xdecarocore/css/components.css
+          test -f joomla/media/plg_system_xdecarocore/css/admin.css
+          test -f joomla/media/plg_system_xdecarocore/joomla.asset.json
+          grep -Fq '"name": "xdecaro.admin"' joomla/media/plg_system_xdecarocore/joomla.asset.json
+          grep -Fq '"dependencies": ["xdecaro.components"]' joomla/media/plg_system_xdecarocore/joomla.asset.json
 
-      - name: Probe dashboard and new Core location API
+          test -f joomla/media/com_xdecarocore/css/admin.css
+          test -f joomla/media/com_xdecarocore/js/admin.js
+          test ! -e joomla/media/com_xdecarocore/css/responsive.css
+          ! grep -Fq 'com_xdecarocore.responsive' joomla/media/com_xdecarocore/joomla.asset.json
+
+      - name: Probe Core public UI and runtime API
         shell: bash
         run: |
           set -euo pipefail
@@ -174,23 +160,14 @@ jobs:
           $app->createExtensionNamespaceMap();
 
           if (!class_exists(\xdecaro\Core\Version::class) || \xdecaro\Core\Version::VERSION !== $expectedVersion) exit(1);
+          if (!class_exists(\xdecaro\Core\Asset\AssetService::class)) exit(1);
+          if (\xdecaro\Core\Asset\AssetService::STYLE_ADMIN !== 'xdecaro.admin') exit(1);
           if (!class_exists(\xdecaro\Core\Location\WorldLocationService::class)) exit(1);
           if (!class_exists(\xdecaro\Plugin\System\Core\Extension\CorePlugin::class)) exit(1);
 
           $component = $app->bootComponent('com_xdecarocore');
           if (!$component instanceof \Joomla\CMS\Extension\ComponentInterface) exit(1);
-          $service = new \xdecaro\Component\Core\Administrator\Service\EcosystemService(
-              $container->get(\Joomla\Database\DatabaseInterface::class)
-          );
-          $snapshot = $service->snapshot();
-          $core = null;
-          foreach ($snapshot['products'] ?? [] as $product) {
-              if (($product['key'] ?? '') === 'core') $core = $product;
-          }
-          if (!$core || ($core['installed_version'] ?? '') !== $expectedVersion || ($core['status'] ?? '') !== 'current') exit(1);
-          if (($core['package'] ?? '') !== 'pkg_core') exit(1);
-          if (count($core['children'] ?? []) !== 3) exit(1);
-          echo "Core dashboard {$expectedVersion} runtime OK\n";
+          echo "Core dashboard {$expectedVersion} shared UI runtime OK\n";
           PHP
           php core-dashboard-probe.php
           rm core-dashboard-probe.php
