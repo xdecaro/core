@@ -15,6 +15,7 @@ use Joomla\CMS\Router\Route;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\Database\DatabaseInterface;
 use xdecaro\Component\Core\Administrator\Service\EcosystemService;
+use xdecaro\Component\Core\Administrator\Service\UpdaterService;
 use xdecaro\Core\Asset\AssetService;
 use xdecaro\Core\Version;
 
@@ -25,6 +26,8 @@ final class HtmlView extends BaseHtmlView
     public $joomlaVersion = '';
     public $phpVersion = '';
     public $canManageInstaller = false;
+    public $updateIds = [];
+    public $updateSites = [];
 
     public function display($tpl = null): void
     {
@@ -36,12 +39,17 @@ final class HtmlView extends BaseHtmlView
         }
 
         $container = Factory::getContainer();
-        $service = new EcosystemService($container->get(DatabaseInterface::class));
+        $db = $container->get(DatabaseInterface::class);
+        $service = new EcosystemService($db);
         $this->snapshot = $service->snapshot();
         $this->coreVersion = Version::VERSION;
         $this->joomlaVersion = defined('JVERSION') ? JVERSION : '';
         $this->phpVersion = PHP_VERSION;
         $this->canManageInstaller = $identity->authorise('core.manage', 'com_installer');
+
+        $updaterService = new UpdaterService($db);
+        $this->updateIds = $updaterService->getUpdateIds($this->snapshot['products'] ?? []);
+        $this->updateSites = $updaterService->getUpdateSites($this->snapshot['products'] ?? []);
 
         $webAssets = $this->getDocument()->getWebAssetManager();
         (new AssetService())->useAdminUi($webAssets);
@@ -69,6 +77,16 @@ final class HtmlView extends BaseHtmlView
             ToolbarHelper::back(
                 Text::_('JTOOLBAR_BACK'),
                 Route::_('index.php?option=com_xdecarocore&view=dashboard', false)
+            );
+        }
+
+        if ($layout === 'updates' && $this->canManageInstaller) {
+            ToolbarHelper::custom(
+                'update.find',
+                'refresh',
+                'refresh',
+                Text::_('COM_XDECAROCORE_CHECK_UPDATES'),
+                false
             );
         }
 
