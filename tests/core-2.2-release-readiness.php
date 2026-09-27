@@ -3,22 +3,22 @@
 declare(strict_types=1);
 
 $root = dirname(__DIR__);
-$expectedVersion = '2.2.3';
+$expectedVersion = '2.2.4';
 $expectedSeries = '2.2';
 $expectedJoomlaManifestTarget = '6.1.3';
 $expectedJoomlaUpdateTarget = '6\\.1\\.3';
 $expectedPhp = '8.3.0';
 
 if (trim((string) file_get_contents($root . '/VERSION')) !== $expectedVersion) {
-    throw new RuntimeException('VERSION must be 2.2.3.');
+    throw new RuntimeException('VERSION must be 2.2.4.');
 }
 if (trim((string) file_get_contents($root . '/STABILIZATION_SERIES')) !== $expectedSeries) {
     throw new RuntimeException('STABILIZATION_SERIES must be 2.2.');
 }
 
 $versionSource = (string) file_get_contents($root . '/src/lib_xdecarocore/src/Version.php');
-if (!str_contains($versionSource, "public const VERSION = '2.2.3';")) {
-    throw new RuntimeException('Version::VERSION must be 2.2.3.');
+if (!str_contains($versionSource, "public const VERSION = '2.2.4';")) {
+    throw new RuntimeException('Version::VERSION must be 2.2.4.');
 }
 
 $manifests = [
@@ -34,7 +34,7 @@ foreach ($manifests as $label => $path) {
         throw new RuntimeException('Invalid ' . $label . ' manifest.');
     }
     if (trim((string) $xml->version) !== $expectedVersion) {
-        throw new RuntimeException($label . ' manifest must be 2.2.3.');
+        throw new RuntimeException($label . ' manifest must be 2.2.4.');
     }
     if (trim((string) $xml->targetplatform['version']) !== $expectedJoomlaManifestTarget) {
         throw new RuntimeException($label . ' manifest must target Joomla 6.1.3 exactly.');
@@ -60,11 +60,11 @@ foreach ([
 ] as $assetPath) {
     $asset = json_decode((string) file_get_contents($assetPath), true, 512, JSON_THROW_ON_ERROR);
     if (($asset['version'] ?? '') !== $expectedVersion) {
-        throw new RuntimeException(basename(dirname($assetPath)) . ' asset registry must be 2.2.3.');
+        throw new RuntimeException(basename(dirname($assetPath)) . ' asset registry must be 2.2.4.');
     }
     foreach (($asset['assets'] ?? []) as $entry) {
         if (($entry['version'] ?? '') !== $expectedVersion) {
-            throw new RuntimeException('Every Core Web Asset entry must be 2.2.3.');
+            throw new RuntimeException('Every Core Web Asset entry must be 2.2.4.');
         }
     }
 }
@@ -78,11 +78,11 @@ if (trim((string) $canonical->element) !== 'pkg_core'
     || trim((string) $canonical->version) !== $expectedVersion
     || trim((string) $canonical->targetplatform['version']) !== $expectedJoomlaUpdateTarget
     || trim((string) $canonical->php_minimum) !== $expectedPhp) {
-    throw new RuntimeException('Canonical update feed must publish Core 2.2.3 for Joomla 6.1.3 / PHP 8.3+.');
+    throw new RuntimeException('Canonical update feed must publish Core 2.2.4 for Joomla 6.1.3 / PHP 8.3+.');
 }
 $download = trim((string) $canonical->downloads->downloadurl);
-if (!str_ends_with($download, '/v2.2.3/pkg_core_2.2.3.zip')) {
-    throw new RuntimeException('Canonical update feed download must point to pkg_core_2.2.3.zip.');
+if (!str_ends_with($download, '/v2.2.4/pkg_core_2.2.4.zip')) {
+    throw new RuntimeException('Canonical update feed download must point to pkg_core_2.2.4.zip.');
 }
 
 $legacyFeed = simplexml_load_file($root . '/updates/pkg_xdecarocore.xml');
@@ -94,8 +94,8 @@ if (trim((string) $legacyFeed->update->element) !== 'pkg_xdecarocore') {
 }
 
 $catalogSource = (string) file_get_contents($root . '/src/com_xdecarocore/admin/src/Service/EcosystemService.php');
-if (!str_contains($catalogSource, "'core' => ['name' => 'Core', 'package' => 'pkg_core', 'component' => 'com_xdecarocore'")) {
-    throw new RuntimeException('Core dashboard catalog must retain the canonical Core identity.');
+if (!str_contains($catalogSource, "'core' => ['name' => 'Core', 'package' => 'pkg_core', 'component' => 'com_xdecarocore', 'version' => '2.2.4'")) {
+    throw new RuntimeException('Core dashboard catalog must identify Core 2.2.4 as current.');
 }
 
 foreach ([
@@ -110,4 +110,4 @@ foreach ([
     }
 }
 
-echo "Core 2.2.3 release readiness contract passed.\n";
+echo "Core 2.2.4 release readiness contract passed.\n";
