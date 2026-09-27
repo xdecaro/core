@@ -1,49 +1,48 @@
 <?php
-
+/**
+ * Historical Core 2.1 canonical-package migration contract.
+ *
+ * This test intentionally survives later 2.x releases: it protects the package identity
+ * established by 2.1 without forcing the current release to remain version 2.1.0.
+ */
 declare(strict_types=1);
 
 $root = dirname(__DIR__);
 $version = trim((string) file_get_contents($root . '/VERSION'));
-$series = trim((string) file_get_contents($root . '/STABILIZATION_SERIES'));
 
-if ($version !== '2.1.0' || $series !== '2.1') {
-    fwrite(STDERR, "Core canonical package release must start at 2.1.0 / series 2.1.\n");
+if (version_compare($version, '2.1.0', '<') || !str_starts_with($version, '2.')) {
+    fwrite(STDERR, "Core canonical pkg_core contract requires Core 2.1.0 or later in the 2.x line.\n");
     exit(1);
 }
 
-$versionedFiles = [
-    $root . '/src/lib_xdecarocore/xdecarocore.xml',
-    $root . '/src/com_xdecarocore/xdecarocore.xml',
-    $root . '/src/plg_system_xdecarocore/xdecarocore.xml',
-    $root . '/package/pkg_core/pkg_core.xml',
-    $root . '/updates/pkg_core.xml',
-    $root . '/src/lib_xdecarocore/src/Version.php',
-    $root . '/src/plg_system_xdecarocore/media/joomla.asset.json',
-    $root . '/src/com_xdecarocore/media/joomla.asset.json',
+$manifest = (string) file_get_contents($root . '/package/pkg_core/pkg_core.xml');
+$installer = (string) file_get_contents($root . '/package/pkg_core/script.php');
+$canonicalFeed = (string) file_get_contents($root . '/updates/pkg_core.xml');
+$legacyFeed = (string) file_get_contents($root . '/updates/pkg_xdecarocore.xml');
+$release = (string) file_get_contents($root . '/.github/workflows/release.yml');
+$runtime = (string) file_get_contents($root . '/.github/workflows/runtime-smoke.yml');
+
+$checks = [
+    [$manifest, '<packagename>core</packagename>', 'Canonical package manifest lost packagename core.'],
+    [$manifest, 'lib_xdecarocore.zip', 'Canonical package lost library child.'],
+    [$manifest, 'com_xdecarocore.zip', 'Canonical package lost component child.'],
+    [$manifest, 'plg_system_xdecarocore.zip', 'Canonical package lost system plugin child.'],
+    [$installer, 'pkg_core', 'Installer no longer recognizes canonical pkg_core.'],
+    [$installer, 'pkg_xdecarocore', 'Installer no longer recognizes legacy package migration source.'],
+    [$installer, 'package_id', 'Installer no longer verifies package child ownership.'],
+    [$canonicalFeed, '<element>pkg_core</element>', 'Canonical feed no longer identifies pkg_core.'],
+    [$legacyFeed, '<element>pkg_core</element>', 'Legacy bridge must resolve clients to canonical pkg_core.'],
+    [$release, 'pkg_core_${VERSION}.zip', 'Release workflow no longer publishes canonical pkg_core ZIP.'],
+    [$release, 'updates/pkg_core.xml', 'Release workflow no longer publishes canonical update feed.'],
+    [$release, 'updates/pkg_xdecarocore.xml', 'Release workflow no longer maintains legacy update bridge.'],
+    [$runtime, 'pkg_core_${VERSION}.zip', 'Runtime workflow no longer installs the canonical package.'],
 ];
 
-foreach ($versionedFiles as $path) {
-    $text = (string) file_get_contents($path);
-    if (!str_contains($text, '2.1.0')) {
-        fwrite(STDERR, "Core 2.1.0 version missing from {$path}.\n");
+foreach ($checks as [$haystack, $needle, $message]) {
+    if (!str_contains($haystack, $needle)) {
+        fwrite(STDERR, $message . "\n");
         exit(1);
     }
 }
 
-$release = (string) file_get_contents($root . '/.github/workflows/release.yml');
-foreach (["2.1.*", 'pkg_core_${VERSION}.zip', 'updates/pkg_core.xml'] as $needle) {
-    if (!str_contains($release, $needle)) {
-        fwrite(STDERR, "Core release workflow missing canonical 2.1 contract: {$needle}\n");
-        exit(1);
-    }
-}
-
-$runtime = (string) file_get_contents($root . '/.github/workflows/runtime-smoke.yml');
-foreach (['pkg_core_${VERSION}.zip', 'pkg_xdecarocore_2.0.1.zip', "element='pkg_core'", "element='pkg_xdecarocore'", 'package_id'] as $needle) {
-    if (!str_contains($runtime, $needle)) {
-        fwrite(STDERR, "Core runtime workflow missing migration assertion: {$needle}\n");
-        exit(1);
-    }
-}
-
-echo "Core 2.1 canonical release contract OK\n";
+echo "Core 2.1 canonical package migration guarantees preserved for Core {$version}.\n";
