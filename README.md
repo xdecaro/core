@@ -1,29 +1,35 @@
 # Core by xdecaro
 
-**Core by xdecaro** is the shared technical foundation for the xdecaro Joomla ecosystem.
+**Core by xdecaro** is the shared, domain-neutral technical foundation for the xdecaro Joomla ecosystem.
 
-Version `1.5.9` finalizes the reviewed Core administrator experience with compact responsive layouts, safe mobile behavior, a native Joomla Guide action, restored package-detail padding and the planned **Feedback** product in the ecosystem catalog. Public `xdecaro\Core` contracts remain unchanged and product business logic stays outside Core.
+Core `2.2.0` adds the public, opt-in **Shared Admin UI** contract. It promotes reusable administrator layout and responsive patterns into Core so People, Courses, Organizations, Membership, Competitions, Photos and other products can share the same visual/mobile foundation without copying `com_xdecarocore` private CSS.
+
+## Platform
+
+Core 2.2.0 targets:
+
+- **Joomla 6.1.3 only**;
+- **PHP 8.3 or newer**.
 
 ## Package
 
-Core is distributed as `pkg_xdecarocore` and contains:
+Core is distributed through the canonical Joomla package `pkg_core` and contains exactly three child extensions:
 
-- `lib_xdecarocore` — canonical shared PHP contracts and services under `xdecaro\Core`;
-- `lib_xdecarocorelegacy` — temporary autoload compatibility for the deprecated `Xdecaro\Core` prefix;
-- `com_xdecarocore` — the administrator component displayed in Joomla as **xdecaro**;
-- `plg_system_xdecarocore` — lightweight Joomla system integration point and shared media assets.
+- `lib_xdecarocore` — shared PHP contracts/services under `xdecaro\Core`;
+- `com_xdecarocore` — the administrator component displayed as **xdecaro**;
+- `plg_system_xdecarocore` — the lightweight system integration point and owner of public shared UI assets.
 
-New code must use `xdecaro\Core`. The legacy namespace is compatibility-only, receives no separate API, and may be removed in a future major release after all supported consumers have migrated.
+The legacy `pkg_xdecarocore` identity is retained only as an updater bridge for older installations. The canonical package identity remains `pkg_core`.
 
 ## Installation and updates
 
-Install the versioned package ZIP directly through Joomla:
+Install the versioned package ZIP through Joomla:
 
-`pkg_xdecarocore_1.5.9.zip`
+`pkg_core_2.2.0.zip`
 
-Core `1.5.9` can be installed directly over an existing 1.5.x installation; the package uses Joomla's normal upgrade path without removing the existing libraries, administrator component, system plugin, data or configuration.
+The package uses Joomla's normal upgrade path. Core 2.2.0 is designed to update the published 2.1.x canonical package while preserving child extensions, configuration and the Core 2.1.1 Atum sidebar-width correction.
 
-The package registers the official update feed at `updates/pkg_xdecarocore.xml`. Releases are deterministic and verified with SHA-256. The feed targets Joomla 4, 5 and 6 where technically possible and declares PHP 7.4 or newer; the installed Joomla major may require a newer PHP version.
+The canonical update feed is `updates/pkg_core.xml`. Releases are built deterministically and verified with SHA-256. The legacy `updates/pkg_xdecarocore.xml` feed points eligible old package registrations toward the same canonical package artifact.
 
 ## xdecaro administrator dashboard
 
@@ -32,34 +38,14 @@ After Core is installed, Joomla exposes **Components → xdecaro**.
 The dashboard provides:
 
 - **Dashboard** — ecosystem summary and immediate diagnostics;
-- **Components** — all known xdecaro products, including installed, not installed, prerelease, development and planned states;
-- **All extensions** — the technical Joomla extensions detected for the ecosystem, including packages, components, plugins, libraries and modules;
-- **Updates** — installed-versus-available version comparison using the bundled catalog and Joomla's local update cache;
-- **Diagnostics** — Core presence, partial package detection and disabled package plugins/modules;
-- **Information** — Core/Joomla/PHP runtime information and development status;
-- **Guide** — an internal quick guide opened from Joomla's native toolbar, covering suite pages, status badges, toolbar actions and package contents.
+- **Components** — known xdecaro products and installation/update state;
+- **All extensions** — technical Joomla extensions detected for the ecosystem;
+- **Updates** — installed-versus-available comparison using Joomla's local update cache;
+- **Diagnostics** — Core presence, partial installations and disabled package children;
+- **Information** — Core/Joomla/PHP runtime information;
+- **Guide** — internal usage guide from Joomla's native toolbar.
 
-All administrator views use the same suite hierarchy: a blue **Suite** eyebrow, the page title and its description. Information and Guide use the same shared hero markup as the other views. In the Components view, product identity/package data stays in the Component column, package children stay under Package contents, and the **Open** action is isolated in a dedicated **Actions** column. Stable channels are shown with the green success badge.
-
-Core administrator responsiveness is container-aware. The `.xdecaro-suite` root is an inline-size container, so an expanded Joomla administrator sidebar can reduce the available content width without leaving Core stuck in a wider tablet/desktop layout. Components, All extensions and Updates use structured responsive record cards in constrained content areas; Diagnostics, Information and Guide collapse their internal grids and definition rows using the same available-width contract.
-
-On phones, Dashboard metrics use the reviewed **2 + 2 + 1** arrangement. Package-detail expansions retain inner spacing on narrow layouts instead of touching the parent card edges. iOS safe areas are reserved so Joomla administrator chrome does not cover Core content.
-
-Secondary Core views expose Joomla-native **Back** navigation to the xdecaro Dashboard. The toolbar also provides **Guide**, while authorized administrators receive Joomla-native **Options**.
-
-Installed state is read from Joomla `#__extensions`. Package contents are resolved from each installed Joomla package manifest first and use `package_id` only as a fallback, so legacy or stale package relationships do not mix extensions from different products.
-
-The All extensions view translates Joomla manifest language keys when available and falls back to a readable label derived from the technical element when a translation is unavailable, preventing raw identifiers such as `COM_XDECAROCORE` from being presented as extension names.
-
-The product catalog is a release-time baseline for products that are not installed yet. For installed extensions, a newer version already discovered by Joomla's updater takes precedence over the bundled catalog value. The dashboard deliberately does not perform remote network requests on every administrator page load.
-
-The catalog includes **Feedback** as a planned product with the reserved identifiers `pkg_xdecarofeedback` and `com_xdecarofeedback`; no release version is advertised until an installable Feedback release exists.
-
-Core 1.5.9 registers its administrator-specific assets through Joomla's Web Asset Manager using the canonical component URIs `com_xdecarocore/admin.css`, `com_xdecarocore/responsive.css` and `com_xdecarocore/admin.js`; Joomla resolves those to the standard media directories.
-
-### Licensing during development
-
-Core `1.5.9` does **not** enforce commercial licensing. The Information screen only reports that licensing is deferred while the suite is still under development. Installed components, updates and features are not blocked by a license check in this release.
+Installed state is read from Joomla `#__extensions`. Package contents are resolved from installed package manifests first and use `package_id` only as a fallback. The dashboard does not perform remote network requests on every page load.
 
 ## Shared Web Asset Manager API
 
@@ -71,21 +57,91 @@ use xdecaro\Core\Asset\AssetService;
 $webAssets = $this->getDocument()->getWebAssetManager();
 $coreAssets = new AssetService();
 
-if ($coreAssets->useComponents($webAssets)) {
-    // Wrap only the UI that should inherit Core styles in .xdecaro-scope.
+if ($coreAssets->useAdminUi($webAssets)) {
+    // Shared administrator UI is available for this view.
 }
 ```
 
-Public asset identifiers remain stable:
+Public style dependency chain:
 
-- `xdecaro.core` — scoped design tokens/foundation;
-- `xdecaro.components` — shared UI primitives; depends on `xdecaro.core`.
+```text
+xdecaro.core
+    ↓
+xdecaro.components
+    ↓
+xdecaro.admin
+```
 
-Assets are opt-in and never injected globally. Shared CSS remains scoped under `.xdecaro-scope`, with `.xdecaro-*` classes and `--xdecaro-*` CSS custom properties.
+Public asset identifiers:
+
+- `xdecaro.core` — design tokens, typography foundation, theme variables and base scope;
+- `xdecaro.components` — small reusable cards, buttons, badges, fields, tables, empty states, loaders and modal shell;
+- `xdecaro.admin` — shared administrator page structure and responsive patterns.
+
+Assets are **opt-in** and never injected globally. Consumers scope migrated views with:
+
+```html
+<div class="xdecaro-scope xdecaro-suite">
+    ...
+</div>
+```
+
+Core shared UI must not globally restyle Joomla Atum.
+
+## Shared Admin UI 2.2
+
+The public `xdecaro.admin` layer provides domain-neutral patterns for:
+
+- hero/page header/eyebrow hierarchy;
+- KPI/metric grids;
+- sections and section actions;
+- information cards, definitions, diagnostics, notices and summaries;
+- responsive administrative forms;
+- Joomla `.control-group`, `.control-label` and `.controls` bridge scoped under `.xdecaro-form`;
+- filter bars;
+- accordion presentation using Joomla/Bootstrap collapse behavior;
+- responsive technical tables and `data-label` stacked/card presentation.
+
+Core-specific product, extension and updater table rules remain private to `com_xdecarocore`.
+
+### Responsive contract
+
+The shared UI is designed for effective administrator content widths of at least:
+
+- 320 px;
+- 393 px;
+- 430 px;
+- 768 px;
+- 1024 px;
+- wide desktop.
+
+The contract accounts for Joomla's sidebar reducing real component width even when the browser viewport is wider. Important grid/flex children can shrink, long UUID/hash/filename values wrap, mobile form labels stack above full-width controls, and large tables either scroll only inside their wrapper or switch to the documented stacked presentation.
+
+Do not use page-wide `overflow-x: hidden` to conceal responsive defects.
+
+The reviewed Atum content-width correction introduced in Core 2.1.1 remains in the shared foundation and is covered by its regression workflow.
+
+## Consumer migration
+
+Core 2.2.0 publishes the contract; consumers migrate independently.
+
+Recommended sequence:
+
+1. People;
+2. Courses;
+3. Organizations;
+4. Membership;
+5. Competitions;
+6. Photos;
+7. remaining xdecaro products as reviewed.
+
+A product should remove local CSS only when Core provides the same generic behavior. Product-specific workflows and domain layouts remain local.
+
+Detailed API and migration guidance: `docs/asset-service.md`.
 
 ## Cross-product integration contracts
 
-Canonical contracts:
+Canonical contracts include:
 
 - `xdecaro\Core\Integration\EntityReference`;
 - `xdecaro\Core\Integration\RelationReference`;
@@ -108,44 +164,40 @@ $event = new IntegrationEvent(
 );
 ```
 
-Core does not persist cross-product relations, events, notifications, tasks, metrics or reports. Each product owns its data, ACL and business rules. A reference never grants authorization.
-
-## Namespace compatibility policy
-
-`xdecaro\Core` is the only namespace to use in new code from 1.3.0 onward. `Xdecaro\Core` remains temporarily loadable through `lib_xdecarocorelegacy` so existing Forms, Courses, Documents, Membership, Events and other published consumers are not broken by a case-only namespace migration.
-
-The compatibility library contains the same canonical source files at build time; it does not fork or duplicate the API implementation. Removal requires a future major release and a verified ecosystem migration.
+Core does not persist another product's relations, business state, events, notifications, tasks, metrics or reports. Each product owns its data and ACL. A cross-product reference never grants authorization.
 
 ## Naming
 
 Public product name: **Core by xdecaro**.
 
-Stable technical identifiers:
+Current technical identities:
 
-- package `pkg_xdecarocore`;
+- package `pkg_core`;
 - administrator component `com_xdecarocore`;
-- canonical library `lib_xdecarocore`;
-- temporary compatibility library `lib_xdecarocorelegacy`;
+- library `lib_xdecarocore`;
 - system plugin `plg_system_xdecarocore`;
 - repository `xdecaro/core`;
-- canonical PHP namespace `xdecaro\Core`.
+- PHP namespace `xdecaro\Core`.
+
+The old package element `pkg_xdecarocore` is compatibility/updater metadata only and is not the canonical package identity.
 
 ## Build integrity
 
-`VERSION` is the release source of truth. `bash build/build.sh` validates PHP, XML, JSON, canonical/legacy namespace mappings, dashboard catalog metadata, integration contracts, Web Asset Manager assets, deterministic ZIP output and package contents, then writes `dist/SHA256SUMS.txt`.
+`VERSION` is the release source of truth. `bash build/build.sh` validates PHP/XML/JSON metadata, Joomla/PHP platform requirements, canonical package identity, shared/private UI contracts, dashboard/integration behavior, deterministic ZIP output and package contents, then writes `dist/SHA256SUMS.txt`.
 
-## Compatibility goals
-
-Target Joomla 4, 5 and 6 where technically possible. Runtime compatibility must still be verified on real Joomla installations; repository CI/build success is not a substitute for runtime testing.
+Runtime workflows install and upgrade the package on Joomla 6.1.3 and preserve the canonical package migration from older Core states.
 
 ## Development principles
 
-- modern Joomla APIs;
+- Joomla 6.1.3 APIs only;
+- PHP 8.3+;
 - server-side ACL and CSRF where applicable;
 - bound database queries;
 - Web Asset Manager for shared assets;
 - Semantic Versioning;
-- backward-compatible public APIs and asset identifiers;
+- opt-in, scoped shared UI;
+- backward-compatible public APIs and asset identifiers within their supported release contract;
 - clean install/update paths;
 - no destructive database migrations;
-- responsive/light/dark shared UI only when genuinely common.
+- no private-table coupling between products;
+- responsive/mobile behavior treated as part of the shared UI API.

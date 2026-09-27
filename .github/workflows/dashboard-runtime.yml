@@ -102,7 +102,7 @@ jobs:
 
           php cli/joomla.php extension:install --path="$PACKAGE" -vvv
 
-      - name: Verify Core 2.1 records and dashboard assets
+      - name: Verify Core 2.2 records and shared dashboard assets
         shell: bash
         run: |
           set -euo pipefail
@@ -138,16 +138,27 @@ jobs:
             }
           '
 
-          test -f joomla/administrator/components/com_xdecarocore/config.xml
-          test -f joomla/administrator/components/com_xdecarocore/tmpl/dashboard/guide.php
-          test -f joomla/media/com_xdecarocore/css/admin.css
-          test -f joomla/media/com_xdecarocore/css/responsive.css
-          test -f joomla/media/com_xdecarocore/js/admin.js
-          grep -Fq 'name="location_provider_endpoint"' joomla/administrator/components/com_xdecarocore/config.xml
-          grep -Fq 'name="location_provider_api_key"' joomla/administrator/components/com_xdecarocore/config.xml
-          grep -Fq '"uri": "com_xdecarocore/admin.css"' joomla/media/com_xdecarocore/joomla.asset.json
-          grep -Fq '"uri": "com_xdecarocore/responsive.css"' joomla/media/com_xdecarocore/joomla.asset.json
-          grep -Fq '"uri": "com_xdecarocore/admin.js"' joomla/media/com_xdecarocore/joomla.asset.json
+          echo "=== com_xdecarocore media after ${{ matrix.scenario }} ==="
+          find joomla/media/com_xdecarocore -maxdepth 3 -type f -print | sort || true
+          echo "=== plg_system_xdecarocore media after ${{ matrix.scenario }} ==="
+          find joomla/media/plg_system_xdecarocore -maxdepth 3 -type f -print | sort || true
+
+          assert_file() { test -f "$1" || { echo "Missing required file: $1" >&2; exit 1; }; }
+          assert_absent() { test ! -f "$1" || { echo "Unexpected stale file: $1" >&2; exit 1; }; }
+          assert_contains() { grep -Fq "$2" "$1" || { echo "Missing expected text in $1: $2" >&2; exit 1; }; }
+
+          assert_file joomla/administrator/components/com_xdecarocore/config.xml
+          assert_file joomla/administrator/components/com_xdecarocore/tmpl/dashboard/guide.php
+          assert_file joomla/media/com_xdecarocore/css/admin.css
+          assert_absent joomla/media/com_xdecarocore/css/responsive.css
+          assert_file joomla/media/com_xdecarocore/js/admin.js
+          assert_file joomla/media/plg_system_xdecarocore/css/admin.css
+          assert_contains joomla/administrator/components/com_xdecarocore/config.xml 'name="location_provider_endpoint"'
+          assert_contains joomla/administrator/components/com_xdecarocore/config.xml 'name="location_provider_api_key"'
+          assert_contains joomla/media/com_xdecarocore/joomla.asset.json '"uri": "com_xdecarocore/admin.css"'
+          assert_contains joomla/media/com_xdecarocore/joomla.asset.json '"uri": "com_xdecarocore/admin.js"'
+          assert_contains joomla/media/plg_system_xdecarocore/joomla.asset.json '"name": "xdecaro.admin"'
+          assert_contains joomla/media/plg_system_xdecarocore/joomla.asset.json '"dependencies": ["xdecaro.components"]'
 
       - name: Probe dashboard and new Core location API
         shell: bash

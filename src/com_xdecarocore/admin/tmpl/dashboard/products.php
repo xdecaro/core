@@ -68,7 +68,7 @@ $label = static function (string $key): string {
 
     <div class="xdecaro-card">
         <div class="xdecaro-card__body">
-            <div class="xdecaro-table-wrap xdecaro-suite__responsive-wrap">
+            <div class="xdecaro-table-wrap xdecaro-suite__responsive-wrap xdecaro-suite__responsive-wrap--stack">
                 <table class="xdecaro-table xdecaro-suite__products-table xdecaro-suite__responsive-table">
                     <thead>
                         <tr>
@@ -139,7 +139,7 @@ $label = static function (string $key): string {
                                                     <strong><?php echo htmlspecialchars($product['name'], ENT_QUOTES, 'UTF-8'); ?> · <?php echo Text::_('COM_XDECAROCORE_INCLUDED_EXTENSIONS'); ?></strong>
                                                     <span class="xdecaro-suite__muted"><?php echo Text::sprintf('COM_XDECAROCORE_EXTENSION_COUNT', count($children)); ?></span>
                                                 </div>
-                                                <div class="xdecaro-table-wrap xdecaro-suite__responsive-wrap">
+                                                <div class="xdecaro-table-wrap xdecaro-suite__responsive-wrap xdecaro-suite__responsive-wrap--stack">
                                                     <table class="xdecaro-table xdecaro-suite__child-table xdecaro-suite__responsive-table">
                                                         <thead>
                                                             <tr>

@@ -15,6 +15,7 @@ use Joomla\CMS\Router\Route;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\Database\DatabaseInterface;
 use xdecaro\Component\Core\Administrator\Service\EcosystemService;
+use xdecaro\Component\Core\Administrator\Service\UpdaterService;
 use xdecaro\Core\Asset\AssetService;
 use xdecaro\Core\Version;
 
@@ -25,6 +26,8 @@ final class HtmlView extends BaseHtmlView
     public $joomlaVersion = '';
     public $phpVersion = '';
     public $canManageInstaller = false;
+    public $updateIds = [];
+    public $updateSites = [];
 
     public function display($tpl = null): void
     {
@@ -36,22 +39,25 @@ final class HtmlView extends BaseHtmlView
         }
 
         $container = Factory::getContainer();
-        $service = new EcosystemService($container->get(DatabaseInterface::class));
+        $db = $container->get(DatabaseInterface::class);
+        $service = new EcosystemService($db);
         $this->snapshot = $service->snapshot();
         $this->coreVersion = Version::VERSION;
         $this->joomlaVersion = defined('JVERSION') ? JVERSION : '';
         $this->phpVersion = PHP_VERSION;
         $this->canManageInstaller = $identity->authorise('core.manage', 'com_installer');
 
-        $webAssets = $this->getDocument()->getWebAssetManager();
-        (new AssetService())->useComponents($webAssets);
+        $updaterService = new UpdaterService($db);
+        $this->updateIds = $updaterService->getUpdateIds($this->snapshot['products'] ?? []);
+        $this->updateSites = $updaterService->getUpdateSites($this->snapshot['products'] ?? []);
 
-        // Dashboard assets are required on every layout. The responsive layer is intentionally
-        // separate so the base visual contract remains stable while Core adapts to Atum's
-        // variable administrator sidebar and real mobile safe areas.
+        $webAssets = $this->getDocument()->getWebAssetManager();
+        (new AssetService())->useAdminUi($webAssets);
+
+        // Core uses the same public administrator UI contract as external consumers.
+        // Component media now contains only Core-dashboard-specific styling and behavior.
         $webAssets->getRegistry()->addExtensionRegistryFile('com_xdecarocore');
         $webAssets->useStyle('com_xdecarocore.admin');
-        $webAssets->useStyle('com_xdecarocore.responsive');
         $webAssets->useScript('com_xdecarocore.admin');
 
         $titles = [
@@ -67,7 +73,6 @@ final class HtmlView extends BaseHtmlView
 
         ToolbarHelper::title(Text::_($titles[$layout] ?? 'COM_XDECAROCORE_DASHBOARD'), 'grid-2');
 
-        // The suite Dashboard is the navigation reference point for every secondary Core view.
         if ($layout !== 'default') {
             ToolbarHelper::back(
                 Text::_('JTOOLBAR_BACK'),
@@ -75,7 +80,30 @@ final class HtmlView extends BaseHtmlView
             );
         }
 
-        // Keep the user guide in Joomla's native toolbar instead of adding custom page chrome.
+        if ($layout === 'updates' && $this->canManageInstaller) {
+            ToolbarHelper::custom(
+                'update.find',
+                'refresh',
+                'refresh',
+                Text::_('COM_XDECAROCORE_CHECK_UPDATES'),
+                false
+            );
+
+            ToolbarHelper::custom(
+                'update.rebuildSites',
+                'refresh',
+                'refresh',
+                Text::_('COM_XDECAROCORE_REBUILD_UPDATE_SITES'),
+                false
+            );
+
+            ToolbarHelper::link(
+                Route::_('index.php?option=com_installer&view=updatesites', false),
+                Text::_('COM_XDECAROCORE_MANAGE_UPDATE_SITES'),
+                'cog'
+            );
+        }
+
         if ($layout !== 'guide') {
             ToolbarHelper::link(
                 Route::_('index.php?option=com_xdecarocore&view=dashboard&layout=guide', false),
@@ -84,8 +112,6 @@ final class HtmlView extends BaseHtmlView
             );
         }
 
-        // Keep configuration in Joomla's native toolbar. At the moment this exposes component
-        // permissions and provides a stable place for future Core options without custom chrome.
         if ($identity->authorise('core.admin', 'com_xdecarocore')) {
             ToolbarHelper::preferences('com_xdecarocore');
         }

@@ -1,7 +1,7 @@
 <?php
 /**
- * Dependency-free smoke test for the Core ecosystem dashboard catalog, UI assets, responsive
- * contracts and Joomla administrator navigation.
+ * Dependency-free smoke test for the Core ecosystem dashboard catalog, shared UI assets,
+ * Core-private dashboard styling and Joomla administrator navigation.
  */
 
 namespace Joomla\Database {
@@ -29,7 +29,7 @@ namespace {
     }
 
     $required = [
-        'core' => ['pkg_core', '2.1.0'],
+        'core' => ['pkg_core', '2.2.0'],
         'forms' => ['pkg_decaroforms', '1.7.0'],
         'courses' => ['pkg_decarocourses', '1.5.0'],
         'competitions' => ['pkg_xdecarocompetitions', '1.3.0'],
@@ -158,7 +158,6 @@ namespace {
 
     $expectedAssets = [
         'com_xdecarocore.admin:style' => 'com_xdecarocore/admin.css',
-        'com_xdecarocore.responsive:style' => 'com_xdecarocore/responsive.css',
         'com_xdecarocore.admin:script' => 'com_xdecarocore/admin.js',
     ];
     foreach ($expectedAssets as $key => $uri) {
@@ -169,12 +168,14 @@ namespace {
             throw new \RuntimeException('Dashboard Web Asset Manager URI duplicates a Joomla media type directory.');
         }
     }
-    if (($assets['com_xdecarocore.responsive:style']['dependencies'][0] ?? '') !== 'com_xdecarocore.admin') {
-        throw new \RuntimeException('Responsive dashboard style must depend on the base administrator style.');
+    if (isset($assets['com_xdecarocore.responsive:style'])) {
+        throw new \RuntimeException('Legacy generic responsive dashboard asset must be retired.');
     }
-    if (!is_file(__DIR__ . '/../src/com_xdecarocore/media/css/responsive.css')
-        || !is_file(__DIR__ . '/../src/com_xdecarocore/media/js/admin.js')) {
-        throw new \RuntimeException('Dashboard responsive style/script files are missing.');
+    if (is_file(__DIR__ . '/../src/com_xdecarocore/media/css/responsive.css')) {
+        throw new \RuntimeException('Legacy generic responsive.css must be retired after public/private classification.');
+    }
+    if (!is_file(__DIR__ . '/../src/com_xdecarocore/media/js/admin.js')) {
+        throw new \RuntimeException('Dashboard private script file is missing.');
     }
 
     $templates = [
@@ -211,8 +212,9 @@ namespace {
 
     if (strpos($templates['default'], 'xdecaro-suite__dashboard-products-table') === false
         || strpos($templates['default'], 'xdecaro-suite__responsive-table') === false
-        || strpos($templates['default'], 'data-label=') === false) {
-        throw new \RuntimeException('Dashboard product summary must share the responsive card contract.');
+        || strpos($templates['default'], 'data-label=') === false
+        || strpos($templates['default'], 'xdecaro-suite__metrics--fill-last') === false) {
+        throw new \RuntimeException('Dashboard summary must use the shared responsive/KPI contracts.');
     }
 
     $productsTemplate = $templates['products'];
@@ -236,6 +238,7 @@ namespace {
     if (strpos($productsTemplate, '$extensionLabel($child)') === false) {
         throw new \RuntimeException('Expanded package extension names must use readable labels.');
     }
+
     $extensionsTemplate = $templates['extensions'];
     foreach (['Text::_($name)', '$extensionLabel($extension)', 'xdecaro-suite__extension-element-mobile', 'xdecaro-suite__extension-element-cell'] as $marker) {
         if (strpos($extensionsTemplate, $marker) === false) {
@@ -254,28 +257,36 @@ namespace {
         }
     }
 
-    $baseCss = file_get_contents(__DIR__ . '/../src/com_xdecarocore/media/css/admin.css');
-    foreach (['repeat(5, minmax(0, 1fr))', 'xdecaro-suite__diagnostic-row', 'xdecaro-suite__info-grid', 'xdecaro-suite__expansion-panel', 'container-name: xdecaro-suite', 'xdecaro-suite__responsive-table'] as $marker) {
-        if (strpos($baseCss, $marker) === false) {
-            throw new \RuntimeException('Dashboard base CSS marker missing: ' . $marker);
+    $publicCss = file_get_contents(__DIR__ . '/../src/plg_system_xdecarocore/media/css/admin.css');
+    foreach (['container-name: xdecaro-suite', 'xdecaro-suite__diagnostic-row', 'xdecaro-suite__info-grid', 'xdecaro-suite__responsive-table', '.xdecaro-form .control-group', '.xdecaro-filterbar', '.xdecaro-accordion'] as $marker) {
+        if (strpos($publicCss, $marker) === false) {
+            throw new \RuntimeException('Shared public admin CSS marker missing: ' . $marker);
         }
     }
 
-    $responsiveCss = file_get_contents(__DIR__ . '/../src/com_xdecarocore/media/css/responsive.css');
-    foreach (['@container xdecaro-suite (max-width: 55rem)', '@container xdecaro-suite (max-width: 20rem)', 'min-width: 0', 'max-width: 100%', 'grid-template-columns: repeat(2, minmax(0, 1fr))', '.xdecaro-suite__metric:last-child', 'safe-area-inset-top', 'safe-area-inset-bottom', 'xdecaro-suite__warning-compact', 'padding: var(--xdecaro-space-3, 0.75rem);', '.xdecaro-suite__filter-button {', 'align-items: center;', 'justify-content: center;', '.xdecaro-suite__chevron::before', 'background: currentColor;', '.xdecaro-suite__chevron::after', 'border-right: 0.12rem solid currentColor;', 'border-bottom: 0.12rem solid currentColor;', 'transform: translateX(-50%) rotate(45deg);', 'transform: rotate(180deg);', 'transform-origin: 50% 50%;'] as $marker) {
-        if (strpos($responsiveCss, $marker) === false) {
-            throw new \RuntimeException('Dashboard 1.5.12 responsive CSS marker missing: ' . $marker);
+    $privateCss = file_get_contents(__DIR__ . '/../src/com_xdecarocore/media/css/admin.css');
+    foreach (['xdecaro-suite__products-table', 'xdecaro-suite__extensions-table', 'xdecaro-suite__updates-table', 'xdecaro-suite__dashboard-products-table', 'xdecaro-suite__expansion-panel', 'xdecaro-suite__warning-compact', '.xdecaro-suite__filter-button {', '.xdecaro-suite__chevron::before', '.xdecaro-suite__chevron::after', 'transform: rotate(180deg);'] as $marker) {
+        if (strpos($privateCss, $marker) === false) {
+            throw new \RuntimeException('Dashboard-private CSS marker missing: ' . $marker);
         }
     }
-    if (strpos($responsiveCss, 'transform: rotate(225deg);') !== false) {
+    foreach (['.xdecaro-suite__hero {', '.xdecaro-suite__metrics {', '.xdecaro-suite__info-grid {', '.xdecaro-suite__diagnostic-list {', '.xdecaro-suite__notice {', '.xdecaro-suite__summary-bar {', '.xdecaro-suite__definition-list {'] as $genericDuplicate) {
+        if (strpos($privateCss, $genericDuplicate) !== false) {
+            throw new \RuntimeException('Generic shared CSS must not remain duplicated in the component: ' . $genericDuplicate);
+        }
+    }
+    if (strpos($privateCss, 'transform: rotate(225deg);') !== false) {
         throw new \RuntimeException('Legacy large chevron rotation must not return in the package toggle.');
     }
 
     $viewSource = file_get_contents(__DIR__ . '/../src/com_xdecarocore/admin/src/View/Dashboard/HtmlView.php');
-    foreach (["useStyle('com_xdecarocore.responsive')", 'ToolbarHelper::back(', "ToolbarHelper::preferences('com_xdecarocore')", 'ToolbarHelper::link(', 'COM_XDECAROCORE_GUIDE'] as $marker) {
+    foreach (['useAdminUi($webAssets)', "useStyle('com_xdecarocore.admin')", 'ToolbarHelper::back(', "ToolbarHelper::preferences('com_xdecarocore')", 'ToolbarHelper::link(', 'COM_XDECAROCORE_GUIDE'] as $marker) {
         if (strpos($viewSource, $marker) === false) {
-            throw new \RuntimeException('Native dashboard toolbar/responsive asset contract missing: ' . $marker);
+            throw new \RuntimeException('Native dashboard toolbar/shared UI contract missing: ' . $marker);
         }
+    }
+    if (strpos($viewSource, "useStyle('com_xdecarocore.responsive')") !== false) {
+        throw new \RuntimeException('Dashboard must not load the retired generic responsive component asset.');
     }
 
     foreach (glob($manifestRoot . '/packages/*.xml') ?: [] as $path) {
@@ -284,5 +295,5 @@ namespace {
     @rmdir($manifestRoot . '/packages');
     @rmdir($manifestRoot);
 
-    echo "xdecaro Core dashboard catalog, package resolution, toolbar, guide and responsive UI tests passed.\n";
+    echo "xdecaro Core dashboard catalog, package resolution, toolbar and shared/private UI tests passed.\n";
 }
