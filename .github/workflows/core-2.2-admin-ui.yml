@@ -17,8 +17,11 @@ jobs:
       - uses: shivammathur/setup-php@v2
         with:
           php-version: '8.3'
+          extensions: simplexml
           coverage: none
       - name: Shared admin UI contract
         run: php tests/core-2.2-admin-ui-contract.php
       - name: Dashboard shared UI contract
         run: php tests/core-2.2-dashboard-shared-ui.php
+      - name: Release readiness contract
+        run: php tests/core-2.2-release-readiness.php
