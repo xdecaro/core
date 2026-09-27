@@ -54,6 +54,13 @@ final class pkg_coreInstallerScript extends InstallerScript
             }
         }
 
+        try {
+            $this->removeRetiredResponsiveStylesheet();
+        } catch (\Throwable $exception) {
+            Log::add('Core package normalization failed in removeRetiredResponsiveStylesheet: ' . $exception->getMessage(), Log::WARNING, self::CANONICAL_PACKAGE);
+            $normalizationFailed = true;
+        }
+
         if ($normalizationFailed) {
             $this->enqueueNormalizationWarning();
         }
@@ -63,6 +70,19 @@ final class pkg_coreInstallerScript extends InstallerScript
     {
         Factory::getApplication()->getLanguage()->load('com_xdecarocore', JPATH_ADMINISTRATOR);
         Factory::getApplication()->enqueueMessage(Text::_('COM_XDECAROCORE_POSTFLIGHT_WARNING'), 'warning');
+    }
+
+    private function removeRetiredResponsiveStylesheet(): void
+    {
+        $path = JPATH_ROOT . '/media/com_xdecarocore/css/responsive.css';
+
+        if (!is_file($path)) {
+            return;
+        }
+
+        if (!@unlink($path)) {
+            throw new \RuntimeException('Unable to remove retired Core responsive stylesheet.');
+        }
     }
 
     private function enableCorePlugin(DatabaseInterface $db): void
