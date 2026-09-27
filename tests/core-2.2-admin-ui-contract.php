@@ -7,6 +7,11 @@ $registryPath = $root . '/src/plg_system_xdecarocore/media/joomla.asset.json';
 $servicePath = $root . '/src/lib_xdecarocore/src/Asset/AssetService.php';
 $adminCssPath = $root . '/src/plg_system_xdecarocore/media/css/admin.css';
 $fixturePath = $root . '/tests/fixtures/admin-ui-contract.html';
+$viewPath = $root . '/src/com_xdecarocore/admin/src/View/Dashboard/HtmlView.php';
+$componentRegistryPath = $root . '/src/com_xdecarocore/media/joomla.asset.json';
+$componentCssPath = $root . '/src/com_xdecarocore/media/css/admin.css';
+$componentResponsivePath = $root . '/src/com_xdecarocore/media/css/responsive.css';
+$dashboardTemplatePath = $root . '/src/com_xdecarocore/admin/tmpl/dashboard/default.php';
 
 $registry = json_decode((string) file_get_contents($registryPath), true, 512, JSON_THROW_ON_ERROR);
 $assets = $registry['assets'] ?? [];
@@ -126,6 +131,56 @@ foreach (['data-contract-width="320"', 'data-contract-width="393"', 'data-contra
     if (!str_contains($fixture, $needle)) {
         throw new RuntimeException('Responsive fixture missing contract marker: ' . $needle);
     }
+}
+
+$viewSource = (string) file_get_contents($viewPath);
+if (!str_contains($viewSource, '(new AssetService())->useAdminUi($webAssets);')) {
+    throw new RuntimeException('Core dashboard must consume the public admin UI through AssetService::useAdminUi().');
+}
+if (str_contains($viewSource, "useStyle('com_xdecarocore.responsive')")) {
+    throw new RuntimeException('Core dashboard must not require the legacy generic responsive asset.');
+}
+
+$componentRegistry = json_decode((string) file_get_contents($componentRegistryPath), true, 512, JSON_THROW_ON_ERROR);
+foreach (($componentRegistry['assets'] ?? []) as $asset) {
+    if (($asset['name'] ?? '') === 'com_xdecarocore.responsive') {
+        throw new RuntimeException('Component registry must not expose the legacy generic responsive asset.');
+    }
+}
+
+$componentCss = (string) file_get_contents($componentCssPath);
+$privateFamilies = [
+    '.xdecaro-suite__products-table',
+    '.xdecaro-suite__product-row',
+    '.xdecaro-suite__extensions-table',
+    '.xdecaro-suite__extension-primary',
+    '.xdecaro-suite__extension-element-mobile',
+    '.xdecaro-suite__extension-element-cell',
+    '.xdecaro-suite__updates-table',
+    '.xdecaro-suite__update-status-cell',
+    '.xdecaro-suite__dashboard-products-table',
+    '.xdecaro-suite__filter-button',
+    '.xdecaro-suite__expansion-panel',
+];
+foreach ($privateFamilies as $selector) {
+    if (!str_contains($componentCss, $selector)) {
+        throw new RuntimeException('Core dashboard-private CSS selector is missing: ' . $selector);
+    }
+}
+
+foreach (['.xdecaro-suite__hero {', '.xdecaro-suite__metrics {', '.xdecaro-suite__info-grid {', '.xdecaro-suite__diagnostic-list {', '.xdecaro-suite__notice {', '.xdecaro-suite__summary-bar {', '.xdecaro-suite__definition-list {'] as $genericDuplicate) {
+    if (str_contains($componentCss, $genericDuplicate)) {
+        throw new RuntimeException('Generic shared UI rule remains duplicated in component CSS: ' . $genericDuplicate);
+    }
+}
+
+if (is_file($componentResponsivePath)) {
+    throw new RuntimeException('Legacy component responsive.css should be removed after public/private classification.');
+}
+
+$dashboardTemplate = (string) file_get_contents($dashboardTemplatePath);
+if (!str_contains($dashboardTemplate, 'xdecaro-suite__metrics xdecaro-suite__metrics--fill-last')) {
+    throw new RuntimeException('Core five-metric dashboard must opt into the fill-last modifier explicitly.');
 }
 
 echo "Core 2.2 shared admin UI contract passed.\n";
