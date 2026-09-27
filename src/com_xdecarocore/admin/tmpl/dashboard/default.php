@@ -57,7 +57,7 @@ $label = static function (string $key): string {
         <span class="xdecaro-badge xdecaro-badge--success">Core <?php echo htmlspecialchars($this->coreVersion, ENT_QUOTES, 'UTF-8'); ?></span>
     </div>
 
-    <div class="xdecaro-suite__metrics" aria-label="<?php echo Text::_('COM_XDECAROCORE_SUMMARY'); ?>">
+    <div class="xdecaro-suite__metrics xdecaro-suite__metrics--fill-last" aria-label="<?php echo Text::_('COM_XDECAROCORE_SUMMARY'); ?>">
         <div class="xdecaro-card xdecaro-suite__metric"><strong><?php echo (int) $summary['known']; ?></strong><span><?php echo Text::_('COM_XDECAROCORE_KNOWN_PRODUCTS'); ?></span></div>
         <div class="xdecaro-card xdecaro-suite__metric"><strong><?php echo (int) $summary['installed']; ?></strong><span><?php echo Text::_('COM_XDECAROCORE_INSTALLED'); ?></span></div>
         <div class="xdecaro-card xdecaro-suite__metric"><strong><?php echo (int) $summary['not_installed']; ?></strong><span><?php echo Text::_('COM_XDECAROCORE_NOT_INSTALLED'); ?></span></div>

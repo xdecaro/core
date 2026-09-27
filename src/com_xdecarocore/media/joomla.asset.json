@@ -10,13 +10,6 @@
       "version": "2.1.0"
     },
     {
-      "name": "com_xdecarocore.responsive",
-      "type": "style",
-      "uri": "com_xdecarocore/responsive.css",
-      "dependencies": ["com_xdecarocore.admin"],
-      "version": "2.1.0"
-    },
-    {
       "name": "com_xdecarocore.admin",
       "type": "script",
       "uri": "com_xdecarocore/admin.js",

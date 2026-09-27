@@ -44,14 +44,12 @@ final class HtmlView extends BaseHtmlView
         $this->canManageInstaller = $identity->authorise('core.manage', 'com_installer');
 
         $webAssets = $this->getDocument()->getWebAssetManager();
-        (new AssetService())->useComponents($webAssets);
+        (new AssetService())->useAdminUi($webAssets);
 
-        // Dashboard assets are required on every layout. The responsive layer is intentionally
-        // separate so the base visual contract remains stable while Core adapts to Atum's
-        // variable administrator sidebar and real mobile safe areas.
+        // Core uses the same public administrator UI contract as external consumers.
+        // Component media now contains only Core-dashboard-specific styling and behavior.
         $webAssets->getRegistry()->addExtensionRegistryFile('com_xdecarocore');
         $webAssets->useStyle('com_xdecarocore.admin');
-        $webAssets->useStyle('com_xdecarocore.responsive');
         $webAssets->useScript('com_xdecarocore.admin');
 
         $titles = [
@@ -67,7 +65,6 @@ final class HtmlView extends BaseHtmlView
 
         ToolbarHelper::title(Text::_($titles[$layout] ?? 'COM_XDECAROCORE_DASHBOARD'), 'grid-2');
 
-        // The suite Dashboard is the navigation reference point for every secondary Core view.
         if ($layout !== 'default') {
             ToolbarHelper::back(
                 Text::_('JTOOLBAR_BACK'),
@@ -75,7 +72,6 @@ final class HtmlView extends BaseHtmlView
             );
         }
 
-        // Keep the user guide in Joomla's native toolbar instead of adding custom page chrome.
         if ($layout !== 'guide') {
             ToolbarHelper::link(
                 Route::_('index.php?option=com_xdecarocore&view=dashboard&layout=guide', false),
@@ -84,8 +80,6 @@ final class HtmlView extends BaseHtmlView
             );
         }
 
-        // Keep configuration in Joomla's native toolbar. At the moment this exposes component
-        // permissions and provides a stable place for future Core options without custom chrome.
         if ($identity->authorise('core.admin', 'com_xdecarocore')) {
             ToolbarHelper::preferences('com_xdecarocore');
         }
