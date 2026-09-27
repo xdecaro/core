@@ -21,12 +21,12 @@ foreach ([$controllerPath, $servicePath] as $path) {
 $controller = (string) file_get_contents($controllerPath);
 foreach ([
     "authorise('core.manage', 'com_installer')",
-    "checkToken()",
+    'checkToken()',
     "bootComponent('com_installer')",
     "createModel('Update', 'Administrator'",
-    "public function find(): void",
-    "public function update(): void",
-    "index.php?option=com_xdecarocore&view=dashboard&layout=updates",
+    'public function find(): void',
+    'public function update(): void',
+    'index.php?option=com_xdecarocore&view=dashboard&layout=updates',
 ] as $fragment) {
     if (!str_contains($controller, $fragment)) {
         throw new RuntimeException('Updater controller contract missing: ' . $fragment);
@@ -52,8 +52,8 @@ $view = (string) file_get_contents($viewPath);
 foreach ([
     'public $updateIds = [];',
     'public $updateSites = [];',
-    "if ($layout === 'updates' && $this->canManageInstaller)",
-    "COM_XDECAROCORE_CHECK_UPDATES",
+    "if (\$layout === 'updates' && \$this->canManageInstaller)",
+    'COM_XDECAROCORE_CHECK_UPDATES',
 ] as $fragment) {
     if (!str_contains($view, $fragment)) {
         throw new RuntimeException('Updates toolbar/view contract missing: ' . $fragment);
