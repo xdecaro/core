@@ -95,7 +95,14 @@ $updatesUrl = Route::_('index.php?option=com_xdecarocore&view=dashboard&layout=u
                 <p><?php echo Text::_('COM_XDECAROCORE_UPDATE_SITES_DESC'); ?></p>
             </div>
             <?php if ($this->canManageInstaller) : ?>
-                <a class="xdecaro-button" href="<?php echo Route::_('index.php?option=com_installer&view=updatesites'); ?>"><?php echo Text::_('COM_XDECAROCORE_MANAGE_UPDATE_SITES'); ?></a>
+                <div class="xdecaro-suite__section-actions">
+                    <form action="<?php echo $updatesUrl; ?>" method="post" class="xdecaro-suite__inline-action-form">
+                        <input type="hidden" name="task" value="update.rebuildSites">
+                        <button type="submit" class="xdecaro-button"><?php echo Text::_('COM_XDECAROCORE_REBUILD_UPDATE_SITES'); ?></button>
+                        <?php echo HTMLHelper::_('form.token'); ?>
+                    </form>
+                    <a class="xdecaro-button" href="<?php echo Route::_('index.php?option=com_installer&view=updatesites'); ?>"><?php echo Text::_('COM_XDECAROCORE_MANAGE_UPDATE_SITES'); ?></a>
+                </div>
             <?php endif; ?>
         </div>
         <div class="xdecaro-card__body">
