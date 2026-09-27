@@ -16,8 +16,13 @@ foreach ($products as $product) {
 $label = static function (string $key): string {
     return htmlspecialchars(Text::_($key), ENT_QUOTES, 'UTF-8');
 };
+$updatesUrl = Route::_('index.php?option=com_xdecarocore&view=dashboard&layout=updates');
 ?>
-<form action="<?php echo Route::_('index.php?option=com_xdecarocore&view=dashboard&layout=updates'); ?>" method="post" name="adminForm" id="adminForm">
+<form action="<?php echo $updatesUrl; ?>" method="post" name="adminForm" id="adminForm" class="visually-hidden">
+    <input type="hidden" name="task" value="">
+    <?php echo HTMLHelper::_('form.token'); ?>
+</form>
+
 <div class="xdecaro-scope xdecaro-suite">
     <div class="xdecaro-suite__hero">
         <div>
@@ -51,11 +56,12 @@ $label = static function (string $key): string {
                             </td>
                             <td class="xdecaro-suite__action-cell" data-label="<?php echo $label('COM_XDECAROCORE_ACTIONS'); ?>">
                                 <?php if ($product['status'] === 'update' && $updateId > 0 && $this->canManageInstaller) : ?>
-                                    <button
-                                        type="submit"
-                                        class="xdecaro-button"
-                                        formaction="<?php echo Route::_('index.php?option=com_xdecarocore&task=update.update&update_id=' . $updateId); ?>"
-                                    ><?php echo Text::_('COM_XDECAROCORE_UPDATE_NOW'); ?></button>
+                                    <form action="<?php echo $updatesUrl; ?>" method="post" class="xdecaro-suite__inline-action-form">
+                                        <input type="hidden" name="task" value="update.update">
+                                        <input type="hidden" name="update_id" value="<?php echo $updateId; ?>">
+                                        <button type="submit" class="xdecaro-button"><?php echo Text::_('COM_XDECAROCORE_UPDATE_NOW'); ?></button>
+                                        <?php echo HTMLHelper::_('form.token'); ?>
+                                    </form>
                                 <?php elseif ($product['status'] === 'partial') : ?>
                                     <a class="xdecaro-button" href="<?php echo Route::_('index.php?option=com_xdecarocore&view=dashboard&layout=diagnostics'); ?>"><?php echo Text::_('COM_XDECAROCORE_VERIFY'); ?></a>
                                 <?php else : ?>
@@ -129,6 +135,3 @@ $label = static function (string $key): string {
         </div>
     </section>
 </div>
-<input type="hidden" name="task" value="">
-<?php echo HTMLHelper::_('form.token'); ?>
-</form>
