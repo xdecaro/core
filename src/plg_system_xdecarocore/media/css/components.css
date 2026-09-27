@@ -1,4 +1,4 @@
-/* Core by xdecaro 2.2.0 - opt-in shared UI primitives. */
+/* Core by xdecaro 2.2.1 - opt-in shared UI primitives. */
 
 .xdecaro-card {
     background: var(--xdecaro-color-surface);
@@ -29,6 +29,69 @@
 .xdecaro-card__description {
     margin: var(--xdecaro-space-1) 0 0;
     color: var(--xdecaro-color-muted);
+}
+
+/* Shared page hierarchy used by administrator list/dashboard views. */
+.xdecaro-suite .xdecaro-suite__page-header {
+    display: grid;
+    gap: var(--xdecaro-space-2, 0.5rem);
+}
+
+.xdecaro-suite .xdecaro-suite__eyebrow {
+    margin: 0;
+    color: var(--xdecaro-color-primary);
+    font-size: 0.8rem;
+    font-weight: 750;
+    letter-spacing: 0.1em;
+    line-height: 1.2;
+    text-transform: uppercase;
+}
+
+.xdecaro-suite .xdecaro-suite__title {
+    margin: 0;
+    color: var(--xdecaro-color-text);
+    font-size: clamp(1.9rem, 3vw, 2.75rem);
+    font-weight: 750;
+    line-height: 1.08;
+    overflow-wrap: anywhere;
+}
+
+.xdecaro-suite .xdecaro-suite__description {
+    max-width: 70rem;
+    margin: 0;
+    color: var(--xdecaro-color-muted);
+    font-size: clamp(1rem, 1.35vw, 1.2rem);
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+}
+
+/* Five semantic KPI accents. The card surface stays theme-native. */
+.xdecaro-suite .xdecaro-suite__metric.is-primary,
+.xdecaro-suite .xdecaro-suite__metric.is-success,
+.xdecaro-suite .xdecaro-suite__metric.is-warning,
+.xdecaro-suite .xdecaro-suite__metric.is-danger,
+.xdecaro-suite .xdecaro-suite__metric.is-neutral {
+    border-inline-start: 0.25rem solid var(--xdecaro-color-border);
+}
+
+.xdecaro-suite .xdecaro-suite__metric.is-primary {
+    border-inline-start-color: var(--xdecaro-color-primary);
+}
+
+.xdecaro-suite .xdecaro-suite__metric.is-success {
+    border-inline-start-color: var(--xdecaro-color-success);
+}
+
+.xdecaro-suite .xdecaro-suite__metric.is-warning {
+    border-inline-start-color: var(--xdecaro-color-warning);
+}
+
+.xdecaro-suite .xdecaro-suite__metric.is-danger {
+    border-inline-start-color: var(--xdecaro-color-danger);
+}
+
+.xdecaro-suite .xdecaro-suite__metric.is-neutral {
+    border-inline-start-color: var(--xdecaro-color-muted);
 }
 
 .xdecaro-toolbar {
@@ -279,6 +342,14 @@
     .xdecaro-modal__body,
     .xdecaro-modal__footer {
         padding: var(--xdecaro-space-4);
+    }
+
+    .xdecaro-suite .xdecaro-suite__title {
+        font-size: clamp(1.65rem, 8vw, 2.1rem);
+    }
+
+    .xdecaro-suite .xdecaro-suite__description {
+        font-size: 1rem;
     }
 
     .xdecaro-toolbar {
