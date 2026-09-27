@@ -39,7 +39,7 @@ $label = static function (string $key): string {
             <?php if (!$extensions) : ?>
                 <div class="xdecaro-empty"><?php echo Text::_('COM_XDECAROCORE_NO_EXTENSIONS'); ?></div>
             <?php else : ?>
-                <div class="xdecaro-table-wrap xdecaro-suite__responsive-wrap">
+                <div class="xdecaro-table-wrap xdecaro-suite__responsive-wrap xdecaro-suite__responsive-wrap--stack">
                     <table class="xdecaro-table xdecaro-suite__responsive-table xdecaro-suite__extensions-table">
                         <caption class="visually-hidden"><?php echo Text::_('COM_XDECAROCORE_EXTENSIONS'); ?></caption>
                         <thead><tr><th scope="col"><?php echo Text::_('COM_XDECAROCORE_EXTENSION'); ?></th><th scope="col"><?php echo Text::_('COM_XDECAROCORE_TYPE'); ?></th><th scope="col"><?php echo Text::_('COM_XDECAROCORE_ELEMENT'); ?></th><th scope="col"><?php echo Text::_('COM_XDECAROCORE_VERSION'); ?></th><th scope="col"><?php echo Text::_('COM_XDECAROCORE_STATE'); ?></th><th scope="col"><?php echo Text::_('COM_XDECAROCORE_PACKAGE_ID'); ?></th></tr></thead>
