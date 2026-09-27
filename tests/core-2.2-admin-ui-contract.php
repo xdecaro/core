@@ -102,7 +102,7 @@ foreach (['.xdecaro-form .control-group', '.xdecaro-form .control-label', '.xdec
     }
 }
 
-if (str_contains($adminCss, '.xdecaro-suite__metric:last-child')) {
+if (preg_match('/(^|\})\s*\.xdecaro-suite__metric:last-child(?:\s|\{|,)/m', $adminCss)) {
     $fail('Generic metrics must not make the last metric span by default.');
 }
 if (!str_contains($adminCss, '.xdecaro-suite__metrics--fill-last')) {
