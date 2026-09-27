@@ -23,7 +23,7 @@ final class pkg_coreInstallerScript extends InstallerScript
     private const LEGACY_PACKAGE = 'pkg_xdecarocore';
 
     /** @var string */
-    protected $minimumJoomla = '6.0.0';
+    protected $minimumJoomla = '6.1.3';
 
     /** @var string */
     protected $minimumPhp = '8.3.0';
