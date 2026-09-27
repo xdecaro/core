@@ -27,6 +27,9 @@ jobs:
       - name: Verify Core 2.2 shared admin UI contract
         run: php tests/core-2.2-admin-ui-contract.php
 
+      - name: Verify Core 2.2 updater actions contract
+        run: php tests/core-2.2-updater-actions.php
+
       - name: Verify Core 2.2 release readiness contract
         run: php tests/core-2.2-release-readiness.php
 
@@ -120,12 +123,12 @@ jobs:
                   'src/Location/WorldLocationService.php',
               ):
                   if required not in library.namelist():
-                      raise SystemExit(f'Missing world location contract: {required}')
+                      raise SystemExit(f"Missing world location contract: {required}")
 
           with zipfile.ZipFile(names[3]) as plugin:
               for required in ('media/joomla.asset.json', 'media/css/core.css', 'media/css/components.css', 'media/css/admin.css'):
                   if required not in plugin.namelist():
-                      raise SystemExit(f'Missing shared admin UI package member: {required}')
+                      raise SystemExit(f"Missing shared admin UI package member: {required}")
           PY
 
       - name: Upload verified Core packages
@@ -138,5 +141,3 @@ jobs:
             dist/com_xdecarocore_*.zip
             dist/plg_system_xdecarocore_*.zip
             dist/SHA256SUMS.txt
-          if-no-files-found: error
-          retention-days: 7
