@@ -31,7 +31,15 @@ $updatesUrl = Route::_('index.php?option=com_xdecarocore&view=dashboard&layout=u
             <p><?php echo Text::_('COM_XDECAROCORE_UPDATES_DESC'); ?></p>
         </div>
         <span class="xdecaro-badge xdecaro-suite__count-badge <?php echo $updateCount > 0 ? 'xdecaro-badge--warning' : 'xdecaro-badge--success'; ?>">
-            <?php echo $updateCount > 0 ? Text::sprintf('COM_XDECAROCORE_UPDATES_AVAILABLE_COUNT', $updateCount) : Text::_('COM_XDECAROCORE_NO_UPDATES_AVAILABLE'); ?>
+            <?php
+            if ($updateCount === 1) {
+                echo Text::_('COM_XDECAROCORE_UPDATES_AVAILABLE_ONE');
+            } elseif ($updateCount > 1) {
+                echo Text::sprintf('COM_XDECAROCORE_UPDATES_AVAILABLE_COUNT', $updateCount);
+            } else {
+                echo Text::_('COM_XDECAROCORE_NO_UPDATES_AVAILABLE');
+            }
+            ?>
         </span>
     </div>
 
@@ -94,16 +102,6 @@ $updatesUrl = Route::_('index.php?option=com_xdecarocore&view=dashboard&layout=u
                 <h3 id="xdecaro-update-sites-title"><?php echo Text::_('COM_XDECAROCORE_UPDATE_SITES'); ?></h3>
                 <p><?php echo Text::_('COM_XDECAROCORE_UPDATE_SITES_DESC'); ?></p>
             </div>
-            <?php if ($this->canManageInstaller) : ?>
-                <div class="xdecaro-suite__section-actions">
-                    <form action="<?php echo $updatesUrl; ?>" method="post" class="xdecaro-suite__inline-action-form">
-                        <input type="hidden" name="task" value="update.rebuildSites">
-                        <button type="submit" class="xdecaro-button"><?php echo Text::_('COM_XDECAROCORE_REBUILD_UPDATE_SITES'); ?></button>
-                        <?php echo HTMLHelper::_('form.token'); ?>
-                    </form>
-                    <a class="xdecaro-button" href="<?php echo Route::_('index.php?option=com_installer&view=updatesites'); ?>"><?php echo Text::_('COM_XDECAROCORE_MANAGE_UPDATE_SITES'); ?></a>
-                </div>
-            <?php endif; ?>
         </div>
         <div class="xdecaro-card__body">
             <?php if ($this->updateSites === []) : ?>
