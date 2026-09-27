@@ -102,7 +102,7 @@ jobs:
 
           php cli/joomla.php extension:install --path="$PACKAGE" -vvv
 
-      - name: Verify Core 2.1 records and dashboard assets
+      - name: Verify Core 2.2 records and shared dashboard assets
         shell: bash
         run: |
           set -euo pipefail
@@ -141,13 +141,15 @@ jobs:
           test -f joomla/administrator/components/com_xdecarocore/config.xml
           test -f joomla/administrator/components/com_xdecarocore/tmpl/dashboard/guide.php
           test -f joomla/media/com_xdecarocore/css/admin.css
-          test -f joomla/media/com_xdecarocore/css/responsive.css
+          test ! -f joomla/media/com_xdecarocore/css/responsive.css
           test -f joomla/media/com_xdecarocore/js/admin.js
+          test -f joomla/media/plg_system_xdecarocore/css/admin.css
           grep -Fq 'name="location_provider_endpoint"' joomla/administrator/components/com_xdecarocore/config.xml
           grep -Fq 'name="location_provider_api_key"' joomla/administrator/components/com_xdecarocore/config.xml
           grep -Fq '"uri": "com_xdecarocore/admin.css"' joomla/media/com_xdecarocore/joomla.asset.json
-          grep -Fq '"uri": "com_xdecarocore/responsive.css"' joomla/media/com_xdecarocore/joomla.asset.json
           grep -Fq '"uri": "com_xdecarocore/admin.js"' joomla/media/com_xdecarocore/joomla.asset.json
+          grep -Fq '"name": "xdecaro.admin"' joomla/media/plg_system_xdecarocore/joomla.asset.json
+          grep -Fq '"dependencies": ["xdecaro.components"]' joomla/media/plg_system_xdecarocore/joomla.asset.json
 
       - name: Probe dashboard and new Core location API
         shell: bash
