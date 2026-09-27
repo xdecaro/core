@@ -1,4 +1,4 @@
-/* Core by xdecaro 2.2.0 - public opt-in administrator UI contract. */
+/* Core by xdecaro 2.2.2 - public opt-in administrator UI contract. */
 
 .xdecaro-scope.xdecaro-suite,
 .xdecaro-suite {
@@ -99,8 +99,8 @@
 .xdecaro-suite__metric {
     display: flex;
     min-width: 0;
-    min-height: 6rem;
-    padding: var(--xdecaro-space-5, 1.25rem);
+    min-height: 5.5rem;
+    padding: 1.125rem 1.25rem;
     flex-direction: column;
     justify-content: center;
     gap: var(--xdecaro-space-2, 0.5rem);
@@ -112,7 +112,7 @@
 
 .xdecaro-suite__metric strong {
     color: var(--xdecaro-color-text);
-    font-size: clamp(1.7rem, 2.4vw, 2.15rem);
+    font-size: clamp(1.65rem, 2vw, 1.875rem);
     font-weight: 750;
     line-height: 1;
 }
@@ -120,7 +120,11 @@
 .xdecaro-suite__metric span,
 .xdecaro-suite__muted {
     color: var(--xdecaro-color-muted);
-    font-size: 0.875rem;
+    font-size: 0.8125rem;
+}
+
+.xdecaro-suite__metric span {
+    font-weight: 650;
 }
 
 .xdecaro-suite__section {
@@ -262,7 +266,7 @@
     overflow-x: auto;
     overscroll-behavior-inline: contain;
     border: 1px solid var(--xdecaro-color-border);
-    border-radius: var(--xdecaro-radius-md, 0.625rem);
+    border-radius: 0.75rem;
 }
 
 .xdecaro-suite__responsive-table {
@@ -281,6 +285,27 @@
     text-align: start;
     vertical-align: middle;
     overflow-wrap: anywhere;
+}
+
+.xdecaro-suite__responsive-table th {
+    background: var(--xdecaro-color-surface-subtle);
+    color: var(--xdecaro-color-muted);
+    font-size: 0.75rem;
+    font-weight: 750;
+    white-space: nowrap;
+}
+
+.xdecaro-suite__responsive-table tbody tr {
+    background: var(--xdecaro-color-surface);
+    transition: background-color 0.15s ease;
+}
+
+.xdecaro-suite__responsive-table tbody tr:hover {
+    background: color-mix(in srgb, var(--xdecaro-color-primary) 3%, var(--xdecaro-color-surface));
+}
+
+.xdecaro-suite__responsive-table tbody tr:last-child td {
+    border-bottom: 0;
 }
 
 .xdecaro-suite__action-heading,
@@ -363,7 +388,7 @@
 }
 
 .xdecaro-filterbar__filter {
-    flex: 1 1 12rem;
+    flex: 0 1 13rem;
     min-width: min(100%, 10rem);
 }
 
@@ -501,8 +526,8 @@
     }
 
     .xdecaro-suite__metric {
-        min-height: 5.25rem;
-        padding: var(--xdecaro-space-4, 1rem);
+        min-height: 5rem;
+        padding: 0.875rem 1rem;
     }
 
     .xdecaro-suite__diagnostic-row { grid-template-columns: 1fr; gap: var(--xdecaro-space-2, 0.5rem); }
