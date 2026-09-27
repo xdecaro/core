@@ -6,9 +6,9 @@
     <element>pkg_core</element>
     <type>package</type>
     <client>site</client>
-    <version>2.2.0</version>
+    <version>2.2.1</version>
     <downloads>
-      <downloadurl type="full" format="zip">https://github.com/xdecaro/core/releases/download/v2.2.0/pkg_core_2.2.0.zip</downloadurl>
+      <downloadurl type="full" format="zip">https://github.com/xdecaro/core/releases/download/v2.2.1/pkg_core_2.2.1.zip</downloadurl>
     </downloads>
     <tags><tag>stable</tag></tags>
     <sha256>7492ae434da9a50ade860d7c855a795f67cf2047cb1d4760b405f4770d9edcf5</sha256>
