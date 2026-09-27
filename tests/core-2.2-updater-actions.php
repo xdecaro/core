@@ -67,7 +67,7 @@ foreach ([
     'COM_XDECAROCORE_VERIFY',
     'COM_XDECAROCORE_UPDATE_SITES',
     'COM_XDECAROCORE_UPDATE_SITE_LAST_CHECK',
-    'task=update.update',
+    'name="task" value="update.update"',
 ] as $fragment) {
     if (!str_contains($template, $fragment)) {
         throw new RuntimeException('Updates template contract missing: ' . $fragment);
