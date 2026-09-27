@@ -38,6 +38,10 @@ final class UpdateController extends BaseController
         $this->checkToken();
         $this->assertInstallerAccess();
 
+        // The rebuild model emits com_installer language strings even when called
+        // from Core, so load that administrator language domain explicitly.
+        $this->app->getLanguage()->load('com_installer', JPATH_ADMINISTRATOR);
+
         $model = $this->installerUpdatesitesModel();
         $model->rebuild();
 
@@ -45,7 +49,6 @@ final class UpdateController extends BaseController
         // Refresh the updater cache immediately so the Core page reflects the rebuilt state.
         $this->refreshUpdates();
 
-        $this->app->enqueueMessage(Text::_('COM_XDECAROCORE_UPDATE_SITES_REBUILT'), 'message');
         $this->setRedirect(Route::_(self::REDIRECT_URL, false));
     }
 
