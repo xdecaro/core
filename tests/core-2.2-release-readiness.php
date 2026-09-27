@@ -46,6 +46,14 @@ if ($package === false || trim((string) $package->packagename) !== 'core') {
     throw new RuntimeException('Canonical package identity must remain pkg_core/core.');
 }
 
+$installerScript = (string) file_get_contents($root . '/package/pkg_core/script.php');
+if (!str_contains($installerScript, "protected \$minimumJoomla = '6.1.3';")) {
+    throw new RuntimeException('Core package installer minimum Joomla must be 6.1.3.');
+}
+if (!str_contains($installerScript, "protected \$minimumPhp = '8.3.0';")) {
+    throw new RuntimeException('Core package installer minimum PHP must be 8.3.0.');
+}
+
 foreach ([
     $root . '/src/plg_system_xdecarocore/media/joomla.asset.json',
     $root . '/src/com_xdecarocore/media/joomla.asset.json',
