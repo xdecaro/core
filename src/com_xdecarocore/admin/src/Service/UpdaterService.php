@@ -89,8 +89,8 @@ final class UpdaterService
                     $this->db->quoteName('e.name', 'extension_name'),
                 ])
                 ->from($this->db->quoteName('#__update_sites', 's'))
-                ->join('INNER', $this->db->quoteName('#__update_sites_extensions', 'use') . ' ON ' . $this->db->quoteName('use.update_site_id') . ' = ' . $this->db->quoteName('s.update_site_id'))
-                ->join('INNER', $this->db->quoteName('#__extensions', 'e') . ' ON ' . $this->db->quoteName('e.extension_id') . ' = ' . $this->db->quoteName('use.extension_id'))
+                ->join('INNER', $this->db->quoteName('#__update_sites_extensions', 'usex') . ' ON ' . $this->db->quoteName('usex.update_site_id') . ' = ' . $this->db->quoteName('s.update_site_id'))
+                ->join('INNER', $this->db->quoteName('#__extensions', 'e') . ' ON ' . $this->db->quoteName('e.extension_id') . ' = ' . $this->db->quoteName('usex.extension_id'))
                 ->where($this->db->quoteName('e.type') . ' = ' . $this->db->quote('package'))
                 ->whereIn($this->db->quoteName('e.element'), $packages, ParameterType::STRING)
                 ->order($this->db->quoteName('e.element') . ' ASC, ' . $this->db->quoteName('s.name') . ' ASC');
