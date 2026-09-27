@@ -158,6 +158,7 @@ $privateFamilies = [
     '.xdecaro-suite__extension-element-cell',
     '.xdecaro-suite__updates-table',
     '.xdecaro-suite__update-status-cell',
+    '.xdecaro-suite__dashboard-metrics',
     '.xdecaro-suite__dashboard-products-table',
     '.xdecaro-suite__filter-button',
     '.xdecaro-suite__expansion-panel',
@@ -179,8 +180,31 @@ if (is_file($componentResponsivePath)) {
 }
 
 $dashboardTemplate = (string) file_get_contents($dashboardTemplatePath);
-if (!str_contains($dashboardTemplate, 'xdecaro-suite__metrics xdecaro-suite__metrics--fill-last')) {
-    throw new RuntimeException('Core five-metric dashboard must opt into the fill-last modifier explicitly.');
+foreach ([
+    'xdecaro-suite__metrics xdecaro-suite__dashboard-metrics',
+    'xdecaro-suite__responsive-wrap xdecaro-suite__responsive-wrap--stack',
+    'xdecaro-suite__action-heading',
+    'xdecaro-suite__action-cell',
+] as $marker) {
+    if (!str_contains($dashboardTemplate, $marker)) {
+        throw new RuntimeException('Core dashboard mobile-card contract missing marker: ' . $marker);
+    }
+}
+
+if (str_contains($dashboardTemplate, 'xdecaro-suite__metrics--fill-last')) {
+    throw new RuntimeException('Core dashboard metrics must keep all five KPI cards at equal width.');
+}
+
+foreach ([
+    'grid-template-columns: repeat(5, minmax(0, 1fr))',
+    '.xdecaro-suite__dashboard-products-table > tbody > tr',
+    '.xdecaro-suite__dashboard-products-table .xdecaro-suite__action-cell .xdecaro-button',
+    'min-height: 2.75rem',
+    'white-space: nowrap',
+] as $fragment) {
+    if (!str_contains($componentCss, $fragment)) {
+        throw new RuntimeException('Core dashboard responsive card CSS missing fragment: ' . $fragment);
+    }
 }
 
 echo "Core 2.2 shared admin UI contract passed.\n";
