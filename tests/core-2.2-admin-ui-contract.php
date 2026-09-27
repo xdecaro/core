@@ -82,9 +82,14 @@ foreach (['.xdecaro-suite__products-table', '.xdecaro-suite__extensions-table', 
     }
 }
 
-foreach (['body {', '#header', '.sidebar-wrapper'] as $globalLeak) {
-    if (str_contains($adminCss, $globalLeak)) {
-        throw new RuntimeException('Public admin CSS contains an unscoped Joomla/global rule: ' . $globalLeak);
+$globalSelectorPatterns = [
+    '/(^|\n)\s*body(?:\s|\.|#|\[|:|\{)/i' => 'body',
+    '/(^|\n|,)\s*#header\b/i' => '#header',
+    '/(^|\n|,)\s*\.sidebar-wrapper\b/i' => '.sidebar-wrapper',
+];
+foreach ($globalSelectorPatterns as $pattern => $label) {
+    if (preg_match($pattern, $adminCss) === 1) {
+        throw new RuntimeException('Public admin CSS contains an unscoped Joomla/global selector: ' . $label);
     }
 }
 
