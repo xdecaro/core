@@ -6,8 +6,8 @@ $root = dirname(__DIR__);
 $version = trim((string) file_get_contents($root . '/VERSION'));
 $series = trim((string) file_get_contents($root . '/STABILIZATION_SERIES'));
 
-if ($version !== '2.1.0' || $series !== '2.1') {
-    fwrite(STDERR, "Core canonical package release must start at 2.1.0 / series 2.1.\n");
+if ($series !== '2.1' || version_compare($version, '2.1.0', '<') || version_compare($version, '2.2.0', '>=')) {
+    fwrite(STDERR, "Core canonical package release must remain in the 2.1.x series.\n");
     exit(1);
 }
 
@@ -24,8 +24,8 @@ $versionedFiles = [
 
 foreach ($versionedFiles as $path) {
     $text = (string) file_get_contents($path);
-    if (!str_contains($text, '2.1.0')) {
-        fwrite(STDERR, "Core 2.1.0 version missing from {$path}.\n");
+    if (!str_contains($text, $version)) {
+        fwrite(STDERR, "Core {$version} version missing from {$path}.\n");
         exit(1);
     }
 }
@@ -46,4 +46,4 @@ foreach (['pkg_core_${VERSION}.zip', 'pkg_xdecarocore_2.0.1.zip', "element='pkg_
     }
 }
 
-echo "Core 2.1 canonical release contract OK\n";
+echo "Core {$version} canonical release contract OK\n";

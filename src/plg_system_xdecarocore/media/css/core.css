@@ -1,4 +1,4 @@
-/* Core by xdecaro 1.1.0 - scoped design tokens and foundation. */
+/* Core by xdecaro - scoped design tokens and foundation. */
 
 .xdecaro-scope {
     --xdecaro-font-family: inherit;
@@ -47,6 +47,19 @@
 .xdecaro-scope *::before,
 .xdecaro-scope *::after {
     box-sizing: border-box;
+}
+
+/*
+ * Atum keeps .container-fluid at width: 100% even when .container-main is a
+ * flex item beside the administrator sidebar. Limit the correction to pages
+ * that explicitly opt in to the shared xdecaro UI scope.
+ */
+@supports selector(#wrapper:has(.xdecaro-scope)) {
+    body.admin #wrapper:has(.xdecaro-scope) > .container-main {
+        width: auto;
+        min-width: 0;
+        flex: 1 1 0;
+    }
 }
 
 html[data-bs-theme="dark"] .xdecaro-scope,

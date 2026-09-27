@@ -104,7 +104,7 @@ jobs:
             "dist/pkg_core_${VERSION}.zip" \
             dist/SHA256SUMS.txt \
             --title "Core ${VERSION}" \
-            --notes "Core ${VERSION}: canonical Joomla package identity pkg_core, migration from pkg_xdecarocore, Joomla 6 / PHP 8.3. Child extension identifiers remain unchanged."
+            --notes "Core ${VERSION}: Joomla 6 / PHP 8.3 patch in the 2.1.x line. Shared xdecaro administrator pages now contain Atum flex width correctly beside the sidebar; canonical pkg_core identity and the legacy updater bridge remain unchanged."
 
       - name: Publish canonical and legacy update feeds
         shell: bash
