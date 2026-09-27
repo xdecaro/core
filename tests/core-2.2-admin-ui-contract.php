@@ -181,7 +181,7 @@ if (is_file($componentResponsivePath)) {
 
 $dashboardTemplate = (string) file_get_contents($dashboardTemplatePath);
 foreach ([
-    'xdecaro-suite__metrics xdecaro-suite__dashboard-metrics',
+    'xdecaro-suite__metrics xdecaro-suite__metrics--fill-last xdecaro-suite__dashboard-metrics',
     'xdecaro-suite__responsive-wrap xdecaro-suite__responsive-wrap--stack',
     'xdecaro-suite__action-heading',
     'xdecaro-suite__action-cell',
@@ -191,12 +191,10 @@ foreach ([
     }
 }
 
-if (str_contains($dashboardTemplate, 'xdecaro-suite__metrics--fill-last')) {
-    throw new RuntimeException('Core dashboard metrics must keep all five KPI cards at equal width.');
-}
-
 foreach ([
     'grid-template-columns: repeat(5, minmax(0, 1fr))',
+    '.xdecaro-suite__dashboard-metrics.xdecaro-suite__metrics--fill-last > :last-child',
+    'grid-column: auto',
     '.xdecaro-suite__dashboard-products-table > tbody > tr',
     '.xdecaro-suite__dashboard-products-table .xdecaro-suite__action-cell .xdecaro-button',
     'min-height: 2.75rem',
