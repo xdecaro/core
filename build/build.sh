@@ -3,12 +3,18 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 VERSION="$(tr -d '[:space:]' < "$ROOT/VERSION")"
+PACKAGE_SRC="$ROOT/package/pkg_core"
+UPDATE_FEED="$ROOT/updates/pkg_core.xml"
+LEGACY_UPDATE_BRIDGE="$ROOT/updates/pkg_xdecarocore.xml"
 DIST="$ROOT/dist"
 
 command -v php >/dev/null 2>&1 || { echo "PHP CLI is required." >&2; exit 1; }
 command -v python3 >/dev/null 2>&1 || { echo "Python 3 is required." >&2; exit 1; }
 
 [[ "$VERSION" == "2.2.0" ]] || { echo "Core shared-admin release must be 2.2.0." >&2; exit 1; }
+[[ -f "$PACKAGE_SRC/pkg_core.xml" ]] || { echo "Canonical Core package manifest is missing." >&2; exit 1; }
+[[ -f "$UPDATE_FEED" ]] || { echo "Canonical Core update feed is missing." >&2; exit 1; }
+[[ -f "$LEGACY_UPDATE_BRIDGE" ]] || { echo "Legacy Core update bridge is missing." >&2; exit 1; }
 php -r 'if (PHP_VERSION_ID < 80300) { fwrite(STDERR, "Core 2.2.0 requires PHP 8.3 or later.\n"); exit(1); }'
 
 while IFS= read -r -d '' php_file; do
