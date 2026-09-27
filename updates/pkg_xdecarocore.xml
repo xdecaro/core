@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <updates>
   <update>
     <name>Core by xdecaro</name>
@@ -13,7 +13,7 @@
     <tags>
       <tag>stable</tag>
     </tags>
-    <sha256>373c53eaf0fdbee27546d75d38dc2c4174cfbe14b1e0f3b944507e9f40f6b899</sha256>
+    <sha256>7492ae434da9a50ade860d7c855a795f67cf2047cb1d4760b405f4770d9edcf5</sha256>
     <maintainer>Luca De Caro</maintainer>
     <maintainerurl>https://github.com/xdecaro/core</maintainerurl>
     <changelogurl>https://raw.githubusercontent.com/xdecaro/core/main/updates/changelog.xml</changelogurl>
