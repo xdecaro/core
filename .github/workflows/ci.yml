@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   validate:
-    name: PHP 8.3 / Joomla 6 source validation
+    name: PHP 8.3 / Joomla 6.1.3 source validation
     runs-on: ubuntu-latest
 
     steps:
@@ -30,18 +30,18 @@ jobs:
       - name: Verify Core 2.2 release readiness contract
         run: php tests/core-2.2-release-readiness.php
 
-      - name: Guard Core 2.1 stabilization series
+      - name: Guard Core 2.2 stabilization series
         shell: bash
         run: |
           set -euo pipefail
           VERSION="$(tr -d '[:space:]' < VERSION)"
           SERIES="$(tr -d '[:space:]' < STABILIZATION_SERIES)"
           test -n "$VERSION"
-          test "$SERIES" = '2.1'
+          test "$SERIES" = '2.2'
           case "$VERSION" in
-            2.1.*) ;;
+            2.2.*) ;;
             *)
-              echo "Core ${VERSION} is outside the 2.1.x stabilization line." >&2
+              echo "Core ${VERSION} is outside the 2.2.x stabilization line." >&2
               exit 1
               ;;
           esac
@@ -53,10 +53,10 @@ jobs:
           grep -Fq '<namespace path="src">xdecaro\Core</namespace>' src/lib_xdecarocore/xdecarocore.xml
           grep -Fq '<namespace path="src">xdecaro\Component\Core</namespace>' src/com_xdecarocore/xdecarocore.xml
           grep -Fq '<namespace path="src">xdecaro\Plugin\System\Core</namespace>' src/plg_system_xdecarocore/xdecarocore.xml
-          grep -Fq '<targetplatform name="joomla" version="6.*"' src/lib_xdecarocore/xdecarocore.xml
-          grep -Fq '<targetplatform name="joomla" version="6.*"' src/com_xdecarocore/xdecarocore.xml
-          grep -Fq '<targetplatform name="joomla" version="6.*"' src/plg_system_xdecarocore/xdecarocore.xml
-          grep -Fq '<targetplatform name="joomla" version="6.*"' package/pkg_core/pkg_core.xml
+          grep -Fq '<targetplatform name="joomla" version="6.1.3"' src/lib_xdecarocore/xdecarocore.xml
+          grep -Fq '<targetplatform name="joomla" version="6.1.3"' src/com_xdecarocore/xdecarocore.xml
+          grep -Fq '<targetplatform name="joomla" version="6.1.3"' src/plg_system_xdecarocore/xdecarocore.xml
+          grep -Fq '<targetplatform name="joomla" version="6.1.3"' package/pkg_core/pkg_core.xml
           test ! -e src/lib_xdecarocorelegacy
           test ! -e src/plg_system_xdecarocore/src/Extension/XdecaroCore.php
           test -f src/plg_system_xdecarocore/src/Extension/CorePlugin.php
@@ -118,6 +118,11 @@ jobs:
               ):
                   if required not in library.namelist():
                       raise SystemExit(f'Missing world location contract: {required}')
+
+          with zipfile.ZipFile(names[3]) as plugin:
+              for required in ('media/joomla.asset.json', 'media/css/core.css', 'media/css/components.css', 'media/css/admin.css'):
+                  if required not in plugin.namelist():
+                      raise SystemExit(f'Missing shared admin UI package member: {required}')
           PY
 
       - name: Upload verified Core packages
