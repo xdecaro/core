@@ -17,6 +17,13 @@
       "uri": "plg_system_xdecarocore/components.css",
       "dependencies": ["xdecaro.core"],
       "version": "2.1.0"
+    },
+    {
+      "name": "xdecaro.admin",
+      "type": "style",
+      "uri": "plg_system_xdecarocore/admin.css",
+      "dependencies": ["xdecaro.components"],
+      "version": "2.1.0"
     }
   ]
 }
