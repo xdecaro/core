@@ -216,7 +216,7 @@
 
     .xdecaro-suite__dashboard-products-table .xdecaro-suite__action-cell {
         width: auto;
-        text-align: stretch;
+        text-align: start;
         white-space: normal;
     }
 
