@@ -24,6 +24,9 @@ jobs:
           extensions: simplexml
           coverage: none
 
+      - name: Verify Core 2.2 shared admin UI contract
+        run: php tests/core-2.2-admin-ui-contract.php
+
       - name: Guard Core 2.1 stabilization series
         shell: bash
         run: |
