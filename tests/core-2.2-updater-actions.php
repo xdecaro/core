@@ -24,8 +24,11 @@ foreach ([
     'checkToken()',
     "bootComponent('com_installer')",
     "createModel('Update', 'Administrator'",
+    "createModel('Updatesites', 'Administrator'",
     'public function find(): void',
     'public function update(): void',
+    'public function rebuildSites(): void',
+    '->rebuild()',
     'index.php?option=com_xdecarocore&view=dashboard&layout=updates',
 ] as $fragment) {
     if (!str_contains($controller, $fragment)) {
@@ -67,7 +70,9 @@ foreach ([
     'COM_XDECAROCORE_VERIFY',
     'COM_XDECAROCORE_UPDATE_SITES',
     'COM_XDECAROCORE_UPDATE_SITE_LAST_CHECK',
+    'COM_XDECAROCORE_REBUILD_UPDATE_SITES',
     'name="task" value="update.update"',
+    'name="task" value="update.rebuildSites"',
 ] as $fragment) {
     if (!str_contains($template, $fragment)) {
         throw new RuntimeException('Updates template contract missing: ' . $fragment);
@@ -89,6 +94,8 @@ foreach ([$itPath, $enPath] as $path) {
         'COM_XDECAROCORE_VERIFY=',
         'COM_XDECAROCORE_UPDATE_SITES=',
         'COM_XDECAROCORE_UPDATE_SITE_LAST_CHECK=',
+        'COM_XDECAROCORE_REBUILD_UPDATE_SITES=',
+        'COM_XDECAROCORE_UPDATE_SITES_REBUILT=',
     ] as $fragment) {
         if (!str_contains($source, $fragment)) {
             throw new RuntimeException('Missing updater language key ' . $fragment . ' in ' . basename(dirname($path)) . '.');
