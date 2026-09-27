@@ -36,6 +36,13 @@ foreach ([$lib, $component, $plugin, $package] as $manifest) {
     if ($manifest === false || trim((string) $manifest->version) !== $version) {
         fwrite(STDERR, "Manifest version mismatch or invalid XML.\n"); exit(1);
     }
+    $target = trim((string) $manifest->targetplatform["version"]);
+    if ($target !== "6.1.3") {
+        fwrite(STDERR, "Core 2.2 manifests must target Joomla 6.1.3 exactly.\n"); exit(1);
+    }
+    if (trim((string) $manifest->php_minimum) !== "8.3.0") {
+        fwrite(STDERR, "Core 2.2 manifests must require PHP 8.3.0 or later.\n"); exit(1);
+    }
 }
 if (trim((string) $lib->namespace) !== "xdecaro\\Core") {
     fwrite(STDERR, "Canonical Core namespace must be xdecaro\\Core.\n"); exit(1);
@@ -45,12 +52,6 @@ if (trim((string) $component->namespace) !== "xdecaro\\Component\\Core") {
 }
 if (trim((string) $plugin->namespace) !== "xdecaro\\Plugin\\System\\Core") {
     fwrite(STDERR, "Core 2.x plugin namespace is not canonical.\n"); exit(1);
-}
-foreach ([$lib, $component, $plugin, $package] as $manifest) {
-    $target = trim((string) $manifest->targetplatform["version"]);
-    if ($target !== "6.*") {
-        fwrite(STDERR, "Core 2.x manifests must target Joomla 6 only.\n"); exit(1);
-    }
 }
 if (trim((string) $component->administration->menu) !== "COM_XDECAROCORE_MENU") {
     fwrite(STDERR, "Core administrator menu entry is missing.\n"); exit(1);
@@ -96,11 +97,17 @@ foreach (($assets["assets"] ?? []) as $asset) {
     if (isset($asset["name"], $asset["type"], $asset["uri"])) $found[$asset["name"]] = $asset;
 }
 $expectedAssets = [
-    "xdecaro.core" => "plg_system_xdecarocore/core.css",
-    "xdecaro.components" => "plg_system_xdecarocore/components.css",
+    "xdecaro.core" => ["plg_system_xdecarocore/core.css", []],
+    "xdecaro.components" => ["plg_system_xdecarocore/components.css", ["xdecaro.core"]],
+    "xdecaro.admin" => ["plg_system_xdecarocore/admin.css", ["xdecaro.components"]],
 ];
-foreach ($expectedAssets as $name => $uri) {
-    if (!isset($found[$name]) || $found[$name]["type"] !== "style" || $found[$name]["uri"] !== $uri || ($found[$name]["version"] ?? "") !== $version) {
+foreach ($expectedAssets as $name => [$uri, $dependencies]) {
+    $asset = $found[$name] ?? null;
+    if (!is_array($asset)
+        || ($asset["type"] ?? "") !== "style"
+        || ($asset["uri"] ?? "") !== $uri
+        || ($asset["version"] ?? "") !== $version
+        || ($asset["dependencies"] ?? []) !== $dependencies) {
         fwrite(STDERR, "Required Core style asset is missing or inconsistent: {$name}\n"); exit(1);
     }
 }
@@ -140,11 +147,11 @@ foreach ($feed->update as $update) {
         fwrite(STDERR, "Core update feed download URL is inconsistent.\n"); exit(1);
     }
     if (trim((string) $update->targetplatform["name"]) !== "joomla"
-        || trim((string) $update->targetplatform["version"]) !== "6\\.[0-9]+") {
-        fwrite(STDERR, "Core 2.x update feed must target Joomla 6 only.\n"); exit(1);
+        || trim((string) $update->targetplatform["version"]) !== "6\\.1\\.3") {
+        fwrite(STDERR, "Core 2.2 update feed must target Joomla 6.1.3 exactly.\n"); exit(1);
     }
     if (version_compare(trim((string) $update->php_minimum), "8.3.0", "<")) {
-        fwrite(STDERR, "Core 2.x update feed must require PHP 8.3 or later.\n"); exit(1);
+        fwrite(STDERR, "Core 2.2 update feed must require PHP 8.3 or later.\n"); exit(1);
     }
 }
 if (simplexml_load_file($argv[9]) === false) {
@@ -157,6 +164,9 @@ php "$ROOT/tests/assets.php"
 php "$ROOT/tests/integration.php"
 php "$ROOT/tests/dashboard.php"
 php "$ROOT/tests/package-naming-migration.php"
+php "$ROOT/tests/core-2.2-admin-ui-contract.php"
+php "$ROOT/tests/core-2.2-release-readiness.php"
+php "$ROOT/tests/atum-layout.php"
 python3 "$ROOT/build/build.py"
 
 python3 - "$DIST" "$VERSION" <<'PY'
@@ -228,9 +238,10 @@ with zipfile.ZipFile(plugin) as archive:
         "media/joomla.asset.json",
         "media/css/core.css",
         "media/css/components.css",
+        "media/css/admin.css",
     }
     if not required.issubset(set(archive.namelist())):
-        raise SystemExit("Core 2.x plugin ZIP is incomplete")
+        raise SystemExit("Core 2.2 plugin ZIP is incomplete")
     if "src/Extension/XdecaroCore.php" in archive.namelist():
         raise SystemExit("Retired Core 1.x plugin class is still packaged")
 
