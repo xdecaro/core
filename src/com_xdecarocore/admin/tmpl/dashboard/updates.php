@@ -30,7 +30,7 @@ $label = static function (string $key): string {
 
     <div class="xdecaro-card">
         <div class="xdecaro-card__body">
-            <div class="xdecaro-table-wrap xdecaro-suite__responsive-wrap">
+            <div class="xdecaro-table-wrap xdecaro-suite__responsive-wrap xdecaro-suite__responsive-wrap--stack">
                 <table class="xdecaro-table xdecaro-suite__responsive-table xdecaro-suite__updates-table">
                     <caption class="visually-hidden"><?php echo Text::_('COM_XDECAROCORE_UPDATES'); ?></caption>
                     <thead><tr><th scope="col"><?php echo Text::_('COM_XDECAROCORE_PRODUCT'); ?></th><th scope="col"><?php echo Text::_('COM_XDECAROCORE_INSTALLED_VERSION'); ?></th><th scope="col"><?php echo Text::_('COM_XDECAROCORE_AVAILABLE_VERSION'); ?></th><th scope="col"><?php echo Text::_('COM_XDECAROCORE_STATUS'); ?></th></tr></thead>
