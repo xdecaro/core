@@ -1,4 +1,4 @@
-/* Core by xdecaro 1.1.0 - scoped design tokens and foundation. */
+/* Core by xdecaro 2.0.2 - scoped design tokens and foundation. */
 
 .xdecaro-scope {
     --xdecaro-font-family: inherit;
@@ -47,6 +47,20 @@
 .xdecaro-scope *::before,
 .xdecaro-scope *::after {
     box-sizing: border-box;
+}
+
+/*
+ * Atum renders .container-main as a Bootstrap .container-fluid flex item next
+ * to the administrator sidebar. The 100% fluid width plus the sidebar width
+ * can create horizontal overflow. Keep the correction opt-in and limited to
+ * administrator pages that actually render an xdecaro UI scope.
+ */
+@supports selector(#wrapper:has(.xdecaro-scope)) {
+    body.admin #wrapper:has(.xdecaro-scope) > .container-main {
+        width: auto;
+        min-width: 0;
+        flex: 1 1 0;
+    }
 }
 
 html[data-bs-theme="dark"] .xdecaro-scope,
