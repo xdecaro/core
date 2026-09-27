@@ -1,4 +1,4 @@
-/* Core by xdecaro 2.2.2 - public opt-in administrator UI contract. */
+/* Core by xdecaro 2.2.3 - public opt-in administrator UI contract. */
 
 .xdecaro-scope.xdecaro-suite,
 .xdecaro-suite {
@@ -373,6 +373,10 @@
     box-sizing: border-box;
 }
 
+/*
+ * Standard list filterbar. Existing flex layouts remain supported; the
+ * --expandable modifier opts in to the shared Search / Clear / Filters row.
+ */
 .xdecaro-filterbar {
     display: flex;
     width: 100%;
@@ -382,9 +386,20 @@
     gap: var(--xdecaro-space-2, 0.5rem);
 }
 
+.xdecaro-filterbar--expandable {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto auto;
+    gap: var(--xdecaro-space-3, 0.75rem);
+    align-items: stretch;
+}
+
 .xdecaro-filterbar__search {
     flex: 1 1 18rem;
     min-width: min(100%, 12rem);
+}
+
+.xdecaro-filterbar--expandable .xdecaro-filterbar__search {
+    min-width: 0;
 }
 
 .xdecaro-filterbar__filter {
@@ -397,6 +412,32 @@
     flex: 0 1 auto;
     flex-wrap: wrap;
     gap: var(--xdecaro-space-2, 0.5rem);
+}
+
+.xdecaro-filterbar__toggle,
+.xdecaro-filterbar__close {
+    align-self: stretch;
+}
+
+.xdecaro-filterbar__advanced {
+    display: grid;
+    grid-column: 1 / -1;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--xdecaro-space-3, 0.75rem);
+    padding-top: var(--xdecaro-space-3, 0.75rem);
+    align-items: stretch;
+    border-top: 1px solid var(--xdecaro-color-border);
+}
+
+.xdecaro-filterbar__advanced-fields {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+    gap: var(--xdecaro-space-3, 0.75rem);
+    min-width: 0;
+}
+
+.xdecaro-filterbar__advanced[hidden] {
+    display: none;
 }
 
 .xdecaro-filterbar input,
@@ -548,6 +589,15 @@
     .xdecaro-filterbar,
     .xdecaro-filterbar__actions { flex-direction: column; }
 
+    .xdecaro-filterbar--expandable,
+    .xdecaro-filterbar__advanced {
+        grid-template-columns: 1fr;
+    }
+
+    .xdecaro-filterbar__advanced-fields,
+    .xdecaro-filterbar__advanced,
+    .xdecaro-filterbar__toggle,
+    .xdecaro-filterbar__close,
     .xdecaro-filterbar__search,
     .xdecaro-filterbar__filter,
     .xdecaro-filterbar__actions,
@@ -575,9 +625,13 @@
     .xdecaro-form-grid--2 { grid-template-columns: 1fr; }
     .xdecaro-form .control-group { grid-template-columns: 1fr; gap: var(--xdecaro-space-1, 0.25rem); }
     .xdecaro-filterbar { flex-direction: column; }
+    .xdecaro-filterbar--expandable,
+    .xdecaro-filterbar__advanced { grid-template-columns: 1fr; }
     .xdecaro-filterbar__search,
     .xdecaro-filterbar__filter,
-    .xdecaro-filterbar__actions { width: 100%; min-width: 0; }
+    .xdecaro-filterbar__actions,
+    .xdecaro-filterbar__toggle,
+    .xdecaro-filterbar__close { width: 100%; min-width: 0; }
     .xdecaro-suite { padding-bottom: calc(var(--xdecaro-space-6, 1.5rem) + env(safe-area-inset-bottom)); }
 }
 
