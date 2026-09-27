@@ -3,6 +3,24 @@
   <changelog>
     <element>pkg_core</element>
     <type>package</type>
+    <version>2.2.0</version>
+    <addition>
+      <item>Added the public opt-in xdecaro.admin Web Asset layer for shared administrator page structure, responsive forms, filters, accordions, KPI layouts and tables.</item>
+      <item>Added AssetService::useAdminUi() so consuming xdecaro products can load the complete shared UI dependency chain without depending on com_xdecarocore private assets.</item>
+    </addition>
+    <change>
+      <item>Promoted domain-neutral xdecaro-suite administrator patterns from the Core component into the shared system-plugin UI contract while keeping Core product/extension/update selectors private.</item>
+      <item>Core administrator views now consume the same public shared UI contract intended for People, Courses, Organizations, Membership, Competitions, Photos and future consumers.</item>
+      <item>Shared UI metadata now targets Joomla 6.1.3 only and PHP 8.3 or newer.</item>
+    </change>
+    <fix>
+      <item>Responsive primitives account for narrow effective Joomla content widths, long technical values and mobile form controls without masking defects with page-wide overflow hiding.</item>
+      <item>Preserves the Core 2.1.1 Atum sidebar-width correction while consolidating responsive layout behavior.</item>
+    </fix>
+  </changelog>
+  <changelog>
+    <element>pkg_core</element>
+    <type>package</type>
     <version>2.1.1</version>
     <fix>
       <item>Prevents Joomla Atum administrator pages using the shared xdecaro UI from expanding horizontally by the width of the sidebar.</item>
