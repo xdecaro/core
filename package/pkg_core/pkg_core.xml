@@ -4,12 +4,12 @@
     <packagename>core</packagename>
     <author>Luca De Caro</author>
     <authorUrl>https://github.com/xdecaro/core</authorUrl>
-    <creationDate>2026-09-17</creationDate>
+    <creationDate>2026-09-27</creationDate>
     <copyright>Copyright (C) 2026 Luca De Caro</copyright>
     <license>GNU General Public License version 2 or later</license>
-    <version>2.1.0</version>
-    <description>Shared xdecaro Joomla infrastructure package with central ecosystem dashboard.</description>
-    <targetplatform name="joomla" version="6.*" />
+    <version>2.2.0</version>
+    <description>Shared xdecaro Joomla infrastructure package with central ecosystem dashboard and opt-in administrator UI.</description>
+    <targetplatform name="joomla" version="6.1.3" />
     <scriptfile>script.php</scriptfile>
     <blockChildUninstall>true</blockChildUninstall>
     <files>

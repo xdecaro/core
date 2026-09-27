@@ -23,6 +23,7 @@ final class AssetService
     public const REGISTRY_EXTENSION = 'plg_system_xdecarocore';
     public const STYLE_FOUNDATION = 'xdecaro.core';
     public const STYLE_COMPONENTS = 'xdecaro.components';
+    public const STYLE_ADMIN = 'xdecaro.admin';
 
     public function isAvailable(): bool
     {
@@ -67,9 +68,21 @@ final class AssetService
         return true;
     }
 
+    public function useAdminUi(WebAssetManager $webAssets): bool
+    {
+        if (!$this->register($webAssets)) {
+            return false;
+        }
+
+        $webAssets->useStyle(self::STYLE_ADMIN);
+
+        return true;
+    }
+
     private function assetsRegistered(WebAssetManager $webAssets): bool
     {
         return $webAssets->assetExists('style', self::STYLE_FOUNDATION)
-            && $webAssets->assetExists('style', self::STYLE_COMPONENTS);
+            && $webAssets->assetExists('style', self::STYLE_COMPONENTS)
+            && $webAssets->assetExists('style', self::STYLE_ADMIN);
     }
 }

@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Core 2.2 Shared Admin UI responsive fixture</title>
+  <link rel="stylesheet" href="../../src/plg_system_xdecarocore/media/css/core.css">
+  <link rel="stylesheet" href="../../src/plg_system_xdecarocore/media/css/components.css">
+  <link rel="stylesheet" href="../../src/plg_system_xdecarocore/media/css/admin.css">
+</head>
+<body>
+  <main style="max-width: 100%; padding: 1rem;" data-test-widths="320px 393px 430px 768px 1024px">
+    <div class="xdecaro-scope xdecaro-suite">
+      <header class="xdecaro-suite__page-header">
+        <span class="xdecaro-suite__eyebrow">Fixture responsive</span>
+        <h1>Shared Admin UI</h1>
+        <p>Questa fixture verifica la fondazione pubblica senza logica di prodotto.</p>
+      </header>
+
+      <section class="xdecaro-suite__metrics" aria-label="Metriche di prova">
+        <article class="xdecaro-card xdecaro-suite__metric"><strong>2058</strong><span>Totale</span></article>
+        <article class="xdecaro-card xdecaro-suite__metric"><strong>2054</strong><span>Pubblicati</span></article>
+        <article class="xdecaro-card xdecaro-suite__metric"><strong>4</strong><span>Sospesi</span></article>
+        <article class="xdecaro-card xdecaro-suite__metric"><strong>0</strong><span>Cestino</span></article>
+      </section>
+
+      <section class="xdecaro-card xdecaro-suite__section">
+        <div class="xdecaro-card__body">
+          <h2>Form Joomla</h2>
+          <form class="xdecaro-form">
+            <div class="control-group">
+              <div class="control-label"><label for="country">Paese</label></div>
+              <div class="controls"><select id="country"><option>Italia</option></select></div>
+            </div>
+            <div class="control-group">
+              <div class="control-label"><label for="name">Nome</label></div>
+              <div class="controls"><input id="name" type="text" value="Esempio"></div>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <section class="xdecaro-card xdecaro-suite__section">
+        <div class="xdecaro-card__body">
+          <h2>Valore tecnico lungo</h2>
+          <code class="xdecaro-long-value">people-backup-pre-restore-2026-09-27_00-44-53-v1.7.33-2058-persone-1234567890abcdef1234567890abcdef.zip</code>
+        </div>
+      </section>
+
+      <section class="xdecaro-card xdecaro-suite__section">
+        <div class="xdecaro-card__body">
+          <h2>Tabella responsive</h2>
+          <div class="xdecaro-suite__responsive-wrap">
+            <table class="xdecaro-suite__responsive-table" data-responsive="cards">
+              <thead><tr><th>Nome</th><th>Versione</th><th>Stato</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td data-label="Nome">Core</td>
+                  <td data-label="Versione">2.2.0</td>
+                  <td data-label="Stato">Disponibile</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+</body>
+</html>
