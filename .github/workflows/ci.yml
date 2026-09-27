@@ -30,6 +30,9 @@ jobs:
       - name: Verify Core 2.2 release readiness contract
         run: php tests/core-2.2-release-readiness.php
 
+      - name: Verify Core 2.2 upgrade cleanup contract
+        run: php tests/core-2.2-upgrade-cleanup.php
+
       - name: Guard Core 2.2 stabilization series
         shell: bash
         run: |
