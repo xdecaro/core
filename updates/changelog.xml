@@ -1,6 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelogs>
   <changelog>
+    <element>pkg_core</element>
+    <type>package</type>
+    <version>2.1.1</version>
+    <fix>
+      <item>Prevents Joomla Atum administrator pages using the shared xdecaro UI from expanding horizontally by the width of the sidebar.</item>
+      <item>The shared content flex item now shrinks to the real available width while preserving the sidebar and component layout.</item>
+    </fix>
+    <change>
+      <item>Added regression coverage for the measured Atum sidebar overflow while keeping the correction scoped to pages containing the xdecaro UI scope.</item>
+    </change>
+  </changelog>
+  <changelog>
+    <element>pkg_core</element>
+    <type>package</type>
+    <version>2.1.0</version>
+    <change>
+      <item>Canonical Joomla package identity migrated from pkg_xdecarocore to pkg_core while keeping the existing library, component and system plugin child identities.</item>
+      <item>Existing pkg_xdecarocore installations retain a legacy update bridge to the canonical package during migration.</item>
+    </change>
+  </changelog>
+  <changelog>
     <element>pkg_xdecarocore</element>
     <type>package</type>
     <version>1.5.9</version>
