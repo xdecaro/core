@@ -57,7 +57,7 @@ $label = static function (string $key): string {
         <span class="xdecaro-badge xdecaro-badge--success">Core <?php echo htmlspecialchars($this->coreVersion, ENT_QUOTES, 'UTF-8'); ?></span>
     </div>
 
-    <div class="xdecaro-suite__metrics xdecaro-suite__metrics--fill-last" aria-label="<?php echo Text::_('COM_XDECAROCORE_SUMMARY'); ?>">
+    <div class="xdecaro-suite__metrics xdecaro-suite__dashboard-metrics" aria-label="<?php echo Text::_('COM_XDECAROCORE_SUMMARY'); ?>">
         <div class="xdecaro-card xdecaro-suite__metric"><strong><?php echo (int) $summary['known']; ?></strong><span><?php echo Text::_('COM_XDECAROCORE_KNOWN_PRODUCTS'); ?></span></div>
         <div class="xdecaro-card xdecaro-suite__metric"><strong><?php echo (int) $summary['installed']; ?></strong><span><?php echo Text::_('COM_XDECAROCORE_INSTALLED'); ?></span></div>
         <div class="xdecaro-card xdecaro-suite__metric"><strong><?php echo (int) $summary['not_installed']; ?></strong><span><?php echo Text::_('COM_XDECAROCORE_NOT_INSTALLED'); ?></span></div>
@@ -76,10 +76,10 @@ $label = static function (string $key): string {
             <a class="xdecaro-button" href="index.php?option=com_xdecarocore&amp;view=dashboard&amp;layout=products"><?php echo Text::_('COM_XDECAROCORE_VIEW_ALL'); ?></a>
         </div>
         <div class="xdecaro-card__body">
-            <div class="xdecaro-table-wrap xdecaro-suite__responsive-wrap">
+            <div class="xdecaro-table-wrap xdecaro-suite__responsive-wrap xdecaro-suite__responsive-wrap--stack">
                 <table class="xdecaro-table xdecaro-suite__responsive-table xdecaro-suite__dashboard-products-table">
                     <caption class="visually-hidden"><?php echo Text::_('COM_XDECAROCORE_PRODUCTS'); ?></caption>
-                    <thead><tr><th scope="col"><?php echo Text::_('COM_XDECAROCORE_PRODUCT'); ?></th><th scope="col"><?php echo Text::_('COM_XDECAROCORE_STATUS'); ?></th><th scope="col"><?php echo Text::_('COM_XDECAROCORE_INSTALLED_VERSION'); ?></th><th scope="col"><?php echo Text::_('COM_XDECAROCORE_AVAILABLE_VERSION'); ?></th><th scope="col"><?php echo Text::_('COM_XDECAROCORE_ACTIONS'); ?></th></tr></thead>
+                    <thead><tr><th scope="col"><?php echo Text::_('COM_XDECAROCORE_PRODUCT'); ?></th><th scope="col"><?php echo Text::_('COM_XDECAROCORE_STATUS'); ?></th><th scope="col"><?php echo Text::_('COM_XDECAROCORE_INSTALLED_VERSION'); ?></th><th scope="col"><?php echo Text::_('COM_XDECAROCORE_AVAILABLE_VERSION'); ?></th><th class="xdecaro-suite__action-heading" scope="col"><?php echo Text::_('COM_XDECAROCORE_ACTIONS'); ?></th></tr></thead>
                     <tbody>
                     <?php foreach ($products as $product) : ?>
                         <tr>
@@ -90,7 +90,7 @@ $label = static function (string $key): string {
                             <td data-label="<?php echo $label('COM_XDECAROCORE_STATUS'); ?>"><span class="xdecaro-badge <?php echo $statusClass($product['status']); ?>"><?php echo $statusLabel($product['status']); ?></span></td>
                             <td data-label="<?php echo $label('COM_XDECAROCORE_INSTALLED_VERSION'); ?>"><?php echo $product['installed_version'] !== '' ? htmlspecialchars($product['installed_version'], ENT_QUOTES, 'UTF-8') : '—'; ?></td>
                             <td data-label="<?php echo $label('COM_XDECAROCORE_AVAILABLE_VERSION'); ?>"><?php echo $product['available_version'] !== '' ? htmlspecialchars($product['available_version'], ENT_QUOTES, 'UTF-8') : '—'; ?></td>
-                            <td data-label="<?php echo $label('COM_XDECAROCORE_ACTIONS'); ?>"><?php if ($product['open_url'] !== '') : ?><a class="xdecaro-button" href="<?php echo htmlspecialchars($product['open_url'], ENT_QUOTES, 'UTF-8'); ?>"><?php echo Text::_('COM_XDECAROCORE_OPEN'); ?></a><?php else : ?>—<?php endif; ?></td>
+                            <td class="xdecaro-suite__action-cell" data-label="<?php echo $label('COM_XDECAROCORE_ACTIONS'); ?>"><?php if ($product['open_url'] !== '') : ?><a class="xdecaro-button" href="<?php echo htmlspecialchars($product['open_url'], ENT_QUOTES, 'UTF-8'); ?>"><?php echo Text::_('COM_XDECAROCORE_OPEN'); ?></a><?php else : ?>—<?php endif; ?></td>
                         </tr>
                     <?php endforeach; ?>
                     </tbody>
