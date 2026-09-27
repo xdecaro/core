@@ -70,7 +70,7 @@ $installationCoherent = $coreProduct !== null && $coreProduct['installed'] && !$
             <div class="xdecaro-card__body">
                 <dl class="xdecaro-suite__definition-list">
                     <div><dt><?php echo Text::_('COM_XDECAROCORE_CORE_VERSION'); ?></dt><dd><span class="xdecaro-badge xdecaro-badge--success"><?php echo htmlspecialchars($this->coreVersion, ENT_QUOTES, 'UTF-8'); ?></span></dd></div>
-                    <div><dt><?php echo Text::_('COM_XDECAROCORE_PACKAGE'); ?></dt><dd><code>pkg_xdecarocore</code></dd></div>
+                    <div><dt><?php echo Text::_('COM_XDECAROCORE_PACKAGE'); ?></dt><dd><code>pkg_core</code></dd></div>
                     <div><dt><?php echo Text::_('COM_XDECAROCORE_COMPONENT'); ?></dt><dd><code>com_xdecarocore</code></dd></div>
                     <div><dt><?php echo Text::_('COM_XDECAROCORE_CHANNEL'); ?></dt><dd><span class="xdecaro-badge xdecaro-badge--success"><?php echo Text::_('COM_XDECAROCORE_CHANNEL_STABLE'); ?></span></dd></div>
                     <div><dt><?php echo Text::_('COM_XDECAROCORE_DEVELOPER'); ?></dt><dd>Luca De Caro</dd></div>
