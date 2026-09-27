@@ -16,11 +16,12 @@ $requiredSelectors = [
     '.xdecaro-suite__metric.is-warning',
     '.xdecaro-suite__metric.is-danger',
     '.xdecaro-suite__metric.is-neutral',
+    '.xdecaro-suite__metric.is-selected',
 ];
 
 foreach ($requiredSelectors as $selector) {
     if (!str_contains($componentsCss, $selector)) {
-        throw new RuntimeException('Missing Core 2.2.1 shared UI selector: ' . $selector);
+        throw new RuntimeException('Missing Core 2.2 shared UI selector: ' . $selector);
     }
 }
 
@@ -31,13 +32,13 @@ $requiredFragments = [
     'var(--xdecaro-color-warning)',
     'var(--xdecaro-color-danger)',
     'var(--xdecaro-color-muted)',
-    'font-size: clamp(1.9rem',
-    'font-size: clamp(1rem',
+    'font-size: clamp(1.65rem, 2.4vw, 2.125rem)',
+    'font-size: 0.9375rem',
 ];
 
 foreach ($requiredFragments as $fragment) {
     if (!str_contains($componentsCss, $fragment)) {
-        throw new RuntimeException('Missing Core 2.2.1 shared UI fragment: ' . $fragment);
+        throw new RuntimeException('Missing Core 2.2 shared UI fragment: ' . $fragment);
     }
 }
 
@@ -45,4 +46,4 @@ if (preg_match('/\.xdecaro-suite\s+\.xdecaro-suite__metric\.is-(primary|success|
     throw new RuntimeException('Metric semantic variants must use a border accent without painting the whole card background.');
 }
 
-echo "Core 2.2.1 page header and metric variant contract passed.\n";
+echo "Core 2.2 compact page header and metric variant contract passed.\n";
