@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Core 2.2 Admin UI Contract Fixture</title>
+    <link rel="stylesheet" href="../../src/plg_system_xdecarocore/media/css/core.css">
+    <link rel="stylesheet" href="../../src/plg_system_xdecarocore/media/css/components.css">
+    <link rel="stylesheet" href="../../src/plg_system_xdecarocore/media/css/admin.css">
+</head>
+<body>
+<div class="xdecaro-scope xdecaro-suite" data-contract-width="320" data-contract-widths="320 393 430 768 1024">
+    <header class="xdecaro-suite__hero">
+        <div>
+            <span class="xdecaro-suite__eyebrow">Area segreteria</span>
+            <h2>Shared administrator UI</h2>
+            <p>Responsive fixture for Core consumers.</p>
+        </div>
+        <span class="xdecaro-badge">2.2.0</span>
+    </header>
+
+    <div hidden data-contract-width="393"></div>
+    <div hidden data-contract-width="430"></div>
+    <div hidden data-contract-width="768"></div>
+    <div hidden data-contract-width="1024"></div>
+
+    <section class="xdecaro-suite__metrics">
+        <article class="xdecaro-card xdecaro-suite__metric"><strong>12</strong><span>Totale</span></article>
+        <article class="xdecaro-card xdecaro-suite__metric"><strong>9</strong><span>Pubblicati</span></article>
+        <article class="xdecaro-card xdecaro-suite__metric"><strong>2</strong><span>Sospesi</span></article>
+        <article class="xdecaro-card xdecaro-suite__metric"><strong>1</strong><span>Cestino</span></article>
+    </section>
+
+    <section class="xdecaro-suite__metrics xdecaro-suite__metrics--fill-last">
+        <article class="xdecaro-card xdecaro-suite__metric"><strong>1</strong><span>A</span></article>
+        <article class="xdecaro-card xdecaro-suite__metric"><strong>2</strong><span>B</span></article>
+        <article class="xdecaro-card xdecaro-suite__metric"><strong>3</strong><span>C</span></article>
+        <article class="xdecaro-card xdecaro-suite__metric"><strong>4</strong><span>D</span></article>
+        <article class="xdecaro-card xdecaro-suite__metric"><strong>5</strong><span>E</span></article>
+    </section>
+
+    <section class="xdecaro-card xdecaro-card__body xdecaro-suite__section">
+        <div class="xdecaro-suite__long-value">people-backup-manuale-2026-09-27_00-44-53-v1.7.32-2058-persone-4f15960f-5085-46c7-9986-8c1ef2a80d01.zip</div>
+    </section>
+
+    <form class="xdecaro-form">
+        <div class="control-group">
+            <div class="control-label"><label for="country">Country</label></div>
+            <div class="controls"><select id="country"><option>Italy</option></select></div>
+        </div>
+        <div class="control-group">
+            <div class="control-label"><label for="date">Date</label></div>
+            <div class="controls"><input id="date" type="date"></div>
+        </div>
+    </form>
+
+    <div class="xdecaro-filterbar">
+        <div class="xdecaro-filterbar__search"><input class="xdecaro-input" type="search" placeholder="Search"></div>
+        <div class="xdecaro-filterbar__filter"><select class="xdecaro-select"><option>Published</option></select></div>
+        <div class="xdecaro-filterbar__actions"><button class="xdecaro-button">Search</button><button class="xdecaro-button">Reset</button></div>
+    </div>
+
+    <div class="xdecaro-accordion">
+        <div class="xdecaro-accordion__item">
+            <button class="xdecaro-accordion__button" type="button" aria-expanded="true" aria-controls="fixture-panel">Identity</button>
+            <div class="xdecaro-accordion__body" id="fixture-panel">Accordion content</div>
+        </div>
+    </div>
+
+    <div class="xdecaro-suite__responsive-wrap xdecaro-suite__responsive-wrap--stack">
+        <table class="xdecaro-suite__responsive-table">
+            <thead><tr><th>Name</th><th>Status</th></tr></thead>
+            <tbody><tr><td data-label="Name">Example</td><td data-label="Status">Published</td></tr></tbody>
+        </table>
+    </div>
+
+    <div class="xdecaro-suite__responsive-wrap">
+        <table class="xdecaro-suite__responsive-table">
+            <thead><tr><th>Technical value</th><th>Value</th></tr></thead>
+            <tbody><tr><td>Long table stays scrollable inside wrapper</td><td>123</td></tr></tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>
