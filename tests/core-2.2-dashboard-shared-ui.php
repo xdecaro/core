@@ -35,13 +35,26 @@ if (isset($styles['com_xdecarocore.responsive'])) {
     $fail('Legacy component responsive asset must be retired after public UI migration.');
 }
 
-foreach (['.xdecaro-suite__products-table', '.xdecaro-suite__extensions-table', '.xdecaro-suite__updates-table'] as $privateSelector) {
+foreach ([
+    '.xdecaro-suite__products-table',
+    '.xdecaro-suite__filter-button',
+    '.xdecaro-suite__expansion-panel',
+    '.xdecaro-suite__extension-element-mobile',
+    '.xdecaro-suite__updates-table',
+] as $privateSelector) {
     if (!str_contains($privateCss, $privateSelector)) {
         $fail("Core-specific selector {$privateSelector} must remain private.");
     }
 }
 
-foreach (['.xdecaro-form', '.xdecaro-filterbar', '.xdecaro-accordion'] as $publicSelector) {
+foreach ([
+    '.xdecaro-form',
+    '.xdecaro-filterbar',
+    '.xdecaro-accordion',
+    '.xdecaro-suite__metrics {',
+    '.xdecaro-suite__info-grid {',
+    '.xdecaro-suite__diagnostic-list {',
+] as $publicSelector) {
     if (str_contains($privateCss, $publicSelector)) {
         $fail("Shared selector {$publicSelector} must not be reimplemented in Core component CSS.");
     }
