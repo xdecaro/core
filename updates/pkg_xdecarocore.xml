@@ -13,7 +13,7 @@
     <tags>
       <tag>stable</tag>
     </tags>
-    <sha256>e24f090eabfc495699166064d907736541b279d76b09af39595a43bc41cbade4</sha256>
+    <sha256>373c53eaf0fdbee27546d75d38dc2c4174cfbe14b1e0f3b944507e9f40f6b899</sha256>
     <maintainer>Luca De Caro</maintainer>
     <maintainerurl>https://github.com/xdecaro/core</maintainerurl>
     <changelogurl>https://raw.githubusercontent.com/xdecaro/core/main/updates/changelog.xml</changelogurl>
