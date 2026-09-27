@@ -15,6 +15,10 @@
     grid-template-columns: repeat(5, minmax(0, 1fr));
 }
 
+.xdecaro-suite__dashboard-metrics.xdecaro-suite__metrics--fill-last > :last-child {
+    grid-column: auto;
+}
+
 .xdecaro-suite__products-table > tbody > .xdecaro-suite__product-row > td,
 .xdecaro-suite__extensions-table > tbody > tr > td,
 .xdecaro-suite__updates-table > tbody > tr > td,
