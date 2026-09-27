@@ -1,0 +1,22 @@
+name: Core 2.2 Admin UI Contract
+
+on:
+  pull_request:
+  push:
+    branches:
+      - core-2.2.0-shared-admin-ui
+
+permissions:
+  contents: read
+
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+      - name: Shared admin UI contract
+        run: php tests/core-2.2-admin-ui-contract.php
