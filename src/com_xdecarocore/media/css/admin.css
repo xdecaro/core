@@ -22,6 +22,7 @@
 .xdecaro-suite__products-table > tbody > .xdecaro-suite__product-row > td,
 .xdecaro-suite__extensions-table > tbody > tr > td,
 .xdecaro-suite__updates-table > tbody > tr > td,
+.xdecaro-suite__update-sites-table > tbody > tr > td,
 .xdecaro-suite__dashboard-products-table > tbody > tr > td {
     vertical-align: middle;
 }
@@ -30,6 +31,15 @@
 .xdecaro-suite__extension-primary,
 .xdecaro-suite__update-status-cell {
     min-width: 0;
+}
+
+.xdecaro-suite__inline-action-form {
+    width: 100%;
+    margin: 0;
+}
+
+.xdecaro-suite__update-sites-table .xdecaro-suite__muted {
+    overflow-wrap: anywhere;
 }
 
 .xdecaro-suite__filter-button {
@@ -214,13 +224,15 @@
         grid-template-columns: 1fr;
     }
 
-    .xdecaro-suite__dashboard-products-table .xdecaro-suite__action-cell {
+    .xdecaro-suite__dashboard-products-table .xdecaro-suite__action-cell,
+    .xdecaro-suite__updates-table .xdecaro-suite__action-cell {
         width: auto;
         text-align: start;
         white-space: normal;
     }
 
-    .xdecaro-suite__dashboard-products-table .xdecaro-suite__action-cell .xdecaro-button {
+    .xdecaro-suite__dashboard-products-table .xdecaro-suite__action-cell .xdecaro-button,
+    .xdecaro-suite__updates-table .xdecaro-suite__action-cell .xdecaro-button {
         display: inline-flex;
         width: 100%;
         min-height: 2.75rem;
