@@ -20,3 +20,5 @@ jobs:
           coverage: none
       - name: Shared admin UI contract
         run: php tests/core-2.2-admin-ui-contract.php
+      - name: Dashboard shared UI contract
+        run: php tests/core-2.2-dashboard-shared-ui.php
