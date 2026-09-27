@@ -9,17 +9,57 @@
     --xdecaro-color-muted: var(--secondary-color, #667085);
     --xdecaro-color-surface: var(--body-bg, #ffffff);
     --xdecaro-color-surface-subtle: #f6f8fb;
-    --xdecaro-color-border: var(--border-color, #d9dee7);
-    --xdecaro-color-primary: var(--template-link-color, #315f9f);
-    --xdecaro-color-primary-hover: #244f89;
+    --xdecaro-color-border: var(--border-color, #d7dde7);
+
+    /* Primary action / selected state. */
+    --xdecaro-color-primary: #2166d9;
+    --xdecaro-color-primary-hover: #1957bd;
     --xdecaro-color-primary-contrast: #ffffff;
-    --xdecaro-color-success: #287a52;
-    --xdecaro-color-success-soft: #e9f6ef;
-    --xdecaro-color-warning: #986000;
-    --xdecaro-color-warning-soft: #fff4d6;
-    --xdecaro-color-danger: #b42318;
-    --xdecaro-color-danger-soft: #fff0ef;
-    --xdecaro-color-focus: rgba(49, 95, 159, 0.28);
+    --xdecaro-color-primary-soft: #e7edff;
+    --xdecaro-color-primary-border: #b7c7f3;
+    --xdecaro-color-primary-text: #2e54a2;
+
+    /* Success / published / active. */
+    --xdecaro-color-success: #167a55;
+    --xdecaro-color-success-soft: #e7f6ef;
+    --xdecaro-color-success-border: #b9dfce;
+
+    /* Warning / suspended. */
+    --xdecaro-color-warning: #9a6100;
+    --xdecaro-color-warning-soft: #fff3d8;
+    --xdecaro-color-warning-border: #e5c98f;
+
+    /* Danger / error / trashed. */
+    --xdecaro-color-danger: #bd2c22;
+    --xdecaro-color-danger-soft: #fde8e6;
+    --xdecaro-color-danger-border: #efb9b4;
+
+    /* Informational state, intentionally lighter than primary blue. */
+    --xdecaro-color-info: #237da7;
+    --xdecaro-color-info-soft: #edf8ff;
+    --xdecaro-color-info-border: #c4e6f7;
+
+    /* Neutral / inactive / unavailable. */
+    --xdecaro-color-neutral: #586174;
+    --xdecaro-color-neutral-soft: #eef1f5;
+    --xdecaro-color-neutral-border: #d4d9e1;
+
+    /* Attention / review / duplicates. */
+    --xdecaro-color-attention: #8c5900;
+    --xdecaro-color-attention-soft: #fff0c7;
+    --xdecaro-color-attention-border: #e6c87b;
+
+    /* Development / beta / preview. */
+    --xdecaro-color-development: #7550a6;
+    --xdecaro-color-development-soft: #f1eafb;
+    --xdecaro-color-development-border: #d5c2ec;
+
+    /* Ordinary operational actions. */
+    --xdecaro-color-action: #3f4f63;
+    --xdecaro-color-action-soft: #eef2f7;
+    --xdecaro-color-action-border: #cfd7e3;
+
+    --xdecaro-color-focus: rgba(33, 102, 217, 0.28);
     --xdecaro-color-backdrop: rgba(15, 23, 42, 0.56);
 
     --xdecaro-radius-sm: 0.375rem;
@@ -72,15 +112,46 @@ body[data-color-scheme="dark"] .xdecaro-scope,
     --xdecaro-color-surface: #202733;
     --xdecaro-color-surface-subtle: #283140;
     --xdecaro-color-border: #3b4656;
+
     --xdecaro-color-primary: #8ab4f8;
     --xdecaro-color-primary-hover: #a7c8fb;
     --xdecaro-color-primary-contrast: #172033;
+    --xdecaro-color-primary-soft: #273752;
+    --xdecaro-color-primary-border: #48658d;
+    --xdecaro-color-primary-text: #b8d0fb;
+
     --xdecaro-color-success: #76d3a7;
     --xdecaro-color-success-soft: #17392a;
+    --xdecaro-color-success-border: #2f6a50;
+
     --xdecaro-color-warning: #f5c46b;
     --xdecaro-color-warning-soft: #443317;
+    --xdecaro-color-warning-border: #765b28;
+
     --xdecaro-color-danger: #ff9b93;
     --xdecaro-color-danger-soft: #482421;
+    --xdecaro-color-danger-border: #7d403a;
+
+    --xdecaro-color-info: #8ed7f4;
+    --xdecaro-color-info-soft: #183745;
+    --xdecaro-color-info-border: #326477;
+
+    --xdecaro-color-neutral: #c4ccd8;
+    --xdecaro-color-neutral-soft: #303846;
+    --xdecaro-color-neutral-border: #505b6c;
+
+    --xdecaro-color-attention: #f0c86e;
+    --xdecaro-color-attention-soft: #473817;
+    --xdecaro-color-attention-border: #77612c;
+
+    --xdecaro-color-development: #d4b6f0;
+    --xdecaro-color-development-soft: #38294a;
+    --xdecaro-color-development-border: #65507d;
+
+    --xdecaro-color-action: #d1d8e2;
+    --xdecaro-color-action-soft: #303846;
+    --xdecaro-color-action-border: #566274;
+
     --xdecaro-color-focus: rgba(138, 180, 248, 0.32);
     --xdecaro-color-backdrop: rgba(0, 0, 0, 0.68);
     --xdecaro-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.24);
@@ -92,16 +163,40 @@ body[data-color-scheme="dark"] .xdecaro-scope,
     --xdecaro-color-muted: #667085;
     --xdecaro-color-surface: #ffffff;
     --xdecaro-color-surface-subtle: #f6f8fb;
-    --xdecaro-color-border: #d9dee7;
-    --xdecaro-color-primary: #315f9f;
-    --xdecaro-color-primary-hover: #244f89;
+    --xdecaro-color-border: #d7dde7;
+
+    --xdecaro-color-primary: #2166d9;
+    --xdecaro-color-primary-hover: #1957bd;
     --xdecaro-color-primary-contrast: #ffffff;
-    --xdecaro-color-success: #287a52;
-    --xdecaro-color-success-soft: #e9f6ef;
-    --xdecaro-color-warning: #986000;
-    --xdecaro-color-warning-soft: #fff4d6;
-    --xdecaro-color-danger: #b42318;
-    --xdecaro-color-danger-soft: #fff0ef;
-    --xdecaro-color-focus: rgba(49, 95, 159, 0.28);
+    --xdecaro-color-primary-soft: #e7edff;
+    --xdecaro-color-primary-border: #b7c7f3;
+    --xdecaro-color-primary-text: #2e54a2;
+
+    --xdecaro-color-success: #167a55;
+    --xdecaro-color-success-soft: #e7f6ef;
+    --xdecaro-color-success-border: #b9dfce;
+    --xdecaro-color-warning: #9a6100;
+    --xdecaro-color-warning-soft: #fff3d8;
+    --xdecaro-color-warning-border: #e5c98f;
+    --xdecaro-color-danger: #bd2c22;
+    --xdecaro-color-danger-soft: #fde8e6;
+    --xdecaro-color-danger-border: #efb9b4;
+    --xdecaro-color-info: #237da7;
+    --xdecaro-color-info-soft: #edf8ff;
+    --xdecaro-color-info-border: #c4e6f7;
+    --xdecaro-color-neutral: #586174;
+    --xdecaro-color-neutral-soft: #eef1f5;
+    --xdecaro-color-neutral-border: #d4d9e1;
+    --xdecaro-color-attention: #8c5900;
+    --xdecaro-color-attention-soft: #fff0c7;
+    --xdecaro-color-attention-border: #e6c87b;
+    --xdecaro-color-development: #7550a6;
+    --xdecaro-color-development-soft: #f1eafb;
+    --xdecaro-color-development-border: #d5c2ec;
+    --xdecaro-color-action: #3f4f63;
+    --xdecaro-color-action-soft: #eef2f7;
+    --xdecaro-color-action-border: #cfd7e3;
+
+    --xdecaro-color-focus: rgba(33, 102, 217, 0.28);
     --xdecaro-color-backdrop: rgba(15, 23, 42, 0.56);
 }
