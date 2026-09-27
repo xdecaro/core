@@ -6,11 +6,11 @@ VERSION="$(tr -d '[:space:]' < "$ROOT/VERSION")"
 LIB_SRC="$ROOT/src/lib_xdecarocore"
 COMPONENT_SRC="$ROOT/src/com_xdecarocore"
 PLUGIN_SRC="$ROOT/src/plg_system_xdecarocore"
-PACKAGE_SRC="$ROOT/package/pkg_xdecarocore"
+PACKAGE_SRC="$ROOT/package/pkg_core"
 PACKAGE_SCRIPT="$PACKAGE_SRC/script.php"
 ASSET_REGISTRY="$PLUGIN_SRC/media/joomla.asset.json"
 COMPONENT_ASSET_REGISTRY="$COMPONENT_SRC/media/joomla.asset.json"
-UPDATE_FEED="$ROOT/updates/pkg_xdecarocore.xml"
+UPDATE_FEED="$ROOT/updates/pkg_core.xml"
 CHANGELOG_XML="$ROOT/updates/changelog.xml"
 DIST="$ROOT/dist"
 
@@ -84,7 +84,7 @@ foreach ($expectedChildren as $name => $meta) {
     }
 }
 $server = trim((string) $package->updateservers->server);
-if ($server !== "https://raw.githubusercontent.com/xdecaro/core/main/updates/pkg_xdecarocore.xml") {
+if ($server !== "https://raw.githubusercontent.com/xdecaro/core/main/updates/pkg_core.xml") {
     fwrite(STDERR, "Package update server is missing or incorrect.\n"); exit(1);
 }
 $assets = json_decode(file_get_contents($argv[6]), true);
@@ -130,12 +130,12 @@ if ($feed === false || count($feed->update) < 1) {
 }
 foreach ($feed->update as $update) {
     if (trim((string) $update->version) !== $version
-        || trim((string) $update->element) !== "pkg_xdecarocore"
+        || trim((string) $update->element) !== "pkg_core"
         || trim((string) $update->type) !== "package"
         || trim((string) $update->client) !== "site") {
         fwrite(STDERR, "Core update feed metadata is inconsistent.\n"); exit(1);
     }
-    $expectedUrl = "https://github.com/xdecaro/core/releases/download/v{$version}/pkg_xdecarocore_{$version}.zip";
+    $expectedUrl = "https://github.com/xdecaro/core/releases/download/v{$version}/pkg_core_{$version}.zip";
     if (trim((string) $update->downloads->downloadurl) !== $expectedUrl) {
         fwrite(STDERR, "Core update feed download URL is inconsistent.\n"); exit(1);
     }
@@ -150,12 +150,13 @@ foreach ($feed->update as $update) {
 if (simplexml_load_file($argv[9]) === false) {
     fwrite(STDERR, "Invalid Core changelog XML.\n"); exit(1);
 }
-' "$ROOT/VERSION" "$LIB_SRC/xdecarocore.xml" "$COMPONENT_SRC/xdecarocore.xml" "$PLUGIN_SRC/xdecarocore.xml" "$PACKAGE_SRC/pkg_xdecarocore.xml" "$ASSET_REGISTRY" "$COMPONENT_ASSET_REGISTRY" "$UPDATE_FEED" "$CHANGELOG_XML" "$PACKAGE_SCRIPT"
+' "$ROOT/VERSION" "$LIB_SRC/xdecarocore.xml" "$COMPONENT_SRC/xdecarocore.xml" "$PLUGIN_SRC/xdecarocore.xml" "$PACKAGE_SRC/pkg_core.xml" "$ASSET_REGISTRY" "$COMPONENT_ASSET_REGISTRY" "$UPDATE_FEED" "$CHANGELOG_XML" "$PACKAGE_SCRIPT"
 
 php "$ROOT/tests/smoke.php"
 php "$ROOT/tests/assets.php"
 php "$ROOT/tests/integration.php"
 php "$ROOT/tests/dashboard.php"
+php "$ROOT/tests/package-naming-migration.php"
 python3 "$ROOT/build/build.py"
 
 python3 - "$DIST" "$VERSION" <<'PY'
@@ -168,7 +169,7 @@ version = sys.argv[2]
 library = dist / f"lib_xdecarocore_{version}.zip"
 component = dist / f"com_xdecarocore_{version}.zip"
 plugin = dist / f"plg_system_xdecarocore_{version}.zip"
-package = dist / f"pkg_xdecarocore_{version}.zip"
+package = dist / f"pkg_core_{version}.zip"
 artifacts = [library, component, plugin, package]
 for path in artifacts:
     if not path.is_file():
@@ -235,7 +236,7 @@ with zipfile.ZipFile(plugin) as archive:
 
 with zipfile.ZipFile(package) as archive:
     expected = {
-        "pkg_xdecarocore.xml",
+        "pkg_core.xml",
         "script.php",
         "lib_xdecarocore.zip",
         "com_xdecarocore.zip",
@@ -247,5 +248,5 @@ with zipfile.ZipFile(package) as archive:
         raise SystemExit("Retired Core legacy library must not be packaged")
 PY
 
-printf 'Built and validated Core by xdecaro %s\n' "$VERSION"
+printf 'Built and validated Core %s\n' "$VERSION"
 cat "$DIST/SHA256SUMS.txt"
