@@ -88,6 +88,20 @@ final class HtmlView extends BaseHtmlView
                 Text::_('COM_XDECAROCORE_CHECK_UPDATES'),
                 false
             );
+
+            ToolbarHelper::custom(
+                'update.rebuildSites',
+                'refresh',
+                'refresh',
+                Text::_('COM_XDECAROCORE_REBUILD_UPDATE_SITES'),
+                false
+            );
+
+            ToolbarHelper::link(
+                Route::_('index.php?option=com_installer&view=updatesites', false),
+                Text::_('COM_XDECAROCORE_MANAGE_UPDATE_SITES'),
+                'cog'
+            );
         }
 
         if ($layout !== 'guide') {
