@@ -12,6 +12,10 @@ $componentRegistryPath = $root . '/src/com_xdecarocore/media/joomla.asset.json';
 $componentCssPath = $root . '/src/com_xdecarocore/media/css/admin.css';
 $componentResponsivePath = $root . '/src/com_xdecarocore/media/css/responsive.css';
 $dashboardTemplatePath = $root . '/src/com_xdecarocore/admin/tmpl/dashboard/default.php';
+$productsTemplatePath = $root . '/src/com_xdecarocore/admin/tmpl/dashboard/products.php';
+$extensionsTemplatePath = $root . '/src/com_xdecarocore/admin/tmpl/dashboard/extensions.php';
+$updatesTemplatePath = $root . '/src/com_xdecarocore/admin/tmpl/dashboard/updates.php';
+$informationTemplatePath = $root . '/src/com_xdecarocore/admin/tmpl/dashboard/information.php';
 
 $registry = json_decode((string) file_get_contents($registryPath), true, 512, JSON_THROW_ON_ERROR);
 $assets = $registry['assets'] ?? [];
@@ -203,6 +207,29 @@ foreach ([
     if (!str_contains($componentCss, $fragment)) {
         throw new RuntimeException('Core dashboard responsive card CSS missing fragment: ' . $fragment);
     }
+}
+
+$productsTemplate = (string) file_get_contents($productsTemplatePath);
+if (substr_count($productsTemplate, 'xdecaro-suite__responsive-wrap--stack') < 2) {
+    throw new RuntimeException('Components view must stack both the product table and nested child-extension table on narrow layouts.');
+}
+
+foreach ([
+    'All Extensions' => $extensionsTemplatePath,
+    'Updates' => $updatesTemplatePath,
+] as $viewLabel => $templatePath) {
+    $template = (string) file_get_contents($templatePath);
+    if (!str_contains($template, 'xdecaro-suite__responsive-wrap--stack')) {
+        throw new RuntimeException($viewLabel . ' view must opt into stacked mobile cards.');
+    }
+}
+
+$informationTemplate = (string) file_get_contents($informationTemplatePath);
+if (!str_contains($informationTemplate, '<code>pkg_core</code>')) {
+    throw new RuntimeException('Information must display the canonical Core package identity pkg_core.');
+}
+if (str_contains($informationTemplate, '<code>pkg_xdecarocore</code>')) {
+    throw new RuntimeException('Information must not display the retired pkg_xdecarocore identity.');
 }
 
 echo "Core 2.2 shared admin UI contract passed.\n";
