@@ -1,4 +1,4 @@
-/* Core by xdecaro 2.2.1 - opt-in shared UI primitives. */
+/* Core by xdecaro 2.2.2 - opt-in shared UI primitives. */
 
 .xdecaro-card {
     background: var(--xdecaro-color-surface);
@@ -34,14 +34,14 @@
 /* Shared page hierarchy used by administrator list/dashboard views. */
 .xdecaro-suite .xdecaro-suite__page-header {
     display: grid;
-    gap: var(--xdecaro-space-2, 0.5rem);
+    gap: 0.35rem;
 }
 
 .xdecaro-suite .xdecaro-suite__eyebrow {
     margin: 0;
     color: var(--xdecaro-color-primary);
     font-size: 0.8rem;
-    font-weight: 750;
+    font-weight: 800;
     letter-spacing: 0.1em;
     line-height: 1.2;
     text-transform: uppercase;
@@ -50,9 +50,10 @@
 .xdecaro-suite .xdecaro-suite__title {
     margin: 0;
     color: var(--xdecaro-color-text);
-    font-size: clamp(1.9rem, 3vw, 2.75rem);
+    font-size: clamp(1.65rem, 2.4vw, 2.125rem);
     font-weight: 750;
-    line-height: 1.08;
+    line-height: 1.12;
+    letter-spacing: -0.02em;
     overflow-wrap: anywhere;
 }
 
@@ -60,8 +61,8 @@
     max-width: 70rem;
     margin: 0;
     color: var(--xdecaro-color-muted);
-    font-size: clamp(1rem, 1.35vw, 1.2rem);
-    line-height: 1.45;
+    font-size: 0.9375rem;
+    line-height: 1.55;
     overflow-wrap: anywhere;
 }
 
@@ -92,6 +93,11 @@
 
 .xdecaro-suite .xdecaro-suite__metric.is-neutral {
     border-inline-start-color: var(--xdecaro-color-muted);
+}
+
+.xdecaro-suite .xdecaro-suite__metric.is-selected {
+    border-color: color-mix(in srgb, var(--xdecaro-color-primary) 58%, var(--xdecaro-color-border));
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--xdecaro-color-primary) 36%, transparent), var(--xdecaro-shadow-sm);
 }
 
 .xdecaro-toolbar {
@@ -165,16 +171,17 @@
 
 .xdecaro-badge {
     display: inline-flex;
-    min-height: 1.75rem;
-    padding: 0.25rem 0.65rem;
+    min-height: 1.625rem;
+    padding: 0.25rem 0.6rem;
     align-items: center;
     gap: var(--xdecaro-space-1);
     border-radius: 999px;
     background: var(--xdecaro-color-surface-subtle);
     color: var(--xdecaro-color-muted);
-    font-size: 0.875rem;
-    font-weight: 650;
+    font-size: 0.75rem;
+    font-weight: 750;
     line-height: 1.15;
+    white-space: nowrap;
 }
 
 .xdecaro-badge--success {
@@ -256,7 +263,9 @@
 
 .xdecaro-table th {
     background: var(--xdecaro-color-surface-subtle);
-    font-weight: 650;
+    color: var(--xdecaro-color-muted);
+    font-size: 0.75rem;
+    font-weight: 750;
 }
 
 .xdecaro-table tr:last-child td {
@@ -345,11 +354,11 @@
     }
 
     .xdecaro-suite .xdecaro-suite__title {
-        font-size: clamp(1.65rem, 8vw, 2.1rem);
+        font-size: clamp(1.6rem, 8vw, 2rem);
     }
 
     .xdecaro-suite .xdecaro-suite__description {
-        font-size: 1rem;
+        font-size: 0.9375rem;
     }
 
     .xdecaro-toolbar {
