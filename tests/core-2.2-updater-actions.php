@@ -39,14 +39,15 @@ foreach ([
 if (!str_contains($controller, 'private function loadInstallerLanguage(): void')) {
     throw new RuntimeException('Updater controller must centralize com_installer language loading.');
 }
-if (!str_contains($controller, "$this->app->getLanguage()->load('com_installer', JPATH_ADMINISTRATOR);")) {
+$languageLoad = "\$this->app->getLanguage()->load('com_installer', JPATH_ADMINISTRATOR);";
+if (!str_contains($controller, $languageLoad)) {
     throw new RuntimeException('Updater language helper must load the com_installer administrator domain.');
 }
 
 $methodRanges = [
     'find' => ['public function find(): void', 'public function rebuildSites(): void'],
     'rebuildSites' => ['public function rebuildSites(): void', 'public function update(): void'],
-    'update' => ['public function update(): void', 'private function refreshUpdates(): void'],
+    'update' => ['public function update(): void', 'private function loadInstallerLanguage(): void'],
 ];
 
 foreach ($methodRanges as $method => [$startMarker, $endMarker]) {
