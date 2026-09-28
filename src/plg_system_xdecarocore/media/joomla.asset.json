@@ -12,24 +12,24 @@
       "version": "2.2.6"
     },
     {
-      "name": "xdecaro.components",
+      "name": "xdecaro.badges",
       "type": "style",
-      "uri": "plg_system_xdecarocore/components.css",
+      "uri": "plg_system_xdecarocore/badges.css",
       "dependencies": ["xdecaro.core"],
       "version": "2.2.6"
     },
     {
-      "name": "xdecaro.badges",
+      "name": "xdecaro.components",
       "type": "style",
-      "uri": "plg_system_xdecarocore/badges.css",
-      "dependencies": ["xdecaro.components"],
+      "uri": "plg_system_xdecarocore/components.css",
+      "dependencies": ["xdecaro.badges"],
       "version": "2.2.6"
     },
     {
       "name": "xdecaro.admin",
       "type": "style",
       "uri": "plg_system_xdecarocore/admin.css",
-      "dependencies": ["xdecaro.badges"],
+      "dependencies": ["xdecaro.components"],
       "version": "2.2.6"
     }
   ]
