@@ -3,22 +3,22 @@
 declare(strict_types=1);
 
 $root = dirname(__DIR__);
-$expectedVersion = '2.2.7';
+$expectedVersion = '2.2.8';
 $expectedSeries = '2.2';
 $expectedJoomlaManifestTarget = '6.1.3';
 $expectedJoomlaUpdateTarget = '6\\.1\\.3';
 $expectedPhp = '8.3.0';
 
 if (trim((string) file_get_contents($root . '/VERSION')) !== $expectedVersion) {
-    throw new RuntimeException('VERSION must be 2.2.7.');
+    throw new RuntimeException('VERSION must be 2.2.8.');
 }
 if (trim((string) file_get_contents($root . '/STABILIZATION_SERIES')) !== $expectedSeries) {
     throw new RuntimeException('STABILIZATION_SERIES must be 2.2.');
 }
 
 $versionSource = (string) file_get_contents($root . '/src/lib_xdecarocore/src/Version.php');
-if (!str_contains($versionSource, "public const VERSION = '2.2.7';")) {
-    throw new RuntimeException('Version::VERSION must be 2.2.7.');
+if (!str_contains($versionSource, "public const VERSION = '2.2.8';")) {
+    throw new RuntimeException('Version::VERSION must be 2.2.8.');
 }
 
 $manifests = [
@@ -34,7 +34,7 @@ foreach ($manifests as $label => $path) {
         throw new RuntimeException('Invalid ' . $label . ' manifest.');
     }
     if (trim((string) $xml->version) !== $expectedVersion) {
-        throw new RuntimeException($label . ' manifest must be 2.2.7.');
+        throw new RuntimeException($label . ' manifest must be 2.2.8.');
     }
     if (trim((string) $xml->targetplatform['version']) !== $expectedJoomlaManifestTarget) {
         throw new RuntimeException($label . ' manifest must target Joomla 6.1.3 exactly.');
@@ -60,11 +60,11 @@ foreach ([
 ] as $assetPath) {
     $asset = json_decode((string) file_get_contents($assetPath), true, 512, JSON_THROW_ON_ERROR);
     if (($asset['version'] ?? '') !== $expectedVersion) {
-        throw new RuntimeException(basename(dirname($assetPath)) . ' asset registry must be 2.2.7.');
+        throw new RuntimeException(basename(dirname($assetPath)) . ' asset registry must be 2.2.8.');
     }
     foreach (($asset['assets'] ?? []) as $entry) {
         if (($entry['version'] ?? '') !== $expectedVersion) {
-            throw new RuntimeException('Every Core Web Asset entry must be 2.2.7.');
+            throw new RuntimeException('Every Core Web Asset entry must be 2.2.8.');
         }
     }
 }
@@ -78,11 +78,11 @@ if (trim((string) $canonical->element) !== 'pkg_core'
     || trim((string) $canonical->version) !== $expectedVersion
     || trim((string) $canonical->targetplatform['version']) !== $expectedJoomlaUpdateTarget
     || trim((string) $canonical->php_minimum) !== $expectedPhp) {
-    throw new RuntimeException('Canonical update feed must publish Core 2.2.7 for Joomla 6.1.3 / PHP 8.3+.');
+    throw new RuntimeException('Canonical update feed must publish Core 2.2.8 for Joomla 6.1.3 / PHP 8.3+.');
 }
 $download = trim((string) $canonical->downloads->downloadurl);
-if (!str_ends_with($download, '/v2.2.7/pkg_core_2.2.7.zip')) {
-    throw new RuntimeException('Canonical update feed download must point to pkg_core_2.2.7.zip.');
+if (!str_ends_with($download, '/v2.2.8/pkg_core_2.2.8.zip')) {
+    throw new RuntimeException('Canonical update feed download must point to pkg_core_2.2.8.zip.');
 }
 
 $legacyFeed = simplexml_load_file($root . '/updates/pkg_xdecarocore.xml');
@@ -111,6 +111,7 @@ foreach ([
     $root . '/src/plg_system_xdecarocore/media/css/core.css',
     $root . '/src/plg_system_xdecarocore/media/css/components.css',
     $root . '/src/plg_system_xdecarocore/media/css/admin.css',
+    $root . '/src/plg_system_xdecarocore/media/css/metrics.css',
     $root . '/src/com_xdecarocore/media/css/admin.css',
 ] as $cssPath) {
     $css = (string) file_get_contents($cssPath);
@@ -119,4 +120,4 @@ foreach ([
     }
 }
 
-echo "Core 2.2.7 release readiness contract passed.\n";
+echo "Core 2.2.8 release readiness contract passed.\n";
