@@ -11,6 +11,7 @@ namespace Joomla\CMS\WebAsset {
             $this->manager->registerFakeAsset('style', 'xdecaro.core');
             $this->manager->registerFakeAsset('style', 'xdecaro.components');
             $this->manager->registerFakeAsset('style', 'xdecaro.admin');
+            $this->manager->registerFakeAsset('style', 'xdecaro.badges');
         }
     }
 
@@ -52,6 +53,7 @@ namespace {
     if (!$manager->isUsed('style', \xdecaro\Core\Asset\AssetService::STYLE_COMPONENTS)) throw new \RuntimeException('Components style was not enabled.');
     if (!$service->useAdminUi($manager)) throw new \RuntimeException('Admin UI asset registration failed.');
     if (!$manager->isUsed('style', \xdecaro\Core\Asset\AssetService::STYLE_ADMIN)) throw new \RuntimeException('Admin UI style was not enabled.');
+    if (!$manager->isUsed('style', \xdecaro\Core\Asset\AssetService::STYLE_BADGES)) throw new \RuntimeException('Badge refinement style was not enabled.');
     if (count($manager->getRegistry()->loaded) !== 1) throw new \RuntimeException('Asset registry must not be loaded more than once per manager.');
 
     unlink($registryDir . '/joomla.asset.json');
