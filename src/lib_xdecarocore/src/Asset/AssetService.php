@@ -24,6 +24,7 @@ final class AssetService
     public const STYLE_FOUNDATION = 'xdecaro.core';
     public const STYLE_COMPONENTS = 'xdecaro.components';
     public const STYLE_ADMIN = 'xdecaro.admin';
+    public const STYLE_BADGES = 'xdecaro.badges';
 
     public function isAvailable(): bool
     {
@@ -74,7 +75,9 @@ final class AssetService
             return false;
         }
 
-        $webAssets->useStyle(self::STYLE_ADMIN);
+        // STYLE_BADGES depends on STYLE_ADMIN, which preserves the established
+        // foundation -> components -> admin chain and loads badge refinements last.
+        $webAssets->useStyle(self::STYLE_BADGES);
 
         return true;
     }
@@ -83,6 +86,7 @@ final class AssetService
     {
         return $webAssets->assetExists('style', self::STYLE_FOUNDATION)
             && $webAssets->assetExists('style', self::STYLE_COMPONENTS)
-            && $webAssets->assetExists('style', self::STYLE_ADMIN);
+            && $webAssets->assetExists('style', self::STYLE_ADMIN)
+            && $webAssets->assetExists('style', self::STYLE_BADGES);
     }
 }
