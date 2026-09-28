@@ -1,7 +1,7 @@
 {
   "$schema": "https://developer.joomla.org/schemas/json-schema/web_assets.json",
   "name": "plg_system_xdecarocore",
-  "version": "2.2.5",
+  "version": "2.2.10",
   "description": "Core by xdecaro shared, opt-in UI assets.",
   "license": "GPL-2.0-or-later",
   "assets": [
@@ -9,21 +9,49 @@
       "name": "xdecaro.core",
       "type": "style",
       "uri": "plg_system_xdecarocore/core.css",
-      "version": "2.2.5"
+      "version": "2.2.10"
     },
     {
       "name": "xdecaro.components",
       "type": "style",
       "uri": "plg_system_xdecarocore/components.css",
       "dependencies": ["xdecaro.core"],
-      "version": "2.2.5"
+      "version": "2.2.10"
     },
     {
       "name": "xdecaro.admin",
       "type": "style",
       "uri": "plg_system_xdecarocore/admin.css",
       "dependencies": ["xdecaro.components"],
-      "version": "2.2.5"
+      "version": "2.2.10"
+    },
+    {
+      "name": "xdecaro.metrics",
+      "type": "style",
+      "uri": "plg_system_xdecarocore/metrics.css",
+      "dependencies": ["xdecaro.admin"],
+      "version": "2.2.10"
+    },
+    {
+      "name": "xdecaro.list",
+      "type": "style",
+      "uri": "plg_system_xdecarocore/list.css",
+      "dependencies": ["xdecaro.metrics"],
+      "version": "2.2.10"
+    },
+    {
+      "name": "xdecaro.badges",
+      "type": "style",
+      "uri": "plg_system_xdecarocore/badges.css",
+      "dependencies": ["xdecaro.list"],
+      "version": "2.2.10"
+    },
+    {
+      "name": "xdecaro.filterbar",
+      "type": "script",
+      "uri": "plg_system_xdecarocore/filterbar.js",
+      "version": "2.2.10",
+      "attributes": {"defer": true}
     }
   ]
 }

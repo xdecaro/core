@@ -1,0 +1,159 @@
+/* Core by xdecaro 2.2.9 - shared list search, filters and striped rows. */
+
+.xdecaro-scope .xdecaro-filterbar--panel,
+.xdecaro-suite .xdecaro-filterbar--panel {
+    display: grid;
+    width: 100%;
+    gap: var(--xdecaro-space-3, .75rem);
+    padding: var(--xdecaro-space-3, .75rem);
+    border: 1px solid var(--xdecaro-color-border);
+    border-radius: var(--xdecaro-radius-lg, .875rem);
+    background: var(--xdecaro-color-surface);
+    box-shadow: var(--xdecaro-shadow-sm);
+}
+
+.xdecaro-scope .xdecaro-filterbar__primary,
+.xdecaro-suite .xdecaro-filterbar__primary {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto auto;
+    gap: var(--xdecaro-space-2, .5rem);
+    align-items: stretch;
+}
+
+.xdecaro-scope .xdecaro-filterbar__search-shell,
+.xdecaro-suite .xdecaro-filterbar__search-shell {
+    position: relative;
+    min-width: 0;
+}
+
+.xdecaro-scope .xdecaro-filterbar__search-shell > .icon-search,
+.xdecaro-suite .xdecaro-filterbar__search-shell > .icon-search {
+    position: absolute;
+    inset-inline-start: 1rem;
+    top: 50%;
+    z-index: 1;
+    margin: 0;
+    color: var(--xdecaro-color-muted);
+    font-size: 1rem;
+    pointer-events: none;
+    transform: translateY(-50%);
+}
+
+.xdecaro-scope .xdecaro-filterbar__search-shell input[type="search"],
+.xdecaro-suite .xdecaro-filterbar__search-shell input[type="search"] {
+    width: 100%;
+    min-width: 0;
+    min-height: 2.75rem;
+    padding-inline-start: 2.75rem;
+    border-color: var(--xdecaro-color-border);
+    border-radius: var(--xdecaro-radius-md, .625rem);
+    background: var(--xdecaro-color-surface);
+    color: var(--xdecaro-color-text);
+}
+
+.xdecaro-scope .xdecaro-filterbar__search-shell input[type="search"]::placeholder,
+.xdecaro-suite .xdecaro-filterbar__search-shell input[type="search"]::placeholder {
+    color: var(--xdecaro-color-muted);
+    opacity: .88;
+}
+
+.xdecaro-scope .xdecaro-filterbar__primary > .xdecaro-button,
+.xdecaro-suite .xdecaro-filterbar__primary > .xdecaro-button {
+    min-height: 2.75rem;
+    padding-inline: 1.1rem;
+    white-space: nowrap;
+}
+
+.xdecaro-scope .xdecaro-filterbar__toggle[aria-expanded="true"],
+.xdecaro-suite .xdecaro-filterbar__toggle[aria-expanded="true"] {
+    border-color: color-mix(in srgb, var(--xdecaro-color-primary) 55%, var(--xdecaro-color-border));
+    background: color-mix(in srgb, var(--xdecaro-color-primary) 8%, var(--xdecaro-color-surface));
+    color: var(--xdecaro-color-primary);
+}
+
+.xdecaro-scope .xdecaro-filterbar__advanced,
+.xdecaro-suite .xdecaro-filterbar__advanced {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--xdecaro-space-2, .5rem);
+    padding-top: var(--xdecaro-space-3, .75rem);
+    align-items: stretch;
+    border-top: 1px solid var(--xdecaro-color-border);
+}
+
+.xdecaro-scope .xdecaro-filterbar__advanced[hidden],
+.xdecaro-suite .xdecaro-filterbar__advanced[hidden] {
+    display: none;
+}
+
+.xdecaro-scope .xdecaro-filterbar__advanced-fields,
+.xdecaro-suite .xdecaro-filterbar__advanced-fields {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 11.5rem), 1fr));
+    gap: var(--xdecaro-space-2, .5rem);
+    min-width: 0;
+}
+
+.xdecaro-scope .xdecaro-filterbar__advanced-fields select,
+.xdecaro-suite .xdecaro-filterbar__advanced-fields select {
+    width: 100%;
+    min-width: 0;
+    min-height: 2.75rem;
+    border-color: var(--xdecaro-color-border);
+    border-radius: var(--xdecaro-radius-md, .625rem);
+    background-color: var(--xdecaro-color-surface);
+    color: var(--xdecaro-color-text);
+}
+
+.xdecaro-scope .xdecaro-filterbar__close,
+.xdecaro-suite .xdecaro-filterbar__close {
+    min-height: 2.75rem;
+    white-space: nowrap;
+}
+
+.xdecaro-scope .xdecaro-filterbar [data-xdecaro-filterbar-open][hidden],
+.xdecaro-suite .xdecaro-filterbar [data-xdecaro-filterbar-open][hidden] {
+    display: none;
+}
+
+.xdecaro-scope .xdecaro-suite__responsive-table--striped tbody tr:nth-child(even),
+.xdecaro-suite .xdecaro-suite__responsive-table--striped tbody tr:nth-child(even) {
+    background: color-mix(in srgb, var(--xdecaro-color-text) 2.6%, var(--xdecaro-color-surface));
+}
+
+.xdecaro-scope .xdecaro-suite__responsive-table--striped tbody tr:hover,
+.xdecaro-suite .xdecaro-suite__responsive-table--striped tbody tr:hover {
+    background: color-mix(in srgb, var(--xdecaro-color-primary) 5%, var(--xdecaro-color-surface));
+}
+
+@container xdecaro-suite (max-width: 44rem) {
+    .xdecaro-scope .xdecaro-filterbar__primary,
+    .xdecaro-suite .xdecaro-filterbar__primary {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .xdecaro-scope .xdecaro-filterbar__search-shell,
+    .xdecaro-suite .xdecaro-filterbar__search-shell {
+        grid-column: 1 / -1;
+    }
+
+    .xdecaro-scope .xdecaro-filterbar__primary > .xdecaro-button,
+    .xdecaro-suite .xdecaro-filterbar__primary > .xdecaro-button {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .xdecaro-scope .xdecaro-filterbar__advanced,
+    .xdecaro-suite .xdecaro-filterbar__advanced {
+        grid-template-columns: 1fr;
+    }
+}
+
+@container xdecaro-suite (max-width: 28rem) {
+    .xdecaro-scope .xdecaro-filterbar__primary,
+    .xdecaro-suite .xdecaro-filterbar__primary,
+    .xdecaro-scope .xdecaro-filterbar__advanced-fields,
+    .xdecaro-suite .xdecaro-filterbar__advanced-fields {
+        grid-template-columns: 1fr;
+    }
+}

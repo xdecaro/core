@@ -1,0 +1,19 @@
+/* Core by xdecaro 2.2.8 - shared metric/card composition refinements. */
+
+/*
+ * Joomla/Bootstrap cards already provide an inner .card-body. When a shared
+ * metric is also a .card, keeping padding on both layers creates an oversized
+ * KPI. Remove the outer padding and let the card body own spacing.
+ */
+.xdecaro-suite .xdecaro-suite__metric.card {
+    min-height: 5.5rem;
+    padding: 0;
+}
+
+.xdecaro-suite .xdecaro-suite__metric.card > .card-body {
+    display: flex;
+    min-width: 0;
+    padding: 0.875rem 1.125rem;
+    flex-direction: column;
+    justify-content: center;
+}

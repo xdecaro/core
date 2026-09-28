@@ -1,0 +1,23 @@
+name: Core 2.2.10 filterbar animation
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - fix/core-2.2.7-compact-badges
+
+permissions:
+  contents: read
+
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+      - run: php tests/core-2.2.10-filterbar-animation-contract.php
+      - run: node --check src/plg_system_xdecarocore/media/js/filterbar.js

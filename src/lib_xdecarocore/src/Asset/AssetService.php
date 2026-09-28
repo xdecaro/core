@@ -24,6 +24,10 @@ final class AssetService
     public const STYLE_FOUNDATION = 'xdecaro.core';
     public const STYLE_COMPONENTS = 'xdecaro.components';
     public const STYLE_ADMIN = 'xdecaro.admin';
+    public const STYLE_METRICS = 'xdecaro.metrics';
+    public const STYLE_LIST = 'xdecaro.list';
+    public const STYLE_BADGES = 'xdecaro.badges';
+    public const SCRIPT_FILTERBAR = 'xdecaro.filterbar';
 
     public function isAvailable(): bool
     {
@@ -75,6 +79,10 @@ final class AssetService
         }
 
         $webAssets->useStyle(self::STYLE_ADMIN);
+        $webAssets->useStyle(self::STYLE_METRICS);
+        $webAssets->useStyle(self::STYLE_LIST);
+        $webAssets->useStyle(self::STYLE_BADGES);
+        $webAssets->useScript(self::SCRIPT_FILTERBAR);
 
         return true;
     }
@@ -83,6 +91,10 @@ final class AssetService
     {
         return $webAssets->assetExists('style', self::STYLE_FOUNDATION)
             && $webAssets->assetExists('style', self::STYLE_COMPONENTS)
-            && $webAssets->assetExists('style', self::STYLE_ADMIN);
+            && $webAssets->assetExists('style', self::STYLE_ADMIN)
+            && $webAssets->assetExists('style', self::STYLE_METRICS)
+            && $webAssets->assetExists('style', self::STYLE_LIST)
+            && $webAssets->assetExists('style', self::STYLE_BADGES)
+            && $webAssets->assetExists('script', self::SCRIPT_FILTERBAR);
     }
 }

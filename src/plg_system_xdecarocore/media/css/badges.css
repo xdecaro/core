@@ -1,0 +1,109 @@
+/* Core by xdecaro 2.2.7 - compact semantic badge refinements. */
+
+/*
+ * Dense administrator tables need a deliberately small status pill.
+ * 1.5rem keeps the interactive target compact without dropping below 24px.
+ */
+.xdecaro-badge.xdecaro-badge {
+    min-height: 1.5rem;
+    padding: 0.1875rem 0.55rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+/*
+ * Interactive badges must keep the semantic variant colour instead of
+ * inheriting Joomla/Atum link colours. The colour is intentionally important
+ * because Atum can apply link-state declarations after extension styles.
+ * Focus visibility remains provided by the base badge primitive.
+ */
+a.xdecaro-badge,
+a.xdecaro-badge:link,
+a.xdecaro-badge:visited,
+a.xdecaro-badge:hover,
+a.xdecaro-badge:focus,
+a.xdecaro-badge:active {
+    text-decoration: none !important;
+}
+
+a.xdecaro-badge.xdecaro-badge--success,
+a.xdecaro-badge.xdecaro-badge--success:link,
+a.xdecaro-badge.xdecaro-badge--success:visited,
+a.xdecaro-badge.xdecaro-badge--success:hover,
+a.xdecaro-badge.xdecaro-badge--success:focus,
+a.xdecaro-badge.xdecaro-badge--success:active {
+    color: var(--xdecaro-color-success) !important;
+}
+
+a.xdecaro-badge.xdecaro-badge--warning,
+a.xdecaro-badge.xdecaro-badge--warning:link,
+a.xdecaro-badge.xdecaro-badge--warning:visited,
+a.xdecaro-badge.xdecaro-badge--warning:hover,
+a.xdecaro-badge.xdecaro-badge--warning:focus,
+a.xdecaro-badge.xdecaro-badge--warning:active {
+    color: var(--xdecaro-color-warning) !important;
+}
+
+a.xdecaro-badge.xdecaro-badge--danger,
+a.xdecaro-badge.xdecaro-badge--danger:link,
+a.xdecaro-badge.xdecaro-badge--danger:visited,
+a.xdecaro-badge.xdecaro-badge--danger:hover,
+a.xdecaro-badge.xdecaro-badge--danger:focus,
+a.xdecaro-badge.xdecaro-badge--danger:active {
+    color: var(--xdecaro-color-danger) !important;
+}
+
+a.xdecaro-badge.xdecaro-badge--info,
+a.xdecaro-badge.xdecaro-badge--info:link,
+a.xdecaro-badge.xdecaro-badge--info:visited,
+a.xdecaro-badge.xdecaro-badge--info:hover,
+a.xdecaro-badge.xdecaro-badge--info:focus,
+a.xdecaro-badge.xdecaro-badge--info:active {
+    color: var(--xdecaro-color-info) !important;
+}
+
+a.xdecaro-badge.xdecaro-badge--neutral,
+a.xdecaro-badge.xdecaro-badge--neutral:link,
+a.xdecaro-badge.xdecaro-badge--neutral:visited,
+a.xdecaro-badge.xdecaro-badge--neutral:hover,
+a.xdecaro-badge.xdecaro-badge--neutral:focus,
+a.xdecaro-badge.xdecaro-badge--neutral:active {
+    color: var(--xdecaro-color-neutral) !important;
+}
+
+a.xdecaro-badge.xdecaro-badge--attention,
+a.xdecaro-badge.xdecaro-badge--attention:link,
+a.xdecaro-badge.xdecaro-badge--attention:visited,
+a.xdecaro-badge.xdecaro-badge--attention:hover,
+a.xdecaro-badge.xdecaro-badge--attention:focus,
+a.xdecaro-badge.xdecaro-badge--attention:active {
+    color: var(--xdecaro-color-attention) !important;
+}
+
+a.xdecaro-badge.xdecaro-badge--primary,
+a.xdecaro-badge.xdecaro-badge--primary:link,
+a.xdecaro-badge.xdecaro-badge--primary:visited,
+a.xdecaro-badge.xdecaro-badge--primary:hover,
+a.xdecaro-badge.xdecaro-badge--primary:focus,
+a.xdecaro-badge.xdecaro-badge--primary:active {
+    color: var(--xdecaro-color-primary-text) !important;
+}
+
+a.xdecaro-badge.xdecaro-badge--development,
+a.xdecaro-badge.xdecaro-badge--development:link,
+a.xdecaro-badge.xdecaro-badge--development:visited,
+a.xdecaro-badge.xdecaro-badge--development:hover,
+a.xdecaro-badge.xdecaro-badge--development:focus,
+a.xdecaro-badge.xdecaro-badge--development:active {
+    color: var(--xdecaro-color-development) !important;
+}
+
+a.xdecaro-badge.xdecaro-badge--action,
+a.xdecaro-badge.xdecaro-badge--action:link,
+a.xdecaro-badge.xdecaro-badge--action:visited,
+a.xdecaro-badge.xdecaro-badge--action:hover,
+a.xdecaro-badge.xdecaro-badge--action:focus,
+a.xdecaro-badge.xdecaro-badge--action:active {
+    color: var(--xdecaro-color-action) !important;
+}
