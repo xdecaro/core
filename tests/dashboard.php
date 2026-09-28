@@ -29,7 +29,7 @@ namespace {
     }
 
     $required = [
-        'core' => ['pkg_core', '2.2.4'],
+        'core' => ['pkg_core', '2.2.5'],
         'forms' => ['pkg_decaroforms', '1.7.0'],
         'courses' => ['pkg_decarocourses', '1.5.0'],
         'competitions' => ['pkg_xdecarocompetitions', '1.5.54'],
