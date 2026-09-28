@@ -2,10 +2,10 @@
 
 /*
  * Badge sizing is intentionally compact for dense administrator tables.
- * This stylesheet loads after components.css so patch releases can refine the
- * shared primitive without overriding Joomla globally.
+ * The doubled class raises specificity so this refinement remains effective
+ * even when the base components stylesheet loads after it.
  */
-.xdecaro-badge {
+.xdecaro-badge.xdecaro-badge {
     min-height: 1.625rem;
     padding: 0.25rem 0.7rem;
     font-size: 0.8125rem;
