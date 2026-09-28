@@ -75,8 +75,7 @@ final class AssetService
             return false;
         }
 
-        // STYLE_BADGES depends on STYLE_ADMIN, which preserves the established
-        // foundation -> components -> admin chain and loads badge refinements last.
+        $webAssets->useStyle(self::STYLE_ADMIN);
         $webAssets->useStyle(self::STYLE_BADGES);
 
         return true;
