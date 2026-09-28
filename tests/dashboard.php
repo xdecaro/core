@@ -29,13 +29,13 @@ namespace {
     }
 
     $required = [
-        'core' => ['pkg_core', '2.2.0'],
+        'core' => ['pkg_core', '2.2.5'],
         'forms' => ['pkg_decaroforms', '1.7.0'],
         'courses' => ['pkg_decarocourses', '1.5.0'],
-        'competitions' => ['pkg_xdecarocompetitions', '1.3.0'],
-        'documents' => ['pkg_decarodocuments', '1.3.0'],
-        'membership' => ['pkg_decaromembership', '1.4.0'],
-        'finance' => ['pkg_decarofinance', '1.3.0'],
+        'competitions' => ['pkg_xdecarocompetitions', '1.5.54'],
+        'documents' => ['pkg_decarodocuments', '1.4.0'],
+        'membership' => ['pkg_decaromembership', '1.9.30'],
+        'finance' => ['pkg_decarofinance', '1.6.0'],
         'protocol' => ['pkg_decaroprotocol', '1.5.0'],
     ];
 

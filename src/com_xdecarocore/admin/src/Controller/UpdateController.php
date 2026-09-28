@@ -26,6 +26,7 @@ final class UpdateController extends BaseController
     {
         $this->checkToken();
         $this->assertInstallerAccess();
+        $this->loadInstallerLanguage();
 
         $this->refreshUpdates();
 
@@ -37,10 +38,7 @@ final class UpdateController extends BaseController
     {
         $this->checkToken();
         $this->assertInstallerAccess();
-
-        // The rebuild model emits com_installer language strings even when called
-        // from Core, so load that administrator language domain explicitly.
-        $this->app->getLanguage()->load('com_installer', JPATH_ADMINISTRATOR);
+        $this->loadInstallerLanguage();
 
         $model = $this->installerUpdatesitesModel();
         $model->rebuild();
@@ -56,6 +54,7 @@ final class UpdateController extends BaseController
     {
         $this->checkToken();
         $this->assertInstallerAccess();
+        $this->loadInstallerLanguage();
 
         $updateId = $this->input->getInt('update_id', 0);
         if ($updateId <= 0 || !$this->isManagedUpdateId($updateId)) {
@@ -68,6 +67,14 @@ final class UpdateController extends BaseController
         $model->update([$updateId], $minimumStability);
 
         $this->setRedirect(Route::_(self::REDIRECT_URL, false));
+    }
+
+    private function loadInstallerLanguage(): void
+    {
+        // Joomla installer models enqueue COM_INSTALLER_* messages. Core executes
+        // those models outside com_installer, so the administrator language domain
+        // must be loaded explicitly before any updater action runs.
+        $this->app->getLanguage()->load('com_installer', JPATH_ADMINISTRATOR);
     }
 
     private function refreshUpdates(): void

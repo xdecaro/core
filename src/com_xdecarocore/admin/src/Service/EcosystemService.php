@@ -18,19 +18,19 @@ final class EcosystemService
      * The catalog version is the newest version known when this Core release was built.
      */
     private const CATALOG = [
-        'core' => ['name' => 'Core', 'package' => 'pkg_core', 'component' => 'com_xdecarocore', 'version' => '2.2.0', 'channel' => 'stable'],
-        'people' => ['name' => 'People', 'package' => 'pkg_xdecaropeople', 'component' => 'com_xdecaropeople', 'version' => '1.0.1', 'channel' => 'stable'],
-        'organizations' => ['name' => 'Organizations', 'package' => 'pkg_xdecaroorganizations', 'component' => 'com_xdecaroorganizations', 'version' => '1.0.0', 'channel' => 'stable'],
-        'notifications' => ['name' => 'Notifications', 'package' => 'pkg_xdecaronotifications', 'component' => 'com_xdecaronotifications', 'version' => '1.0.2', 'channel' => 'stable'],
+        'core' => ['name' => 'Core', 'package' => 'pkg_core', 'component' => 'com_xdecarocore', 'version' => '2.2.5', 'channel' => 'stable'],
+        'people' => ['name' => 'People', 'package' => 'pkg_xdecaropeople', 'component' => 'com_xdecaropeople', 'version' => '1.8.3', 'channel' => 'stable'],
+        'organizations' => ['name' => 'Organizations', 'package' => 'pkg_xdecaroorganizations', 'component' => 'com_xdecaroorganizations', 'version' => '1.2.23', 'channel' => 'stable'],
+        'notifications' => ['name' => 'Notifications', 'package' => 'pkg_xdecaronotifications', 'component' => 'com_xdecaronotifications', 'version' => '1.1.8', 'channel' => 'stable'],
         'tasks' => ['name' => 'Tasks', 'package' => 'pkg_xdecarotasks', 'component' => 'com_xdecarotasks', 'version' => '1.0.0', 'channel' => 'stable'],
         'analytics' => ['name' => 'Analytics', 'package' => 'pkg_xdecaroanalytics', 'component' => 'com_xdecaroanalytics', 'version' => '1.0.0', 'channel' => 'stable'],
-        'documents' => ['name' => 'Documents', 'package' => 'pkg_decarodocuments', 'component' => 'com_decarodocuments', 'version' => '1.3.0', 'channel' => 'stable'],
+        'documents' => ['name' => 'Documents', 'package' => 'pkg_decarodocuments', 'component' => 'com_decarodocuments', 'version' => '1.4.0', 'channel' => 'stable'],
         'forms' => ['name' => 'Forms', 'package' => 'pkg_decaroforms', 'component' => 'com_decaroforms', 'version' => '1.7.0', 'channel' => 'stable'],
-        'membership' => ['name' => 'Membership', 'package' => 'pkg_decaromembership', 'component' => 'com_decaromembership', 'version' => '1.4.0', 'channel' => 'stable'],
+        'membership' => ['name' => 'Membership', 'package' => 'pkg_decaromembership', 'component' => 'com_decaromembership', 'version' => '1.9.30', 'channel' => 'stable'],
         'courses' => ['name' => 'Courses', 'package' => 'pkg_decarocourses', 'component' => 'com_decarocourses', 'version' => '1.5.0', 'channel' => 'stable'],
         'events' => ['name' => 'Events', 'package' => 'pkg_decaroevents', 'component' => 'com_decaroevents', 'version' => '1.2.0', 'channel' => 'stable'],
-        'competitions' => ['name' => 'Competitions', 'package' => 'pkg_xdecarocompetitions', 'component' => 'com_xdecarocompetitions', 'version' => '1.3.0', 'channel' => 'stable'],
-        'finance' => ['name' => 'Finance', 'package' => 'pkg_decarofinance', 'component' => 'com_decarofinance', 'version' => '1.3.0', 'channel' => 'stable'],
+        'competitions' => ['name' => 'Competitions', 'package' => 'pkg_xdecarocompetitions', 'component' => 'com_xdecarocompetitions', 'version' => '1.5.54', 'channel' => 'stable'],
+        'finance' => ['name' => 'Finance', 'package' => 'pkg_decarofinance', 'component' => 'com_decarofinance', 'version' => '1.6.0', 'channel' => 'stable'],
         'protocol' => ['name' => 'Protocol', 'package' => 'pkg_decaroprotocol', 'component' => 'com_decaroprotocol', 'version' => '1.5.0', 'channel' => 'stable'],
         'editor' => ['name' => 'Editor', 'package' => 'pkg_decaroeditor', 'component' => '', 'version' => '0.1.0-alpha6', 'channel' => 'prerelease'],
         'draw' => ['name' => 'Draw', 'package' => 'pkg_xdecarodraw', 'component' => 'com_xdecarodraw', 'version' => '1.0.0', 'channel' => 'development'],
@@ -207,16 +207,25 @@ final class EcosystemService
 
     private function buildProduct(string $key, array $definition, array $extensions, array $updates): array
     {
-        $package = $definition['package'] !== '' ? $this->findExtension($extensions, 'package', $definition['package']) : null;
         $component = $definition['component'] !== '' ? $this->findExtension($extensions, 'component', $definition['component']) : null;
+        $package = $this->findProductPackage($definition, $component, $extensions);
         $partial = $package === null && $component !== null;
         $installed = $package !== null || $partial;
         $installedVersion = $package !== null ? $package['version'] : ($component !== null ? $component['version'] : '');
         $catalogVersion = (string) $definition['version'];
         $availableVersion = $catalogVersion;
 
-        $packageUpdateIdentity = $this->extensionIdentity('package', (string) $definition['package'], '', 0);
-        if ($definition['package'] !== '' && isset($updates[$packageUpdateIdentity])) {
+        $packageElements = array_values(array_unique(array_filter([
+            (string) $definition['package'],
+            (string) ($package['element'] ?? ''),
+        ], static fn (string $element): bool => $element !== '')));
+
+        foreach ($packageElements as $packageElement) {
+            $packageUpdateIdentity = $this->extensionIdentity('package', $packageElement, '', 0);
+            if (!isset($updates[$packageUpdateIdentity])) {
+                continue;
+            }
+
             $updateVersion = (string) $updates[$packageUpdateIdentity]['version'];
             if ($availableVersion === '' || version_compare($updateVersion, $availableVersion, '>')) {
                 $availableVersion = $updateVersion;
@@ -270,7 +279,8 @@ final class EcosystemService
         return [
             'key' => $key,
             'name' => (string) $definition['name'],
-            'package' => (string) $definition['package'],
+            'package' => (string) ($package['element'] ?? $definition['package']),
+            'catalog_package' => (string) $definition['package'],
             'component' => (string) $definition['component'],
             'channel' => (string) $definition['channel'],
             'catalog_version' => $catalogVersion,
@@ -284,6 +294,41 @@ final class EcosystemService
             'disabled_count' => $disabledCount,
             'open_url' => $component !== null ? 'index.php?option=' . rawurlencode((string) $definition['component']) : '',
         ];
+    }
+
+    /**
+     * Prefer the catalog package identity, then use Joomla's real component-to-package relation.
+     * When a package manifest is readable, the linked package is accepted only if it declares
+     * the expected component. This keeps legacy package names working without trusting stale links.
+     */
+    private function findProductPackage(array $definition, ?array $component, array $extensions): ?array
+    {
+        $canonical = $definition['package'] !== '' ? $this->findExtension($extensions, 'package', (string) $definition['package']) : null;
+        if ($canonical !== null) {
+            return $canonical;
+        }
+
+        if ($component === null || (int) $component['package_id'] <= 0) {
+            return null;
+        }
+
+        $linked = $this->findExtensionById($extensions, 'package', (int) $component['package_id']);
+        if ($linked === null) {
+            return null;
+        }
+
+        $members = $this->loadPackageManifestMembers((string) $linked['element']);
+        if ($members === null) {
+            return $linked;
+        }
+
+        foreach ($members as $member) {
+            if ($member['type'] === 'component' && $member['id'] === (string) $definition['component']) {
+                return $linked;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -530,6 +575,17 @@ final class EcosystemService
         return null;
     }
 
+    private function findExtensionById(array $extensions, string $type, int $extensionId): ?array
+    {
+        foreach ($extensions as $extension) {
+            if ($extension['type'] === $type && (int) $extension['extension_id'] === $extensionId) {
+                return $extension;
+            }
+        }
+
+        return null;
+    }
+
     /**
      * Build exact identities from catalog roots and the contents of installed known packages.
      * package_id is only a fallback for legacy/manual installs with an unreadable package manifest.
@@ -542,27 +598,25 @@ final class EcosystemService
         $packageIds = [];
 
         foreach (self::CATALOG as $definition) {
-            foreach (['package' => 'package', 'component' => 'component'] as $field => $type) {
-                $element = (string) $definition[$field];
-                if ($element === '') {
+            $component = $definition['component'] !== ''
+                ? $this->findExtension($extensions, 'component', (string) $definition['component'])
+                : null;
+            $package = $this->findProductPackage($definition, $component, $extensions);
+
+            foreach ([$component, $package] as $extension) {
+                if ($extension === null) {
                     continue;
                 }
 
-                foreach ($extensions as $extension) {
-                    if ($extension['type'] !== $type || $extension['element'] !== $element) {
-                        continue;
-                    }
+                $identities[$this->extensionIdentity(
+                    (string) $extension['type'],
+                    (string) $extension['element'],
+                    (string) $extension['folder'],
+                    (int) $extension['client_id']
+                )] = true;
 
-                    $identities[$this->extensionIdentity(
-                        (string) $extension['type'],
-                        (string) $extension['element'],
-                        (string) $extension['folder'],
-                        (int) $extension['client_id']
-                    )] = true;
-
-                    if ($type === 'package') {
-                        $packageIds[(int) $extension['extension_id']] = true;
-                    }
+                if ($extension['type'] === 'package') {
+                    $packageIds[(int) $extension['extension_id']] = true;
                 }
             }
         }
@@ -579,17 +633,15 @@ final class EcosystemService
         }
 
         foreach (self::CATALOG as $definition) {
-            $packageElement = (string) $definition['package'];
-            if ($packageElement === '') {
-                continue;
-            }
-
-            $package = $this->findExtension($extensions, 'package', $packageElement);
+            $component = $definition['component'] !== ''
+                ? $this->findExtension($extensions, 'component', (string) $definition['component'])
+                : null;
+            $package = $this->findProductPackage($definition, $component, $extensions);
             if ($package === null) {
                 continue;
             }
 
-            $members = $this->loadPackageManifestMembers($packageElement);
+            $members = $this->loadPackageManifestMembers((string) $package['element']);
             foreach ($members ?? [] as $member) {
                 $extension = $this->findPackageMemberExtension($extensions, $member);
                 if ($extension === null) {

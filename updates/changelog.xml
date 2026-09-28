@@ -3,6 +3,20 @@
   <changelog>
     <element>pkg_core</element>
     <type>package</type>
+    <version>2.2.5</version>
+    <fix>
+      <item>Recognizes valid legacy People and Organizations package elements through Joomla package_id linkage instead of reporting false partial installations.</item>
+      <item>Loads com_installer language strings before Core update actions enqueue Joomla Installer messages.</item>
+      <item>Keeps the Updates summary badge compact with a 200px maximum width and reduced horizontal padding.</item>
+    </fix>
+    <change>
+      <item>Finalizes the shared semantic badge, button and expandable filterbar UI primitives for reuse across xdecaro administrator extensions.</item>
+      <item>Synchronizes Core manifests, Web Assets, catalog metadata and update feed to 2.2.5.</item>
+    </change>
+  </changelog>
+  <changelog>
+    <element>pkg_core</element>
+    <type>package</type>
     <version>2.2.0</version>
     <addition>
       <item>Added the public opt-in xdecaro.admin Web Asset layer for shared administrator page structure, responsive forms, filters, accordions, KPI layouts and tables.</item>

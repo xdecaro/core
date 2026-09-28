@@ -1,0 +1,22 @@
+name: Core 2.2.3 semantic UI
+
+on:
+  push:
+    branches:
+      - feat/core-2.2.1-ui-refinement
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+      - name: Core 2.2.3 badges buttons and filterbar contract
+        run: php tests/core-2.2.3-semantic-ui-contract.php

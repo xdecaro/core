@@ -1,4 +1,4 @@
-/* Core by xdecaro 2.2.0 - Core dashboard-private administrator styles. */
+/* Core by xdecaro 2.2.x - Core dashboard-private administrator styles. */
 
 .xdecaro-suite__warning {
     margin-top: var(--xdecaro-space-2, 0.5rem);
@@ -52,6 +52,17 @@
 
 .xdecaro-suite__update-sites-table .xdecaro-suite__muted {
     overflow-wrap: anywhere;
+}
+
+.xdecaro-suite__count-badge {
+    width: auto;
+    max-width: 200px;
+    min-height: 34px;
+    padding: 7px 10px;
+    font-size: 14px;
+    line-height: 1.05;
+    text-align: center;
+    white-space: normal;
 }
 
 .xdecaro-suite__filter-button {

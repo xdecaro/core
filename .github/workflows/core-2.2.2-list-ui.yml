@@ -1,0 +1,22 @@
+name: Core 2.2.2 compact list UI
+
+on:
+  push:
+    branches: [feat/core-2.2.1-ui-refinement]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+      - name: Verify compact shared list UI contract
+        run: php tests/core-2.2.2-list-ui-contract.php
