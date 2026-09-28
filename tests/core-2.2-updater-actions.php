@@ -37,6 +37,13 @@ foreach ([
     }
 }
 
+if (preg_match(
+    "/public function find\(\): void\s*\{.*?getLanguage\(\)->load\('com_installer', JPATH_ADMINISTRATOR\);.*?refreshUpdates\(\);/s",
+    $controller
+) !== 1) {
+    throw new RuntimeException('Update search must load the com_installer administrator language before refreshing updates.');
+}
+
 $service = (string) file_get_contents($servicePath);
 foreach ([
     '#__updates',
