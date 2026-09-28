@@ -93,9 +93,18 @@ if (trim((string) $legacyFeed->update->element) !== 'pkg_xdecarocore') {
     throw new RuntimeException('Legacy update feed must remain a pkg_xdecarocore migration bridge.');
 }
 
+/*
+ * During a draft patch candidate the dashboard catalog may still identify the
+ * last released Core until the release is approved. It must never point to a
+ * version newer than the package being validated.
+ */
 $catalogSource = (string) file_get_contents($root . '/src/com_xdecarocore/admin/src/Service/EcosystemService.php');
-if (!str_contains($catalogSource, "'core' => ['name' => 'Core', 'package' => 'pkg_core', 'component' => 'com_xdecarocore', 'version' => '2.2.6'")) {
-    throw new RuntimeException('Core dashboard catalog must identify Core 2.2.6 as current.');
+if (!preg_match("/'core' => \['name' => 'Core', 'package' => 'pkg_core', 'component' => 'com_xdecarocore', 'version' => '([^']+)'/", $catalogSource, $catalogMatch)) {
+    throw new RuntimeException('Core dashboard catalog identity is missing.');
+}
+$catalogVersion = (string) ($catalogMatch[1] ?? '');
+if ($catalogVersion === '' || version_compare($catalogVersion, $expectedVersion, '>')) {
+    throw new RuntimeException('Core dashboard catalog version cannot be newer than the package candidate.');
 }
 
 foreach ([
