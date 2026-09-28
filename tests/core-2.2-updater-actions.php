@@ -29,7 +29,6 @@ foreach ([
     'public function update(): void',
     'public function rebuildSites(): void',
     '->rebuild()',
-    "getLanguage()->load('com_installer', JPATH_ADMINISTRATOR)",
     'index.php?option=com_xdecarocore&view=dashboard&layout=updates',
 ] as $fragment) {
     if (!str_contains($controller, $fragment)) {
@@ -37,11 +36,30 @@ foreach ([
     }
 }
 
-if (preg_match(
-    "/public function find\(\): void\s*\{.*?getLanguage\(\)->load\('com_installer', JPATH_ADMINISTRATOR\);.*?refreshUpdates\(\);/s",
-    $controller
-) !== 1) {
-    throw new RuntimeException('Update search must load the com_installer administrator language before refreshing updates.');
+if (!str_contains($controller, 'private function loadInstallerLanguage(): void')) {
+    throw new RuntimeException('Updater controller must centralize com_installer language loading.');
+}
+if (!str_contains($controller, "$this->app->getLanguage()->load('com_installer', JPATH_ADMINISTRATOR);")) {
+    throw new RuntimeException('Updater language helper must load the com_installer administrator domain.');
+}
+
+$methodRanges = [
+    'find' => ['public function find(): void', 'public function rebuildSites(): void'],
+    'rebuildSites' => ['public function rebuildSites(): void', 'public function update(): void'],
+    'update' => ['public function update(): void', 'private function refreshUpdates(): void'],
+];
+
+foreach ($methodRanges as $method => [$startMarker, $endMarker]) {
+    $start = strpos($controller, $startMarker);
+    $end = strpos($controller, $endMarker);
+    if ($start === false || $end === false || $end <= $start) {
+        throw new RuntimeException('Cannot inspect updater action method: ' . $method);
+    }
+
+    $body = substr($controller, $start, $end - $start);
+    if (!str_contains($body, '$this->loadInstallerLanguage();')) {
+        throw new RuntimeException('Updater action ' . $method . ' must load com_installer language before invoking Joomla installer models.');
+    }
 }
 
 $service = (string) file_get_contents($servicePath);
