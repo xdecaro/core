@@ -18,7 +18,7 @@ final class EcosystemService
      * The catalog version is the newest version known when this Core release was built.
      */
     private const CATALOG = [
-        'core' => ['name' => 'Core', 'package' => 'pkg_core', 'component' => 'com_xdecarocore', 'version' => '2.2.4', 'channel' => 'stable'],
+        'core' => ['name' => 'Core', 'package' => 'pkg_core', 'component' => 'com_xdecarocore', 'version' => '2.2.5', 'channel' => 'stable'],
         'people' => ['name' => 'People', 'package' => 'pkg_xdecaropeople', 'component' => 'com_xdecaropeople', 'version' => '1.8.3', 'channel' => 'stable'],
         'organizations' => ['name' => 'Organizations', 'package' => 'pkg_xdecaroorganizations', 'component' => 'com_xdecaroorganizations', 'version' => '1.2.23', 'channel' => 'stable'],
         'notifications' => ['name' => 'Notifications', 'package' => 'pkg_xdecaronotifications', 'component' => 'com_xdecaronotifications', 'version' => '1.1.8', 'channel' => 'stable'],
@@ -236,7 +236,6 @@ final class EcosystemService
             && $catalogVersion !== ''
             && version_compare($installedVersion, $catalogVersion, '>');
 
-        // The displayed available version must never be older than the version already installed.
         if ($installedVersion !== ''
             && ($availableVersion === '' || version_compare($installedVersion, $availableVersion, '>'))) {
             $availableVersion = $installedVersion;
@@ -296,11 +295,6 @@ final class EcosystemService
         ];
     }
 
-    /**
-     * Prefer the catalog package identity, then use Joomla's real component-to-package relation.
-     * When a package manifest is readable, the linked package is accepted only if it declares
-     * the expected component. This keeps legacy package names working without trusting stale links.
-     */
     private function findProductPackage(array $definition, ?array $component, array $extensions): ?array
     {
         $canonical = $definition['package'] !== '' ? $this->findExtension($extensions, 'package', (string) $definition['package']) : null;
@@ -331,10 +325,6 @@ final class EcosystemService
         return null;
     }
 
-    /**
-     * Resolve the real children declared by the installed package manifest.
-     * Joomla package_id is retained only as a fallback because older/manual installs can leave stale relationships.
-     */
     private function resolvePackageChildren(array $package, array $definition, array $extensions): array
     {
         $members = $this->loadPackageManifestMembers((string) $package['element']);
@@ -347,7 +337,6 @@ final class EcosystemService
                 if ($extension === null || isset($seen[$extension['extension_id']])) {
                     continue;
                 }
-
                 $children[] = $extension;
                 $seen[$extension['extension_id']] = true;
             }
@@ -356,13 +345,11 @@ final class EcosystemService
                 if ($extension['package_id'] !== $package['extension_id']) {
                     continue;
                 }
-
                 $children[] = $extension;
                 $seen[$extension['extension_id']] = true;
             }
         }
 
-        // Always retain the catalog component when it exists, even if a legacy package manifest is incomplete.
         if ($definition['component'] !== '') {
             $component = $this->findExtension($extensions, 'component', (string) $definition['component']);
             if ($component !== null && !isset($seen[$component['extension_id']])) {
@@ -373,9 +360,6 @@ final class EcosystemService
         return $children;
     }
 
-    /**
-     * @return array<int,array{type:string,id:string,group:string,client:string}>|null
-     */
     private function loadPackageManifestMembers(string $packageElement): ?array
     {
         if (!defined('JPATH_MANIFESTS') || $packageElement === '') {
@@ -409,7 +393,6 @@ final class EcosystemService
             if ($type === '' || $id === '') {
                 continue;
             }
-
             $members[] = [
                 'type' => $type,
                 'id' => $id,
@@ -417,7 +400,6 @@ final class EcosystemService
                 'client' => strtolower(trim((string) $file['client'])),
             ];
         }
-
         return $members;
     }
 
@@ -427,7 +409,6 @@ final class EcosystemService
             if ($extension['type'] !== $member['type'] || $extension['element'] !== $member['id']) {
                 continue;
             }
-
             if ($member['type'] === 'plugin' && $member['group'] !== '' && $extension['folder'] !== $member['group']) {
                 continue;
             }
@@ -437,10 +418,8 @@ final class EcosystemService
                     continue;
                 }
             }
-
             return $extension;
         }
-
         return null;
     }
 
@@ -453,97 +432,37 @@ final class EcosystemService
         $coreLibrary = $this->findExtension($extensions, 'library', 'xdecaro/core');
         $corePlugin = $this->findExtension($extensions, 'plugin', 'xdecarocore', 'system');
 
-        $checks[] = $this->diagnostic(
-            $corePackage !== null ? 'success' : 'danger',
-            'COM_XDECAROCORE_DIAGNOSTIC_CORE_PACKAGE',
-            $corePackage !== null ? 'COM_XDECAROCORE_DIAGNOSTIC_REGISTERED' : 'COM_XDECAROCORE_DIAGNOSTIC_NOT_FOUND'
-        );
-        $checks[] = $this->diagnostic(
-            $coreComponent !== null ? 'success' : 'danger',
-            'COM_XDECAROCORE_DIAGNOSTIC_CORE_DASHBOARD',
-            $coreComponent !== null ? 'COM_XDECAROCORE_DIAGNOSTIC_COMPONENT_AVAILABLE' : 'COM_XDECAROCORE_DIAGNOSTIC_COMPONENT_NOT_FOUND'
-        );
-        $checks[] = $this->diagnostic(
-            $coreLibrary !== null ? 'success' : 'danger',
-            'COM_XDECAROCORE_DIAGNOSTIC_CORE_LIBRARY',
-            $coreLibrary === null
-                ? 'COM_XDECAROCORE_DIAGNOSTIC_NOT_FOUND_FEMININE'
-                : ($coreLibrary['version'] !== ''
-                    ? 'COM_XDECAROCORE_DIAGNOSTIC_VERSION'
-                    : 'COM_XDECAROCORE_DIAGNOSTIC_VERSION_UNDECLARED'),
-            $coreLibrary !== null && $coreLibrary['version'] !== '' ? [(string) $coreLibrary['version']] : []
-        );
-        $checks[] = $this->diagnostic(
-            $corePlugin !== null && (int) $corePlugin['enabled'] === 1 ? 'success' : 'danger',
-            'COM_XDECAROCORE_DIAGNOSTIC_CORE_PLUGIN',
-            $corePlugin === null
-                ? 'COM_XDECAROCORE_DIAGNOSTIC_NOT_FOUND'
-                : ((int) $corePlugin['enabled'] === 1
-                    ? 'COM_XDECAROCORE_DIAGNOSTIC_ENABLED'
-                    : 'COM_XDECAROCORE_DIAGNOSTIC_DISABLED')
-        );
+        $checks[] = $this->diagnostic($corePackage !== null ? 'success' : 'danger', 'COM_XDECAROCORE_DIAGNOSTIC_CORE_PACKAGE', $corePackage !== null ? 'COM_XDECAROCORE_DIAGNOSTIC_REGISTERED' : 'COM_XDECAROCORE_DIAGNOSTIC_NOT_FOUND');
+        $checks[] = $this->diagnostic($coreComponent !== null ? 'success' : 'danger', 'COM_XDECAROCORE_DIAGNOSTIC_CORE_DASHBOARD', $coreComponent !== null ? 'COM_XDECAROCORE_DIAGNOSTIC_COMPONENT_AVAILABLE' : 'COM_XDECAROCORE_DIAGNOSTIC_COMPONENT_NOT_FOUND');
+        $checks[] = $this->diagnostic($coreLibrary !== null ? 'success' : 'danger', 'COM_XDECAROCORE_DIAGNOSTIC_CORE_LIBRARY', $coreLibrary === null ? 'COM_XDECAROCORE_DIAGNOSTIC_NOT_FOUND_FEMININE' : ($coreLibrary['version'] !== '' ? 'COM_XDECAROCORE_DIAGNOSTIC_VERSION' : 'COM_XDECAROCORE_DIAGNOSTIC_VERSION_UNDECLARED'), $coreLibrary !== null && $coreLibrary['version'] !== '' ? [(string) $coreLibrary['version']] : []);
+        $checks[] = $this->diagnostic($corePlugin !== null && (int) $corePlugin['enabled'] === 1 ? 'success' : 'danger', 'COM_XDECAROCORE_DIAGNOSTIC_CORE_PLUGIN', $corePlugin === null ? 'COM_XDECAROCORE_DIAGNOSTIC_NOT_FOUND' : ((int) $corePlugin['enabled'] === 1 ? 'COM_XDECAROCORE_DIAGNOSTIC_ENABLED' : 'COM_XDECAROCORE_DIAGNOSTIC_DISABLED'));
 
         if ($updateLoadFailed) {
-            $checks[] = $this->diagnostic(
-                'warning',
-                'COM_XDECAROCORE_DIAGNOSTIC_UPDATE_CACHE',
-                'COM_XDECAROCORE_DIAGNOSTIC_UPDATE_CACHE_UNAVAILABLE'
-            );
+            $checks[] = $this->diagnostic('warning', 'COM_XDECAROCORE_DIAGNOSTIC_UPDATE_CACHE', 'COM_XDECAROCORE_DIAGNOSTIC_UPDATE_CACHE_UNAVAILABLE');
         }
 
         foreach ($products as $product) {
             if ($product['partial']) {
                 $ecosystemCoherent = false;
-                $checks[] = $this->diagnostic(
-                    'danger',
-                    '',
-                    'COM_XDECAROCORE_DIAGNOSTIC_PARTIAL_INSTALLATION',
-                    [],
-                    (string) $product['name']
-                );
+                $checks[] = $this->diagnostic('danger', '', 'COM_XDECAROCORE_DIAGNOSTIC_PARTIAL_INSTALLATION', [], (string) $product['name']);
             } elseif ($product['disabled_count'] > 0) {
                 $ecosystemCoherent = false;
-                $checks[] = $this->diagnostic(
-                    'warning',
-                    '',
-                    'COM_XDECAROCORE_DIAGNOSTIC_DISABLED_CHILDREN',
-                    [(int) $product['disabled_count']],
-                    (string) $product['name']
-                );
+                $checks[] = $this->diagnostic('warning', '', 'COM_XDECAROCORE_DIAGNOSTIC_DISABLED_CHILDREN', [(int) $product['disabled_count']], (string) $product['name']);
             }
-
             if ($product['catalog_behind']) {
-                $checks[] = $this->diagnostic(
-                    'info',
-                    '',
-                    'COM_XDECAROCORE_DIAGNOSTIC_CATALOG_BEHIND',
-                    [(string) $product['catalog_version'], (string) $product['installed_version']],
-                    (string) $product['name']
-                );
+                $checks[] = $this->diagnostic('info', '', 'COM_XDECAROCORE_DIAGNOSTIC_CATALOG_BEHIND', [(string) $product['catalog_version'], (string) $product['installed_version']], (string) $product['name']);
             }
         }
 
         if ($ecosystemCoherent) {
-            $checks[] = $this->diagnostic(
-                'success',
-                'COM_XDECAROCORE_DIAGNOSTIC_ECOSYSTEM',
-                'COM_XDECAROCORE_DIAGNOSTIC_ECOSYSTEM_COHERENT'
-            );
+            $checks[] = $this->diagnostic('success', 'COM_XDECAROCORE_DIAGNOSTIC_ECOSYSTEM', 'COM_XDECAROCORE_DIAGNOSTIC_ECOSYSTEM_COHERENT');
         }
 
         return $checks;
     }
 
-    /**
-     * Build a translated diagnostic while retaining its language keys for alternate renderers.
-     */
-    private function diagnostic(
-        string $level,
-        string $labelKey,
-        string $detailKey,
-        array $detailArgs = [],
-        string $label = ''
-    ): array {
+    private function diagnostic(string $level, string $labelKey, string $detailKey, array $detailArgs = [], string $label = ''): array
+    {
         return [
             'level' => $level,
             'label_key' => $labelKey,
@@ -571,7 +490,6 @@ final class EcosystemService
             }
             return $extension;
         }
-
         return null;
     }
 
@@ -582,39 +500,22 @@ final class EcosystemService
                 return $extension;
             }
         }
-
         return null;
     }
 
-    /**
-     * Build exact identities from catalog roots and the contents of installed known packages.
-     * package_id is only a fallback for legacy/manual installs with an unreadable package manifest.
-     *
-     * @return array<string,bool>
-     */
     private function buildSuiteExtensionIdentities(array $extensions): array
     {
         $identities = [];
         $packageIds = [];
 
         foreach (self::CATALOG as $definition) {
-            $component = $definition['component'] !== ''
-                ? $this->findExtension($extensions, 'component', (string) $definition['component'])
-                : null;
+            $component = $definition['component'] !== '' ? $this->findExtension($extensions, 'component', (string) $definition['component']) : null;
             $package = $this->findProductPackage($definition, $component, $extensions);
-
             foreach ([$component, $package] as $extension) {
                 if ($extension === null) {
                     continue;
                 }
-
-                $identities[$this->extensionIdentity(
-                    (string) $extension['type'],
-                    (string) $extension['element'],
-                    (string) $extension['folder'],
-                    (int) $extension['client_id']
-                )] = true;
-
+                $identities[$this->extensionIdentity((string) $extension['type'], (string) $extension['element'], (string) $extension['folder'], (int) $extension['client_id'])] = true;
                 if ($extension['type'] === 'package') {
                     $packageIds[(int) $extension['extension_id']] = true;
                 }
@@ -623,58 +524,37 @@ final class EcosystemService
 
         foreach ($extensions as $extension) {
             if ((int) $extension['package_id'] > 0 && isset($packageIds[(int) $extension['package_id']])) {
-                $identities[$this->extensionIdentity(
-                    (string) $extension['type'],
-                    (string) $extension['element'],
-                    (string) $extension['folder'],
-                    (int) $extension['client_id']
-                )] = true;
+                $identities[$this->extensionIdentity((string) $extension['type'], (string) $extension['element'], (string) $extension['folder'], (int) $extension['client_id'])] = true;
             }
         }
 
         foreach (self::CATALOG as $definition) {
-            $component = $definition['component'] !== ''
-                ? $this->findExtension($extensions, 'component', (string) $definition['component'])
-                : null;
+            $component = $definition['component'] !== '' ? $this->findExtension($extensions, 'component', (string) $definition['component']) : null;
             $package = $this->findProductPackage($definition, $component, $extensions);
             if ($package === null) {
                 continue;
             }
-
             $members = $this->loadPackageManifestMembers((string) $package['element']);
             foreach ($members ?? [] as $member) {
                 $extension = $this->findPackageMemberExtension($extensions, $member);
                 if ($extension === null) {
                     continue;
                 }
-
-                $identities[$this->extensionIdentity(
-                    (string) $extension['type'],
-                    (string) $extension['element'],
-                    (string) $extension['folder'],
-                    (int) $extension['client_id']
-                )] = true;
+                $identities[$this->extensionIdentity((string) $extension['type'], (string) $extension['element'], (string) $extension['folder'], (int) $extension['client_id'])] = true;
             }
         }
-
         return $identities;
     }
 
     private function isSuiteExtension(array $extension, array $knownIdentities = []): bool
     {
-        $identity = $this->extensionIdentity(
-            (string) $extension['type'],
-            (string) $extension['element'],
-            (string) $extension['folder'],
-            (int) $extension['client_id']
-        );
+        $identity = $this->extensionIdentity((string) $extension['type'], (string) $extension['element'], (string) $extension['folder'], (int) $extension['client_id']);
         if (isset($knownIdentities[$identity])) {
             return true;
         }
 
         $element = strtolower(trim((string) $extension['element']));
-        if (preg_match('/^(?:pkg|com|mod)_xdecaro[a-z0-9_]*$/', $element) === 1
-            || preg_match('/^xdecaro[a-z0-9_\/-]*$/', $element) === 1) {
+        if (preg_match('/^(?:pkg|com|mod)_xdecaro[a-z0-9_]*$/', $element) === 1 || preg_match('/^xdecaro[a-z0-9_\/-]*$/', $element) === 1) {
             return true;
         }
 
@@ -683,14 +563,11 @@ final class EcosystemService
             if (strpos($package, 'pkg_decaro') !== 0) {
                 continue;
             }
-
             $legacyElement = substr($package, 4);
-            if ($element === $legacyElement
-                || in_array($element, ['mod_' . $legacyElement, 'plg_' . $legacyElement, 'lib_' . $legacyElement], true)) {
+            if ($element === $legacyElement || in_array($element, ['mod_' . $legacyElement, 'plg_' . $legacyElement, 'lib_' . $legacyElement], true)) {
                 return true;
             }
         }
-
         return false;
     }
 }
