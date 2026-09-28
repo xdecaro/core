@@ -12,7 +12,9 @@ namespace Joomla\CMS\WebAsset {
             $this->manager->registerFakeAsset('style', 'xdecaro.components');
             $this->manager->registerFakeAsset('style', 'xdecaro.admin');
             $this->manager->registerFakeAsset('style', 'xdecaro.metrics');
+            $this->manager->registerFakeAsset('style', 'xdecaro.list');
             $this->manager->registerFakeAsset('style', 'xdecaro.badges');
+            $this->manager->registerFakeAsset('script', 'xdecaro.filterbar');
         }
     }
 
@@ -24,10 +26,12 @@ namespace Joomla\CMS\WebAsset {
         public function __construct() { $this->registry = new WebAssetRegistry($this); }
         public function getRegistry(): WebAssetRegistry { return $this->registry; }
         public function assetExists($type, $name): bool { return isset($this->assets[$type][$name]); }
-        public function useStyle($name): self
+        public function useStyle($name): self { return $this->useAsset('style', $name); }
+        public function useScript($name): self { return $this->useAsset('script', $name); }
+        private function useAsset($type, $name): self
         {
-            if (!$this->assetExists('style', $name)) throw new \RuntimeException('Unknown fake style ' . $name);
-            $this->used['style'][$name] = true;
+            if (!$this->assetExists($type, $name)) throw new \RuntimeException('Unknown fake ' . $type . ' ' . $name);
+            $this->used[$type][$name] = true;
             return $this;
         }
         public function registerFakeAsset($type, $name): void { $this->assets[$type][$name] = true; }
@@ -53,14 +57,29 @@ namespace {
     if (!$service->useComponents($manager)) throw new \RuntimeException('Components asset registration failed.');
     if (!$manager->isUsed('style', \xdecaro\Core\Asset\AssetService::STYLE_COMPONENTS)) throw new \RuntimeException('Components style was not enabled.');
     if (!$service->useAdminUi($manager)) throw new \RuntimeException('Admin UI asset registration failed.');
-    if (!$manager->isUsed('style', \xdecaro\Core\Asset\AssetService::STYLE_ADMIN)) throw new \RuntimeException('Admin UI style was not enabled.');
-    if (!$manager->isUsed('style', \xdecaro\Core\Asset\AssetService::STYLE_METRICS)) throw new \RuntimeException('Metric refinement style was not enabled.');
-    if (!$manager->isUsed('style', \xdecaro\Core\Asset\AssetService::STYLE_BADGES)) throw new \RuntimeException('Badge refinement style was not enabled.');
+    foreach ([
+        \xdecaro\Core\Asset\AssetService::STYLE_ADMIN,
+        \xdecaro\Core\Asset\AssetService::STYLE_METRICS,
+        \xdecaro\Core\Asset\AssetService::STYLE_LIST,
+        \xdecaro\Core\Asset\AssetService::STYLE_BADGES,
+    ] as $style) {
+        if (!$manager->isUsed('style', $style)) throw new \RuntimeException('Expected shared style was not enabled: ' . $style);
+    }
+    if (!$manager->isUsed('script', \xdecaro\Core\Asset\AssetService::SCRIPT_FILTERBAR)) throw new \RuntimeException('Shared filterbar script was not enabled.');
     if (count($manager->getRegistry()->loaded) !== 1) throw new \RuntimeException('Asset registry must not be loaded more than once per manager.');
 
     $metricCss = (string) file_get_contents(__DIR__ . '/../src/plg_system_xdecarocore/media/css/metrics.css');
     foreach (['.xdecaro-suite .xdecaro-suite__metric.card', 'padding: 0;', '.xdecaro-suite__metric.card > .card-body', 'padding: 0.875rem 1.125rem;'] as $marker) {
         if (!str_contains($metricCss, $marker)) throw new \RuntimeException('Metric card contract missing: ' . $marker);
+    }
+
+    $listCss = (string) file_get_contents(__DIR__ . '/../src/plg_system_xdecarocore/media/css/list.css');
+    foreach (['.xdecaro-filterbar--panel', '.xdecaro-filterbar__primary', '.xdecaro-filterbar__advanced', '.xdecaro-suite__responsive-table--striped'] as $marker) {
+        if (!str_contains($listCss, $marker)) throw new \RuntimeException('Shared list contract missing: ' . $marker);
+    }
+    $filterbarJs = (string) file_get_contents(__DIR__ . '/../src/plg_system_xdecarocore/media/js/filterbar.js');
+    foreach (['data-xdecaro-filterbar-toggle', 'aria-expanded', 'data-xdecaro-filterbar-close'] as $marker) {
+        if (!str_contains($filterbarJs, $marker)) throw new \RuntimeException('Shared filterbar behavior missing: ' . $marker);
     }
 
     unlink($registryDir . '/joomla.asset.json');
