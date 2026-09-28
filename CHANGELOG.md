@@ -4,6 +4,31 @@ All notable changes to **Core by xdecaro** are documented here.
 
 The project follows Semantic Versioning.
 
+## 2.2.5 — 2026-09-28
+
+### Fixed
+
+- Fixed false **Installazione parziale** states when Joomla links a known component to a valid legacy package element through `package_id`, including People `pkg_people` and Organizations `pkg_organizations`.
+- Joomla Installer feedback used by Core update actions now loads `com_installer` language strings before enqueueing messages, so update/search confirmations are translated instead of exposing raw language keys.
+- The Updates summary badge is now compact (`max-width: 200px`, reduced horizontal padding) and remains readable in responsive layouts.
+
+### Changed
+
+- Finalized the shared semantic badge, button and expandable filterbar primitives introduced during the 2.2 series, keeping component-specific behavior outside Core.
+- Core catalog identity remains canonical while runtime package detection follows Joomla's real installed linkage and validates readable package manifests when available.
+- Web Asset versions, manifests, update feed and release metadata are synchronized to 2.2.5.
+
+### Tests
+
+- Added regression coverage for legacy package linkage, updater language loading and the compact Updates summary badge.
+- Verified Joomla runtime, dashboard runtime, Atum layout, namespace audit, package naming migration and shared UI contracts before stabilization.
+
+### Compatibility
+
+- Joomla 6.1.3 and PHP 8.3+ remain the supported runtime for the current 2.2 stabilization series.
+- No database mutation or destructive migration is introduced.
+- Existing `xdecaro\Core` public integration contracts remain unchanged.
+
 ## 1.5.9 — 2026-09-10
 
 ### Added
@@ -64,7 +89,7 @@ The project follows Semantic Versioning.
 
 ### Fixed
 
-- Information card status badges now remain compact when Joomla's expanded administrator sidebar forces card headers into a vertical layout.
+- Information card status badges now remain compact when Joomla's expanded administrator sidebar forces the card headers into a vertical layout.
 - `Coerente`, `Sistema OK` and `In sviluppo` no longer stretch to the full card width on narrow tablet and phone layouts.
 - The fix is structural in the Information template and does not alter the already-approved responsive behavior of Dashboard, Components, All extensions, Updates or Diagnostics.
 
