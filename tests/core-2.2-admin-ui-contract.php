@@ -6,6 +6,7 @@ $root = dirname(__DIR__);
 $registryPath = $root . '/src/plg_system_xdecarocore/media/joomla.asset.json';
 $servicePath = $root . '/src/lib_xdecarocore/src/Asset/AssetService.php';
 $adminCssPath = $root . '/src/plg_system_xdecarocore/media/css/admin.css';
+$listCssPath = $root . '/src/plg_system_xdecarocore/media/css/list.css';
 $filterbarJsPath = $root . '/src/plg_system_xdecarocore/media/js/filterbar.js';
 $fixturePath = $root . '/tests/fixtures/admin-ui-contract.html';
 $viewPath = $root . '/src/com_xdecarocore/admin/src/View/Dashboard/HtmlView.php';
@@ -32,7 +33,7 @@ foreach ($assets as $asset) {
     }
 }
 
-foreach (['xdecaro.core', 'xdecaro.components', 'xdecaro.admin'] as $required) {
+foreach (['xdecaro.core', 'xdecaro.components', 'xdecaro.admin', 'xdecaro.metrics', 'xdecaro.list', 'xdecaro.badges'] as $required) {
     if (!isset($styles[$required])) {
         throw new RuntimeException('Missing public Core style asset: ' . $required);
     }
@@ -44,32 +45,50 @@ if (!isset($scripts['xdecaro.filterbar'])) {
 if (($styles['xdecaro.components']['dependencies'] ?? []) !== ['xdecaro.core']) {
     throw new RuntimeException('xdecaro.components must depend only on xdecaro.core.');
 }
-
 if (($styles['xdecaro.admin']['dependencies'] ?? []) !== ['xdecaro.components']) {
     throw new RuntimeException('xdecaro.admin must depend only on xdecaro.components.');
 }
+if (($styles['xdecaro.metrics']['dependencies'] ?? []) !== ['xdecaro.admin']) {
+    throw new RuntimeException('xdecaro.metrics must depend only on xdecaro.admin.');
+}
+if (($styles['xdecaro.list']['dependencies'] ?? []) !== ['xdecaro.metrics']) {
+    throw new RuntimeException('xdecaro.list must depend only on xdecaro.metrics.');
+}
+if (($styles['xdecaro.badges']['dependencies'] ?? []) !== ['xdecaro.list']) {
+    throw new RuntimeException('xdecaro.badges must depend only on xdecaro.list.');
+}
 
 $service = (string) file_get_contents($servicePath);
-
-if (!str_contains($service, "public const STYLE_ADMIN = 'xdecaro.admin';")) {
-    throw new RuntimeException('AssetService::STYLE_ADMIN is missing.');
+foreach ([
+    "public const STYLE_ADMIN = 'xdecaro.admin';",
+    "public const STYLE_METRICS = 'xdecaro.metrics';",
+    "public const STYLE_LIST = 'xdecaro.list';",
+    "public const STYLE_BADGES = 'xdecaro.badges';",
+    "public const SCRIPT_FILTERBAR = 'xdecaro.filterbar';",
+] as $marker) {
+    if (!str_contains($service, $marker)) {
+        throw new RuntimeException('AssetService shared admin asset marker is missing: ' . $marker);
+    }
 }
-if (!str_contains($service, "public const SCRIPT_FILTERBAR = 'xdecaro.filterbar';")) {
-    throw new RuntimeException('AssetService::SCRIPT_FILTERBAR is missing.');
-}
-
 if (!str_contains($service, 'public function useAdminUi(WebAssetManager $webAssets): bool')) {
     throw new RuntimeException('AssetService::useAdminUi() is missing.');
 }
-
-if (!str_contains($service, 'useStyle(self::STYLE_ADMIN)')) {
-    throw new RuntimeException('useAdminUi() must enable STYLE_ADMIN through Web Asset Manager.');
-}
-if (!str_contains($service, 'useScript(self::SCRIPT_FILTERBAR)')) {
-    throw new RuntimeException('useAdminUi() must enable SCRIPT_FILTERBAR through Web Asset Manager.');
+foreach ([
+    'useStyle(self::STYLE_ADMIN)',
+    'useStyle(self::STYLE_METRICS)',
+    'useStyle(self::STYLE_LIST)',
+    'useStyle(self::STYLE_BADGES)',
+    'useScript(self::SCRIPT_FILTERBAR)',
+] as $marker) {
+    if (!str_contains($service, $marker)) {
+        throw new RuntimeException('useAdminUi() is missing shared asset activation: ' . $marker);
+    }
 }
 
 $adminCss = is_file($adminCssPath) ? (string) file_get_contents($adminCssPath) : '';
+$listCss = is_file($listCssPath) ? (string) file_get_contents($listCssPath) : '';
+$publicCss = $adminCss . "\n" . $listCss;
+
 $publicSelectors = [
     '.xdecaro-suite',
     '.xdecaro-suite__hero',
@@ -100,13 +119,13 @@ $publicSelectors = [
 ];
 
 foreach ($publicSelectors as $selector) {
-    if (!str_contains($adminCss, $selector)) {
+    if (!str_contains($publicCss, $selector)) {
         throw new RuntimeException('Missing public admin selector: ' . $selector);
     }
 }
 
 foreach (['.xdecaro-suite__products-table', '.xdecaro-suite__extensions-table', '.xdecaro-suite__updates-table'] as $privateSelector) {
-    if (str_contains($adminCss, $privateSelector)) {
+    if (str_contains($publicCss, $privateSelector)) {
         throw new RuntimeException('Core dashboard-private selector leaked into public admin CSS: ' . $privateSelector);
     }
 }
@@ -117,7 +136,7 @@ $globalSelectorPatterns = [
     '/(^|\n|,)\s*\.sidebar-wrapper\b/i' => '.sidebar-wrapper',
 ];
 foreach ($globalSelectorPatterns as $pattern => $label) {
-    if (preg_match($pattern, $adminCss) === 1) {
+    if (preg_match($pattern, $publicCss) === 1) {
         throw new RuntimeException('Public admin CSS contains an unscoped Joomla/global selector: ' . $label);
     }
 }
@@ -136,9 +155,8 @@ $requiredFragments = [
     '@container xdecaro-suite',
     'data-xdecaro-filterbar-open',
 ];
-
 foreach ($requiredFragments as $fragment) {
-    if (!str_contains($adminCss, $fragment)) {
+    if (!str_contains($publicCss, $fragment)) {
         throw new RuntimeException('Shared admin responsive contract missing fragment: ' . $fragment);
     }
 }
@@ -160,7 +178,6 @@ if (str_contains($adminCss, '.xdecaro-suite__metric:last-child')) {
 if (!is_file($fixturePath)) {
     throw new RuntimeException('Responsive admin UI fixture is missing.');
 }
-
 $fixture = (string) file_get_contents($fixturePath);
 foreach (['data-contract-width="320"', 'data-contract-width="393"', 'data-contract-width="430"', 'data-contract-width="768"', 'data-contract-width="1024"', 'data-label=', 'xdecaro-form', 'xdecaro-accordion'] as $needle) {
     if (!str_contains($fixture, $needle)) {
