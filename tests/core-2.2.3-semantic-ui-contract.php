@@ -6,6 +6,7 @@ $root = dirname(__DIR__);
 $core = (string) file_get_contents($root . '/src/plg_system_xdecarocore/media/css/core.css');
 $components = (string) file_get_contents($root . '/src/plg_system_xdecarocore/media/css/components.css');
 $admin = (string) file_get_contents($root . '/src/plg_system_xdecarocore/media/css/admin.css');
+$dashboardAdmin = (string) file_get_contents($root . '/src/com_xdecarocore/media/css/admin.css');
 
 $requiredCoreTokens = [
     '--xdecaro-color-info:',
@@ -72,6 +73,23 @@ $requiredFilterbar = [
 foreach ($requiredFilterbar as $fragment) {
     if (!str_contains($admin, $fragment)) {
         throw new RuntimeException('Core 2.2.3 filterbar contract missing: ' . $fragment);
+    }
+}
+
+$requiredCompactSummaryBadge = [
+    '.xdecaro-suite__count-badge',
+    'max-width: 200px',
+    'padding: 7px 10px',
+    'min-height: 34px',
+    'font-size: 14px',
+    'line-height: 1.05',
+    'text-align: center',
+    'white-space: normal',
+];
+
+foreach ($requiredCompactSummaryBadge as $fragment) {
+    if (!str_contains($dashboardAdmin, $fragment)) {
+        throw new RuntimeException('Core compact updates summary badge contract missing: ' . $fragment);
     }
 }
 
