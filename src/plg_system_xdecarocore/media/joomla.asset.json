@@ -21,7 +21,7 @@
     {
       "name": "xdecaro.admin",
       "type": "style",
-      "uri": "plg_system_xdecarocore/admin-2.2.6.css",
+      "uri": "plg_system_xdecarocore/admin.css",
       "dependencies": ["xdecaro.components"],
       "version": "2.2.6"
     }
