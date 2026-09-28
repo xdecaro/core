@@ -6,6 +6,7 @@ $root = dirname(__DIR__);
 $registryPath = $root . '/src/plg_system_xdecarocore/media/joomla.asset.json';
 $servicePath = $root . '/src/lib_xdecarocore/src/Asset/AssetService.php';
 $adminCssPath = $root . '/src/plg_system_xdecarocore/media/css/admin.css';
+$filterbarJsPath = $root . '/src/plg_system_xdecarocore/media/js/filterbar.js';
 $fixturePath = $root . '/tests/fixtures/admin-ui-contract.html';
 $viewPath = $root . '/src/com_xdecarocore/admin/src/View/Dashboard/HtmlView.php';
 $componentRegistryPath = $root . '/src/com_xdecarocore/media/joomla.asset.json';
@@ -20,10 +21,14 @@ $informationTemplatePath = $root . '/src/com_xdecarocore/admin/tmpl/dashboard/in
 $registry = json_decode((string) file_get_contents($registryPath), true, 512, JSON_THROW_ON_ERROR);
 $assets = $registry['assets'] ?? [];
 $styles = [];
+$scripts = [];
 
 foreach ($assets as $asset) {
     if (($asset['type'] ?? null) === 'style' && isset($asset['name'])) {
         $styles[$asset['name']] = $asset;
+    }
+    if (($asset['type'] ?? null) === 'script' && isset($asset['name'])) {
+        $scripts[$asset['name']] = $asset;
     }
 }
 
@@ -31,6 +36,9 @@ foreach (['xdecaro.core', 'xdecaro.components', 'xdecaro.admin'] as $required) {
     if (!isset($styles[$required])) {
         throw new RuntimeException('Missing public Core style asset: ' . $required);
     }
+}
+if (!isset($scripts['xdecaro.filterbar'])) {
+    throw new RuntimeException('Missing shared filterbar behavior asset xdecaro.filterbar.');
 }
 
 if (($styles['xdecaro.components']['dependencies'] ?? []) !== ['xdecaro.core']) {
@@ -46,6 +54,9 @@ $service = (string) file_get_contents($servicePath);
 if (!str_contains($service, "public const STYLE_ADMIN = 'xdecaro.admin';")) {
     throw new RuntimeException('AssetService::STYLE_ADMIN is missing.');
 }
+if (!str_contains($service, "public const SCRIPT_FILTERBAR = 'xdecaro.filterbar';")) {
+    throw new RuntimeException('AssetService::SCRIPT_FILTERBAR is missing.');
+}
 
 if (!str_contains($service, 'public function useAdminUi(WebAssetManager $webAssets): bool')) {
     throw new RuntimeException('AssetService::useAdminUi() is missing.');
@@ -53,6 +64,9 @@ if (!str_contains($service, 'public function useAdminUi(WebAssetManager $webAsse
 
 if (!str_contains($service, 'useStyle(self::STYLE_ADMIN)')) {
     throw new RuntimeException('useAdminUi() must enable STYLE_ADMIN through Web Asset Manager.');
+}
+if (!str_contains($service, 'useScript(self::SCRIPT_FILTERBAR)')) {
+    throw new RuntimeException('useAdminUi() must enable SCRIPT_FILTERBAR through Web Asset Manager.');
 }
 
 $adminCss = is_file($adminCssPath) ? (string) file_get_contents($adminCssPath) : '';
@@ -72,10 +86,16 @@ $publicSelectors = [
     '.xdecaro-suite__summary-bar',
     '.xdecaro-suite__responsive-wrap',
     '.xdecaro-suite__responsive-table',
+    '.xdecaro-suite__responsive-table--striped',
     '.xdecaro-form',
     '.xdecaro-form-grid',
     '.xdecaro-form-grid--2',
     '.xdecaro-filterbar',
+    '.xdecaro-filterbar--panel',
+    '.xdecaro-filterbar__primary',
+    '.xdecaro-filterbar__search-shell',
+    '.xdecaro-filterbar__advanced',
+    '.xdecaro-filterbar__advanced-fields',
     '.xdecaro-accordion',
 ];
 
@@ -114,11 +134,22 @@ $requiredFragments = [
     'overflow-x: auto',
     'td[data-label]::before',
     '@container xdecaro-suite',
+    'data-xdecaro-filterbar-open',
 ];
 
 foreach ($requiredFragments as $fragment) {
     if (!str_contains($adminCss, $fragment)) {
         throw new RuntimeException('Shared admin responsive contract missing fragment: ' . $fragment);
+    }
+}
+
+if (!is_file($filterbarJsPath)) {
+    throw new RuntimeException('Shared filterbar behavior file is missing.');
+}
+$filterbarJs = (string) file_get_contents($filterbarJsPath);
+foreach (['data-xdecaro-filterbar-toggle', 'data-xdecaro-filterbar-close', 'aria-expanded', 'hidden'] as $fragment) {
+    if (!str_contains($filterbarJs, $fragment)) {
+        throw new RuntimeException('Shared filterbar behavior missing fragment: ' . $fragment);
     }
 }
 
