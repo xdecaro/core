@@ -118,13 +118,24 @@ The initial package may include a small system plugin only if runtime registrati
 
 Wallet must link to stable source identities, not mutable display values such as card number.
 
-For Membership, add a stable UUID to `#__decaromembership_cards` before Wallet integration if the table does not already contain one at implementation time:
+For Membership, add a stable UUID to `#__decaromembership_cards` before Wallet integration if the table does not already contain one at implementation time.
+
+Target field:
 
 ```sql
 uuid CHAR(36) NOT NULL
 ```
 
-with a unique index.
+The production migration must be non-destructive and must not apply a new non-null/unique constraint before existing rows are populated. The implementation plan must use this sequence (or a database-safe equivalent):
+
+1. add the UUID column in a migration-safe nullable state;
+2. generate a cryptographically strong RFC 4122-compatible UUID for every existing card lacking one;
+3. verify no null or duplicate values remain;
+4. add the unique index;
+5. enforce the final non-null constraint when supported safely by the target database/Joomla migration path;
+6. preserve every existing Membership card and all existing identifiers.
+
+New cards receive their UUID at creation time before Wallet integration runs.
 
 The UUID belongs to the Membership card record and is not a global person UUID or a Core-owned identifier.
 
@@ -352,6 +363,8 @@ Responsibilities include:
 - revocation/invalidation strategy;
 - provider diagnostics without exposing private keys or certificate passwords.
 
+For live updates, the pass configuration and Wallet web service must support the Apple registration/update/unregistration flow. The implementation must not treat regeneration of a `.pkpass` file alone as sufficient for already-installed pass updates.
+
 Apple certificates, private keys and signing material must never be committed to Git.
 
 Prefer configuration that references credentials stored outside the public web root or supplied through environment/server configuration. Administrator diagnostics may confirm presence, expiry and validity but must not display secret values.
@@ -369,6 +382,10 @@ Responsibilities include:
 - deactivating/revoking objects according to supported provider semantics;
 - recording issuer/object IDs and technical state;
 - provider diagnostics without exposing service-account secrets.
+
+The initial Membership template should use the Google Generic pass model unless provider review during implementation demonstrates a more appropriate supported pass type.
+
+Google class-level data is shared; object-level data is unique to the individual issued pass. Small changes should prefer partial updates (`PATCH`) where supported so unrelated fields are not unintentionally cleared. Full replacement updates require retrieval/preservation of the complete intended resource state.
 
 Google credentials must never be committed to Git and should be supplied through a secure server-side configuration/reference rather than copied into normal administrator diagnostics.
 
@@ -668,7 +685,10 @@ The following decisions are considered part of this design:
 - Core receives no Wallet-specific abstraction in the first implementation.
 - Integration is optional and failure-isolated.
 - Stable source UUIDs are preferred over database IDs or card numbers for cross-component mapping.
+- Membership UUID migration must preserve all existing cards and backfill before uniqueness/non-null enforcement.
 - QR is implemented from the first release and remains the universal fallback.
 - Apple and Google are isolated providers behind the Wallet service boundary.
+- Apple installed-pass updates require the proper Wallet web-service lifecycle, not only file regeneration.
+- Google Generic pass uses shared Class data and individual Object data; partial updates should avoid destructive replacement where possible.
 - A fixed Membership template is used before any generic visual builder.
 - NFC/contactless is deferred until the normal digital-pass lifecycle is stable.
