@@ -34,6 +34,7 @@ final class EcosystemService
         'protocol' => ['name' => 'Protocol', 'package' => 'pkg_decaroprotocol', 'component' => 'com_decaroprotocol', 'version' => '1.5.0', 'channel' => 'stable'],
         'editor' => ['name' => 'Editor', 'package' => 'pkg_decaroeditor', 'component' => '', 'version' => '0.1.0-alpha6', 'channel' => 'prerelease'],
         'draw' => ['name' => 'Draw', 'package' => 'pkg_xdecarodraw', 'component' => 'com_xdecarodraw', 'version' => '1.0.0', 'channel' => 'development'],
+        'photos' => ['name' => 'xdecaro Photos', 'package' => 'pkg_xdecarophotos', 'component' => 'com_xdecarophotos', 'version' => '0.2.0', 'channel' => 'development'],
         'resources' => ['name' => 'Resources', 'package' => 'pkg_xdecaroresources', 'component' => 'com_xdecaroresources', 'version' => '0.2.0', 'channel' => 'development'],
         'inventory' => ['name' => 'Inventory', 'package' => 'pkg_xdecaroinventory', 'component' => 'com_xdecaroinventory', 'version' => '0.2.0', 'channel' => 'development'],
         'communications' => ['name' => 'Communications', 'package' => '', 'component' => '', 'version' => '', 'channel' => 'planned'],
