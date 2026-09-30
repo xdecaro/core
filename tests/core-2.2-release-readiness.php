@@ -98,6 +98,87 @@ if (!str_contains($catalogSource, "'core' => ['name' => 'Core', 'package' => 'pk
     throw new RuntimeException('Core dashboard catalog must identify Core 2.2.5 as current.');
 }
 
+if (!defined('_JEXEC')) {
+    define('_JEXEC', 1);
+}
+require_once $root . '/src/com_xdecarocore/admin/src/Service/EcosystemService.php';
+
+$reflection = new ReflectionClass(\xdecaro\Component\Core\Administrator\Service\EcosystemService::class);
+$catalogConstant = $reflection->getReflectionConstant('CATALOG');
+$catalog = $catalogConstant !== false ? $catalogConstant->getValue() : null;
+if (!is_array($catalog) || !isset($catalog['photos'])) {
+    throw new RuntimeException('xdecaro Photos must be present in the dashboard catalog.');
+}
+
+$photosDefinition = $catalog['photos'];
+$expectedPhotosDefinition = [
+    'name' => 'xdecaro Photos',
+    'package' => 'pkg_xdecarophotos',
+    'component' => 'com_xdecarophotos',
+    'version' => '0.2.0',
+    'channel' => 'development',
+];
+if ($photosDefinition !== $expectedPhotosDefinition) {
+    throw new RuntimeException('xdecaro Photos dashboard identity does not match the verified component/package identifiers.');
+}
+
+$service = $reflection->newInstanceWithoutConstructor();
+$buildProduct = $reflection->getMethod('buildProduct');
+$buildProduct->setAccessible(true);
+
+$withoutPhotos = $buildProduct->invoke($service, 'photos', $photosDefinition, [], []);
+if (($withoutPhotos['installed'] ?? true) !== false
+    || ($withoutPhotos['partial'] ?? true) !== false
+    || ($withoutPhotos['status'] ?? '') !== 'development'
+    || ($withoutPhotos['open_url'] ?? 'unexpected') !== '') {
+    throw new RuntimeException('Core must keep Photos unavailable and non-fatal when Photos is absent.');
+}
+
+$photosExtensions = [
+    [
+        'extension_id' => 501,
+        'package_id' => 0,
+        'name' => 'xdecaro Photos',
+        'type' => 'package',
+        'element' => 'pkg_xdecarophotos',
+        'folder' => '',
+        'client_id' => 0,
+        'enabled' => 1,
+        'version' => '0.2.0',
+        'author' => 'xdecaro',
+    ],
+    [
+        'extension_id' => 502,
+        'package_id' => 501,
+        'name' => 'xdecaro Photos',
+        'type' => 'component',
+        'element' => 'com_xdecarophotos',
+        'folder' => '',
+        'client_id' => 1,
+        'enabled' => 1,
+        'version' => '0.2.0',
+        'author' => 'xdecaro',
+    ],
+];
+$withPhotos = $buildProduct->invoke($service, 'photos', $photosDefinition, $photosExtensions, []);
+if (($withPhotos['installed'] ?? false) !== true
+    || ($withPhotos['partial'] ?? true) !== false
+    || ($withPhotos['status'] ?? '') !== 'current'
+    || ($withPhotos['package'] ?? '') !== 'pkg_xdecarophotos'
+    || ($withPhotos['component'] ?? '') !== 'com_xdecarophotos'
+    || ($withPhotos['installed_version'] ?? '') !== '0.2.0'
+    || ($withPhotos['open_url'] ?? '') !== 'index.php?option=com_xdecarophotos') {
+    throw new RuntimeException('Core must recognize an installed xdecaro Photos package/component through the existing ecosystem mechanism.');
+}
+
+$photoChildren = array_map(
+    static fn (array $extension): string => ($extension['type'] ?? '') . ':' . ($extension['element'] ?? ''),
+    $withPhotos['children'] ?? []
+);
+if ($photoChildren !== ['component:com_xdecarophotos']) {
+    throw new RuntimeException('xdecaro Photos package children must resolve without creating a duplicate registry or installation.');
+}
+
 foreach ([
     $root . '/src/plg_system_xdecarocore/media/css/core.css',
     $root . '/src/plg_system_xdecarocore/media/css/components.css',
